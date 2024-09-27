@@ -1,4 +1,7 @@
-use super::enums::{OracleValidation, OrderStatus, Origin};
+use super::{
+    enums::{OracleValidation, OrderStatus, Origin},
+    ExternalValidationResult,
+};
 use anchor_lang::prelude::*;
 
 #[account]

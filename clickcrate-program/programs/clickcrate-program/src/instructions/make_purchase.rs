@@ -1,11 +1,15 @@
-use crate::error::ClickCrateErrors;
+use crate::errors::ClickCrateErrors;
 use crate::state::{
     ClickCrateState, ExternalValidationResult, OracleValidation, OrderOracle, OrderStatus,
     ProductListingState, VaultAccount,
 };
+use crate::utils::Core;
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::{program::invoke, system_instruction};
-use mpl_core::{Asset, Attribute, Attributes, Collection, Plugin};
+use mpl_core::{
+    instructions::UpdatePluginV1CpiBuilder,
+    types::{Attribute, Attributes, Plugin},
+};
 
 #[derive(Accounts)]
 #[instruction(product_listing_id: Pubkey, clickcrate_id: Pubkey, product_id: Pubkey, quantity: u64)]

@@ -1,4 +1,4 @@
-use crate::error::ClickCrateErrors;
+use crate::errors::ClickCrateErrors;
 use crate::state::{
     ExternalValidationResult, OracleValidation, OrderOracle, OrderStatus, ProductListingState,
 };
@@ -14,6 +14,15 @@ pub struct UpdateOrderStatus<'info> {
       bump,
     )]
     pub product_listing: Account<'info, ProductListingState>,
+    // #[account(
+    //   mut,
+    //   seeds = [b"oracle", product.key().as_ref()],
+    //   bump,
+    //   realloc = 8 + OrderOracle::MAX_SIZE,
+    //   realloc::payer = seller,
+    //   realloc::zero = true,
+    // )]
+    // pub oracle: Account<'info, OrderOracle>,
     #[account(
       mut,
       seeds = [b"oracle".as_ref(), product_id.key().as_ref()],

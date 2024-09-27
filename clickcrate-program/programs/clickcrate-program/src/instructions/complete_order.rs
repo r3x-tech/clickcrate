@@ -1,5 +1,6 @@
-use crate::error::ClickCrateErrors;
+use crate::errors::ClickCrateErrors;
 use crate::state::{OrderOracle, ProductListingState, VaultAccount};
+use crate::OrderStatus;
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::{program::invoke, system_instruction};
 use mpl_core::Asset;

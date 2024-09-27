@@ -1,5 +1,6 @@
-use crate::error::ClickCrateErrors;
+use crate::errors::ClickCrateErrors;
 use crate::state::{ClickCrateState, OrderOracle, OrderStatus, ProductListingState, VaultAccount};
+use crate::Core;
 use anchor_lang::prelude::*;
 use mpl_core::{
     instructions::{

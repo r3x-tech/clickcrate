@@ -9,12 +9,15 @@ crate-type = ["cdylib", "lib"]
 name = "clickcrate_program"
 
 [features]
-default = []
+default = ["custom-heap"]
 cpi = ["no-entrypoint"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
 idl-build = ["anchor-lang/idl-build"]
+custom-heap = []
 
 [dependencies]
 anchor-lang = "0.30.1"
+mpl-core = "0.7.2"
+smalloc = "0.1.2"
