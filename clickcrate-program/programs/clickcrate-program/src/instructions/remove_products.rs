@@ -53,7 +53,27 @@ pub fn remove_products<'a, 'b, 'c: 'info, 'info>(
     let listing_collection = &ctx.accounts.listing_collection;
     let product_accounts = ctx.remaining_accounts;
 
-    // ... (validation checks)
+    require!(
+        product_listing.is_active,
+        ClickCrateErrors::ProductListingDeactivated
+    );
+    require!(
+        clickcrate.is_active,
+        ClickCrateErrors::ClickCrateDeactivated
+    );
+    require!(
+        product_listing.vault.is_some() && vault.key() == product_listing.vault.unwrap(),
+        ClickCrateErrors::InvalidVaultAccount
+    );
+
+    let collection_data = listing_collection.try_borrow_data()?;
+    let collection_account = Collection::deserialize(&mut &collection_data[..])?;
+    let total_minted = collection_account.base.num_minted;
+
+    require!(
+        product_accounts.len() as u32 == total_minted && (1..=20).contains(&product_accounts.len()),
+        ClickCrateErrors::InvalidRemovalRequest
+    );
 
     let core_program_info = &ctx.accounts.core_program;
     let owner_info = &ctx.accounts.owner;
@@ -61,7 +81,29 @@ pub fn remove_products<'a, 'b, 'c: 'info, 'info>(
 
     // Check order status for all products
     for product_account in product_accounts.iter() {
-        // ... (order status check logic)
+        let product_data = product_account.try_borrow_data()?;
+        let deserialized_product = Asset::deserialize(&mut &product_data[..])
+            .map_err(|_| ClickCrateErrors::InvalidProductAccount)?;
+
+        let oracle = deserialized_product
+            .external_plugin_adapter_list
+            .oracles
+            .first()
+            .ok_or(ClickCrateErrors::OracleNotFound)?;
+
+        let oracle_account_info = ctx
+            .remaining_accounts
+            .iter()
+            .find(|a| *a.key == oracle.base_address)
+            .ok_or(ClickCrateErrors::OracleNotFound)?;
+
+        let oracle_data = oracle_account_info.try_borrow_data()?;
+        let oracle_state = OrderOracle::try_deserialize(&mut &oracle_data[..])?;
+
+        match oracle_state.order_status {
+            OrderStatus::Pending | OrderStatus::Completed | OrderStatus::Cancelled => {}
+            _ => return Err(ClickCrateErrors::OrdersInProgress.into()),
+        }
     }
 
     // Remove plugins and update product listing
@@ -94,7 +136,6 @@ pub fn remove_products<'a, 'b, 'c: 'info, 'info>(
     Ok(())
 }
 
-// Helper function (move this to a separate module if needed)
 fn remove_product_plugins<'info>(
     product_listing: &Account<'info, ProductListingState>,
     product_account: &AccountInfo<'info>,
@@ -104,6 +145,47 @@ fn remove_product_plugins<'info>(
     system_program: &Program<'info, System>,
     bump: u8,
 ) -> Result<()> {
-    // ... (implementation of remove_product_plugins)
+    let product_data = product_account.try_borrow_data()?;
+    let deserialized_product = Asset::deserialize(&mut &product_data[..])
+        .map_err(|_| ClickCrateErrors::InvalidProductAccount)?;
+
+    // Unfreeze the Asset
+    UpdatePluginV1CpiBuilder::new(core_program)
+        .asset(product_account)
+        .collection(Some(listing_collection))
+        .payer(owner)
+        .authority(Some(&product_listing.to_account_info()))
+        .system_program(system_program)
+        .plugin(Plugin::FreezeDelegate(FreezeDelegate { frozen: false }))
+        .invoke_signed(&[&[b"listing", product_listing.id.as_ref(), &[bump]]])?;
+
+    // Remove the FreezeDelegate and TransferDelegate Plugins
+    for plugin_type in [PluginType::FreezeDelegate, PluginType::TransferDelegate] {
+        RemovePluginV1CpiBuilder::new(core_program)
+            .asset(product_account)
+            .collection(Some(listing_collection))
+            .payer(owner)
+            .authority(Some(owner))
+            .system_program(system_program)
+            .plugin_type(plugin_type)
+            .invoke()?;
+    }
+
+    // Remove the Oracle Plugin
+    let oracle = deserialized_product
+        .external_plugin_adapter_list
+        .oracles
+        .first()
+        .ok_or(ClickCrateErrors::OracleNotFound)?;
+
+    RemoveExternalPluginAdapterV1CpiBuilder::new(core_program)
+        .asset(product_account)
+        .collection(Some(listing_collection))
+        .payer(owner)
+        .authority(Some(owner))
+        .system_program(system_program)
+        .key(ExternalPluginAdapterKey::Oracle(oracle.base_address))
+        .invoke()?;
+
     Ok(())
 }
