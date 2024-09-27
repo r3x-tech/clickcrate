@@ -5,14 +5,17 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
+clickcrate_program = "8kcNZswTWxgccDEmea5VbHwqpm7LKqSiKuTNPFmd2ZMX"
+
+[programs.localnet]
 clickcrate_program = "5PJAUEMFVHKn29byHzAqbFerH71h1g9XQLui3ToYoAow"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
-wallet = "~/.config/solana/id.json"
+cluster = "Localnet"
+wallet = "~/solana-wallets/clickcrate-wallet.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

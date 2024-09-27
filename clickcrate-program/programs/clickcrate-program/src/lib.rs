@@ -1,24 +1,33 @@
-#[cfg(all(feature = "custom-heap", target_arch = "bpf"))]
+#[cfg(target_os = "solana")]
 #[global_allocator]
-static ALLOC: smalloc::Smalloc<{ solana_program::entrypoint::HEAP_LENGTH as usize }> =
-    smalloc::Smalloc::new();
+static ALLOC: smalloc::Smalloc<
+    { solana_program::entrypoint::HEAP_START_ADDRESS as usize },
+    { solana_program::entrypoint::HEAP_LENGTH as usize },
+    16,
+    1024,
+> = smalloc::Smalloc::new();
 
-#[cfg(feature = "custom-heap")]
-use anchor_lang::solana_program::custom_heap_default;
+// #[cfg(all(feature = "custom-heap", target_arch = "bpf"))]
+// #[global_allocator]
+// static ALLOC: smalloc::Smalloc<{ solana_program::entrypoint::HEAP_LENGTH as usize }> =
+//     smalloc::Smalloc::new();
+
+// #[cfg(feature = "custom-heap")]
+// use solana_program::custom_heap_default;
 
 use anchor_lang::prelude::*;
 
-pub mod constants;
+// pub mod constants;
 pub mod errors;
 pub mod instructions;
 pub mod state;
 
-use crate::constants::*;
-use crate::errors::ClickCrateErrors;
+// use crate::constants::*;
+// use crate::errors::ClickCrateErrors;
 use instructions::*;
 use state::*;
 
-declare_id!("5PJAUEMFVHKn29byHzAqbFerH71h1g9XQLui3ToYoAow");
+declare_id!("8kcNZswTWxgccDEmea5VbHwqpm7LKqSiKuTNPFmd2ZMX");
 
 #[program]
 pub mod clickcrate_program {

@@ -8,7 +8,7 @@ use mpl_core::{
         ExternalCheckResult, ExternalPluginAdapterInitInfo, FreezeDelegate, HookableLifecycleEvent,
         OracleInitInfo, Plugin, PluginAuthority, TransferDelegate, ValidationResultsOffset,
     },
-    Asset, Collection,
+    Collection,
 };
 
 #[derive(Accounts)]
