@@ -1,7 +1,11 @@
-.anchor
+# Global ignores
 .DS_Store
-target
-**/*.rs.bk
 node_modules
-test-ledger
-.yarn
+
+
+# clickcrate-program specific ignores
+clickcrate-program/.anchor
+clickcrate-program/target
+clickcrate-program/node_modules
+clickcrate-program/test-ledger
+clickcrate-program/.yarn
