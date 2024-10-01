@@ -5,10 +5,10 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-clickcrate_program = "8kcNZswTWxgccDEmea5VbHwqpm7LKqSiKuTNPFmd2ZMX"
+clickcrate_program = "8haS17iUkRL1aMchExXTcLS5J8iHwupN9gWWRNLD9q3v"
 
 [programs.localnet]
-clickcrate_program = "5PJAUEMFVHKn29byHzAqbFerH71h1g9XQLui3ToYoAow"
+clickcrate_program = "8haS17iUkRL1aMchExXTcLS5J8iHwupN9gWWRNLD9q3v"
 
 [registry]
 url = "https://api.apr.dev"

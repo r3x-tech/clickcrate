@@ -27,7 +27,7 @@ pub mod state;
 use instructions::*;
 use state::*;
 
-declare_id!("8kcNZswTWxgccDEmea5VbHwqpm7LKqSiKuTNPFmd2ZMX");
+declare_id!("8haS17iUkRL1aMchExXTcLS5J8iHwupN9gWWRNLD9q3v");
 
 #[program]
 pub mod clickcrate_program {
@@ -143,7 +143,7 @@ pub mod clickcrate_program {
         instructions::remove_products::remove_products(ctx, product_listing_id, clickcrate_id)
     }
 
-    pub fn place_productss<'a, 'b, 'c: 'info, 'info>(
+    pub fn place_products<'a, 'b, 'c: 'info, 'info>(
         ctx: Context<'a, 'b, 'c, 'info, PlaceProducts<'info>>,
         product_listing_id: Pubkey,
         clickcrate_id: Pubkey,
