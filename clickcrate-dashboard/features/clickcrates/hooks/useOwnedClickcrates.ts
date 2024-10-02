@@ -3,9 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { clickcrateApi } from "@/services/clickcrateApi";
 import { PublicKey } from "@solana/web3.js";
 
-export function useOwnedProductListings(owner: PublicKey) {
+export function useOwnedClickcrates(owner: PublicKey) {
   return useQuery({
-    queryKey: ["ownedProductListings", owner.toString()],
-    queryFn: () => clickcrateApi.fetchOwnedProductListings(owner),
+    queryKey: ["ownedClickcrates", owner.toString()],
+    queryFn: () => clickcrateApi.fetchOwnedClickCrates(owner),
   });
 }

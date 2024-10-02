@@ -1,0 +1,1899 @@
+{
+  "address": "8haS17iUkRL1aMchExXTcLS5J8iHwupN9gWWRNLD9q3v",
+  "metadata": {
+    "name": "clickcrate_program",
+    "version": "0.4.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "activate_clickcrate",
+      "discriminator": [
+        81,
+        143,
+        45,
+        111,
+        139,
+        140,
+        223,
+        72
+      ],
+      "accounts": [
+        {
+          "name": "clickcrate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  99,
+                  107,
+                  99,
+                  114,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "clickcrate.id",
+                "account": "ClickCrateState"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "clickcrate"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "activate_product_listing",
+      "discriminator": [
+        59,
+        174,
+        122,
+        230,
+        190,
+        160,
+        92,
+        20
+      ],
+      "accounts": [
+        {
+          "name": "product_listing",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "product_listing.id",
+                "account": "ProductListingState"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "product_listing"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "close_oracle",
+      "discriminator": [
+        74,
+        239,
+        49,
+        223,
+        206,
+        52,
+        189,
+        123
+      ],
+      "accounts": [
+        {
+          "name": "product_listing",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_listing_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "oracle",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  114,
+                  97,
+                  99,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "product",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "product_listing_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "product_id",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "complete_order",
+      "discriminator": [
+        73,
+        78,
+        89,
+        7,
+        140,
+        132,
+        17,
+        97
+      ],
+      "accounts": [
+        {
+          "name": "product_listing",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_listing_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_listing_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "oracle",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  114,
+                  97,
+                  99,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "product"
+              }
+            ]
+          }
+        },
+        {
+          "name": "seller",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "product",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "product_listing_id",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "deactivate_clickcrate",
+      "discriminator": [
+        72,
+        46,
+        232,
+        105,
+        48,
+        53,
+        185,
+        227
+      ],
+      "accounts": [
+        {
+          "name": "clickcrate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  99,
+                  107,
+                  99,
+                  114,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "clickcrate.id",
+                "account": "ClickCrateState"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "clickcrate"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "deactivate_product_listing",
+      "discriminator": [
+        102,
+        7,
+        237,
+        206,
+        191,
+        47,
+        188,
+        61
+      ],
+      "accounts": [
+        {
+          "name": "product_listing",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "product_listing.id",
+                "account": "ProductListingState"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "product_listing"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_oracle",
+      "discriminator": [
+        144,
+        223,
+        131,
+        120,
+        196,
+        253,
+        181,
+        99
+      ],
+      "accounts": [
+        {
+          "name": "product_listing",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_listing_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "product",
+          "writable": true
+        },
+        {
+          "name": "oracle",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  114,
+                  97,
+                  99,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "product_listing_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "product_id",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "make_purchase",
+      "discriminator": [
+        193,
+        62,
+        227,
+        136,
+        105,
+        212,
+        201,
+        20
+      ],
+      "accounts": [
+        {
+          "name": "clickcrate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  99,
+                  107,
+                  99,
+                  114,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "clickcrate_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "product_listing",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_listing_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "oracle",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  114,
+                  97,
+                  99,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_listing_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "listing_collection",
+          "writable": true
+        },
+        {
+          "name": "product_account",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "clickcrate",
+            "product_listing"
+          ]
+        },
+        {
+          "name": "buyer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "core_program",
+          "address": "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "product_listing_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "clickcrate_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "product_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "quantity",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "place_products",
+      "discriminator": [
+        39,
+        86,
+        179,
+        53,
+        43,
+        82,
+        94,
+        45
+      ],
+      "accounts": [
+        {
+          "name": "clickcrate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  99,
+                  107,
+                  99,
+                  114,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "clickcrate_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "product_listing",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_listing_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_listing_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "listing_collection",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "clickcrate",
+            "product_listing"
+          ]
+        },
+        {
+          "name": "core_program",
+          "address": "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "product_listing_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "clickcrate_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "price",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "register_clickcrate",
+      "discriminator": [
+        44,
+        199,
+        5,
+        86,
+        66,
+        240,
+        70,
+        35
+      ],
+      "accounts": [
+        {
+          "name": "clickcrate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  99,
+                  107,
+                  99,
+                  114,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "id",
+          "type": "pubkey"
+        },
+        {
+          "name": "eligible_placement_type",
+          "type": {
+            "defined": {
+              "name": "PlacementType"
+            }
+          }
+        },
+        {
+          "name": "eligible_product_category",
+          "type": {
+            "defined": {
+              "name": "ProductCategory"
+            }
+          }
+        },
+        {
+          "name": "manager",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "register_product_listing",
+      "discriminator": [
+        22,
+        144,
+        48,
+        241,
+        143,
+        78,
+        58,
+        135
+      ],
+      "accounts": [
+        {
+          "name": "product_listing",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "id",
+          "type": "pubkey"
+        },
+        {
+          "name": "origin",
+          "type": {
+            "defined": {
+              "name": "Origin"
+            }
+          }
+        },
+        {
+          "name": "placement_type",
+          "type": {
+            "defined": {
+              "name": "PlacementType"
+            }
+          }
+        },
+        {
+          "name": "product_category",
+          "type": {
+            "defined": {
+              "name": "ProductCategory"
+            }
+          }
+        },
+        {
+          "name": "manager",
+          "type": "pubkey"
+        },
+        {
+          "name": "order_manager",
+          "type": {
+            "defined": {
+              "name": "Origin"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "remove_products",
+      "discriminator": [
+        173,
+        2,
+        240,
+        38,
+        141,
+        175,
+        120,
+        124
+      ],
+      "accounts": [
+        {
+          "name": "clickcrate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  99,
+                  107,
+                  99,
+                  114,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "clickcrate_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "product_listing",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_listing_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_listing_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "listing_collection",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "clickcrate",
+            "product_listing"
+          ]
+        },
+        {
+          "name": "core_program",
+          "address": "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "product_listing_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "clickcrate_id",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "update_clickcrate",
+      "discriminator": [
+        88,
+        218,
+        191,
+        63,
+        64,
+        49,
+        133,
+        96
+      ],
+      "accounts": [
+        {
+          "name": "clickcrate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  105,
+                  99,
+                  107,
+                  99,
+                  114,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "id",
+          "type": "pubkey"
+        },
+        {
+          "name": "eligible_placement_type",
+          "type": {
+            "defined": {
+              "name": "PlacementType"
+            }
+          }
+        },
+        {
+          "name": "eligible_product_category",
+          "type": {
+            "defined": {
+              "name": "ProductCategory"
+            }
+          }
+        },
+        {
+          "name": "manager",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "update_order_status",
+      "discriminator": [
+        88,
+        95,
+        133,
+        241,
+        63,
+        159,
+        32,
+        71
+      ],
+      "accounts": [
+        {
+          "name": "product_listing",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_listing_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "oracle",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  114,
+                  97,
+                  99,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "product_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "product_listing"
+          ]
+        },
+        {
+          "name": "seller",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "product_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "product_listing_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "new_order_status",
+          "type": {
+            "defined": {
+              "name": "OrderStatus"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_product_listing",
+      "discriminator": [
+        201,
+        155,
+        135,
+        164,
+        93,
+        135,
+        174,
+        209
+      ],
+      "accounts": [
+        {
+          "name": "product_listing",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "id",
+          "type": "pubkey"
+        },
+        {
+          "name": "placement_type",
+          "type": {
+            "defined": {
+              "name": "PlacementType"
+            }
+          }
+        },
+        {
+          "name": "product_category",
+          "type": {
+            "defined": {
+              "name": "ProductCategory"
+            }
+          }
+        },
+        {
+          "name": "manager",
+          "type": "pubkey"
+        },
+        {
+          "name": "price",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "ClickCrateState",
+      "discriminator": [
+        74,
+        128,
+        24,
+        160,
+        44,
+        211,
+        75,
+        6
+      ]
+    },
+    {
+      "name": "OrderOracle",
+      "discriminator": [
+        192,
+        227,
+        150,
+        94,
+        198,
+        44,
+        108,
+        107
+      ]
+    },
+    {
+      "name": "ProductListingState",
+      "discriminator": [
+        97,
+        129,
+        39,
+        209,
+        209,
+        102,
+        189,
+        139
+      ]
+    },
+    {
+      "name": "VaultAccount",
+      "discriminator": [
+        230,
+        251,
+        241,
+        83,
+        139,
+        202,
+        93,
+        28
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "AccountBorrowFailed",
+      "msg": "Failed to borrow account data"
+    },
+    {
+      "code": 6001,
+      "name": "AddPluginFailed",
+      "msg": "Failed to add plugin"
+    },
+    {
+      "code": 6002,
+      "name": "ClickCrateExists",
+      "msg": "ClickCrate already registered"
+    },
+    {
+      "code": 6003,
+      "name": "ClickCrateActivated",
+      "msg": "ClickCrate is actived"
+    },
+    {
+      "code": 6004,
+      "name": "ClickCrateDeactivated",
+      "msg": "ClickCrate is deactived"
+    },
+    {
+      "code": 6005,
+      "name": "ClickCrateNotFound",
+      "msg": "ClickCrate not found"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidClickCrateRegistration",
+      "msg": "Invalid clickcrate registration"
+    },
+    {
+      "code": 6007,
+      "name": "ProductNotFound",
+      "msg": "Product Listing was not found"
+    },
+    {
+      "code": 6008,
+      "name": "ProductListingExists",
+      "msg": "Product Listing already registered"
+    },
+    {
+      "code": 6009,
+      "name": "ProductListingActivated",
+      "msg": "Product Listing is actived"
+    },
+    {
+      "code": 6010,
+      "name": "ProductListingDeactivated",
+      "msg": "Product Listing is deactived"
+    },
+    {
+      "code": 6011,
+      "name": "ProductNotPlaced",
+      "msg": "Product not placed"
+    },
+    {
+      "code": 6012,
+      "name": "ProductOutOfStock",
+      "msg": "Product out of stock"
+    },
+    {
+      "code": 6013,
+      "name": "InvalidProductAccount",
+      "msg": "Invalid product account"
+    },
+    {
+      "code": 6014,
+      "name": "InvalidStockingRequest",
+      "msg": "Invalid stocking request"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidStockingAmount",
+      "msg": "Invalid stocking amount"
+    },
+    {
+      "code": 6016,
+      "name": "InvalidRemovalRequest",
+      "msg": "Invalid removal request"
+    },
+    {
+      "code": 6017,
+      "name": "InvalidRemovalAmount",
+      "msg": "Invalid removal amount"
+    },
+    {
+      "code": 6018,
+      "name": "InvalidProductListingRegistration",
+      "msg": "Invalid listing registration"
+    },
+    {
+      "code": 6019,
+      "name": "ProductRemovalFailed",
+      "msg": "Product removal failed"
+    },
+    {
+      "code": 6020,
+      "name": "PriceNotFound",
+      "msg": "Price not found"
+    },
+    {
+      "code": 6021,
+      "name": "OrderNotFound",
+      "msg": "Order not found"
+    },
+    {
+      "code": 6022,
+      "name": "OrderNotConfirmed",
+      "msg": "Order not confirmed"
+    },
+    {
+      "code": 6023,
+      "name": "OrderNotCompleted",
+      "msg": "Order not completed"
+    },
+    {
+      "code": 6024,
+      "name": "OrdersInProgress",
+      "msg": "Orders in progress"
+    },
+    {
+      "code": 6025,
+      "name": "InvalidOrderOracleAccount",
+      "msg": "Invalid oracle"
+    },
+    {
+      "code": 6026,
+      "name": "InvalidVaultAccount",
+      "msg": "Invalid vault"
+    },
+    {
+      "code": 6027,
+      "name": "FreezeAuthorityNotFound",
+      "msg": "Freeze authority not found"
+    },
+    {
+      "code": 6028,
+      "name": "TransferAuthorityNotFound",
+      "msg": "Transfer authority not found"
+    },
+    {
+      "code": 6029,
+      "name": "InvalidFreezeAuthority",
+      "msg": "Invalid freeze authority"
+    },
+    {
+      "code": 6030,
+      "name": "InvalidTransferAuthority",
+      "msg": "Invalid transfer authority"
+    },
+    {
+      "code": 6031,
+      "name": "VaultNotEmpty",
+      "msg": "Vault not empty"
+    },
+    {
+      "code": 6032,
+      "name": "InsufficientBalance",
+      "msg": "Insufficient balance"
+    },
+    {
+      "code": 6033,
+      "name": "OracleFailedToClose",
+      "msg": "Oracle account closure failed"
+    },
+    {
+      "code": 6034,
+      "name": "OracleNotFound",
+      "msg": "Oracle not found"
+    },
+    {
+      "code": 6035,
+      "name": "OracleAlreadyUpdated",
+      "msg": "Oracle already updated"
+    },
+    {
+      "code": 6036,
+      "name": "UnauthorizedUpdate",
+      "msg": "Unauthorized update"
+    },
+    {
+      "code": 6037,
+      "name": "UnauthorizedClose",
+      "msg": "Unauthorized close"
+    }
+  ],
+  "types": [
+    {
+      "name": "ClickCrateState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "manager",
+            "type": "pubkey"
+          },
+          {
+            "name": "eligible_placement_type",
+            "type": {
+              "defined": {
+                "name": "PlacementType"
+              }
+            }
+          },
+          {
+            "name": "eligible_product_category",
+            "type": {
+              "defined": {
+                "name": "ProductCategory"
+              }
+            }
+          },
+          {
+            "name": "product",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ExternalValidationResult",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Approved"
+          },
+          {
+            "name": "Rejected"
+          },
+          {
+            "name": "Pass"
+          }
+        ]
+      }
+    },
+    {
+      "name": "OracleValidation",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Uninitialized"
+          },
+          {
+            "name": "V1",
+            "fields": [
+              {
+                "name": "create",
+                "type": {
+                  "defined": {
+                    "name": "ExternalValidationResult"
+                  }
+                }
+              },
+              {
+                "name": "transfer",
+                "type": {
+                  "defined": {
+                    "name": "ExternalValidationResult"
+                  }
+                }
+              },
+              {
+                "name": "burn",
+                "type": {
+                  "defined": {
+                    "name": "ExternalValidationResult"
+                  }
+                }
+              },
+              {
+                "name": "update",
+                "type": {
+                  "defined": {
+                    "name": "ExternalValidationResult"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "OrderOracle",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "order_status",
+            "type": {
+              "defined": {
+                "name": "OrderStatus"
+              }
+            }
+          },
+          {
+            "name": "order_manager",
+            "type": {
+              "defined": {
+                "name": "Origin"
+              }
+            }
+          },
+          {
+            "name": "validation",
+            "type": {
+              "defined": {
+                "name": "OracleValidation"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "OrderStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Pending"
+          },
+          {
+            "name": "Placed"
+          },
+          {
+            "name": "Confirmed"
+          },
+          {
+            "name": "Fulfilled"
+          },
+          {
+            "name": "Delivered"
+          },
+          {
+            "name": "Completed"
+          },
+          {
+            "name": "Cancelled"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Origin",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Clickcrate"
+          },
+          {
+            "name": "Shopify"
+          },
+          {
+            "name": "Square"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PlacementType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Digitalreplica"
+          },
+          {
+            "name": "Relatedpurchase"
+          },
+          {
+            "name": "Targetedplacement"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProductCategory",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Clothing"
+          },
+          {
+            "name": "Electronics"
+          },
+          {
+            "name": "Books"
+          },
+          {
+            "name": "Home"
+          },
+          {
+            "name": "Beauty"
+          },
+          {
+            "name": "Toys"
+          },
+          {
+            "name": "Sports"
+          },
+          {
+            "name": "Automotive"
+          },
+          {
+            "name": "Grocery"
+          },
+          {
+            "name": "Beverage"
+          },
+          {
+            "name": "Health"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProductListingState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "pubkey"
+          },
+          {
+            "name": "origin",
+            "type": {
+              "defined": {
+                "name": "Origin"
+              }
+            }
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "manager",
+            "type": "pubkey"
+          },
+          {
+            "name": "placement_type",
+            "type": {
+              "defined": {
+                "name": "PlacementType"
+              }
+            }
+          },
+          {
+            "name": "product_category",
+            "type": {
+              "defined": {
+                "name": "ProductCategory"
+              }
+            }
+          },
+          {
+            "name": "in_stock",
+            "type": "u64"
+          },
+          {
+            "name": "sold",
+            "type": "u64"
+          },
+          {
+            "name": "clickcrate_pos",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          },
+          {
+            "name": "price",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "vault",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "order_manager",
+            "type": {
+              "defined": {
+                "name": "Origin"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "VaultAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}
