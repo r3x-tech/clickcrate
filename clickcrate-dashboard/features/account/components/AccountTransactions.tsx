@@ -5,7 +5,7 @@ import { PublicKey } from "@solana/web3.js";
 import { useState, useMemo } from "react";
 import { IconRefresh } from "@tabler/icons-react";
 import { ExplorerLink } from "@/components/ExplorerLink";
-import { ellipsify } from "@/components/UiLayout";
+import { ellipsify } from "@/components/Layout";
 import { useGetSignatures } from "../hooks/useGetSignatures";
 
 export function AccountTransactions({ address }: { address: PublicKey }) {

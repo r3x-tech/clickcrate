@@ -181,3 +181,33 @@ html, body {
 .animate-spin-counterclockwise {
   animation: spin-counterclockwise 1s linear infinite;
 }
+
+/* Add these styles to your globals.css */
+:root {
+  --wallet-adapter-modal-background-color: rgba(0, 0, 0, 0.9) !important;
+}
+
+.wallet-adapter-modal-wrapper {
+  background: var(--wallet-adapter-modal-background-color) !important;
+  border-radius: 9999px !important;
+  padding: 24px !important;
+  margin: 16px !important;
+}
+
+.wallet-adapter-modal-button-close {
+  background-color: blue !important;
+}
+
+/* Make the wallet button darker and fully rounded */
+.wallet-adapter-button-trigger {
+  background-color: #000000 !important;
+  border: 2px solid white !important;
+  border-radius: 9999px !important;
+  padding-left: 22px !important;
+  padding-right: 22px !important;
+  font-size: 14px !important;
+}
+
+.wallet-adapter-button-trigger:hover {
+  background-color: #1a1a1a !important;
+}

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Connection } from "@solana/web3.js";
 import { useCluster, ClusterNetwork } from "../hooks/useCluster";
-import { AppModal } from "@/components/UiLayout";
+import { AppModal } from "@/components/Layout";
 
 export function ClusterUiModal({
   hideModal,

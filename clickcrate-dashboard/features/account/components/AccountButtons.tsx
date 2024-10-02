@@ -5,7 +5,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { useState } from "react";
 import { useCluster } from "../../cluster/hooks/useCluster";
-import { AppModal } from "@/components/UiLayout";
+import { AppModal } from "@/components/Layout";
 import { useRequestAirdrop } from "@/hooks/useRequestAirdrop";
 import { useTransferSol } from "@/hooks/useTransferSol";
 

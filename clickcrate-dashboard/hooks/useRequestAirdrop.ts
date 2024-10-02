@@ -1,4 +1,4 @@
-import { useTransactionToast } from "@/components/UiLayout";
+import { useTransactionToast } from "@/components/Layout";
 import { useConnection } from "@jup-ag/wallet-adapter";
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

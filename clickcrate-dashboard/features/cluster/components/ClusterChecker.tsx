@@ -1,22 +1,23 @@
 // features/cluster/components/ClusterChecker.tsx
 "use client";
 
-import { useConnection } from "@solana/wallet-adapter-react";
 import { useQuery } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import { useCluster } from "../hooks/useCluster";
+import { useConnection } from "@jup-ag/wallet-adapter";
 
 export function ClusterChecker({ children }: { children: ReactNode }) {
   const { cluster } = useCluster();
   const { connection } = useConnection();
 
   const query = useQuery({
-    queryKey: ["version", { cluster, endpoint: connection.rpcEndpoint }],
-    queryFn: () => connection.getVersion(),
+    queryKey: ["version", { cluster, endpoint: connection?.rpcEndpoint }],
+    queryFn: () => connection?.getVersion(),
     retry: 1,
+    enabled: !!connection,
   });
 
-  if (query.isLoading) {
+  if (!connection || query.isLoading) {
     return null;
   }
 

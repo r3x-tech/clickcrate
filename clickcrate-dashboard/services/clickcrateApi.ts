@@ -34,6 +34,18 @@ export const clickcrateApi = {
       clickcrateId: clickcrateId.toString(),
     }),
 
+  createClickcrate: (data: {
+    name: string;
+    description: string;
+    eligiblePlacementType: PlacementType;
+    eligibleProductCategory: ProductCategory;
+    manager: PublicKey;
+  }) =>
+    api.post("/v1/clickcrate/create", {
+      ...data,
+      manager: data.manager.toString(),
+    }),
+
   registerClickcrate: (data: {
     clickcrateId: PublicKey;
     eligiblePlacementType: PlacementType;
@@ -81,6 +93,16 @@ export const clickcrateApi = {
     api.post("/v1/product-listing/details", {
       productListingId: productListingId.toString(),
     }),
+
+  createProduct: (data: {
+    name: string;
+    description: string;
+    quantity: number;
+    unitPrice: number;
+    currency: "SOL" | "USDC";
+    orderManager: OrderManager;
+    email: string;
+  }) => api.post("/v1/product/create", data),
 
   registerProductListing: (data: {
     productListingId: PublicKey;

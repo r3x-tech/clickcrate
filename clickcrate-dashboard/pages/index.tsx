@@ -38,8 +38,8 @@ export default function Home() {
 
   if (!connected) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <h1 className="text-2xl">
+      <div className="flex items-center justify-center h-[100vw]">
+        <h1 className="text-lg">
           Please connect your wallet to view the dashboard
         </h1>
       </div>
@@ -47,10 +47,14 @@ export default function Home() {
   }
 
   return (
-    <div className="p-6">
+    <div className="py-6">
       <div className="flex justify-between items-center mb-6">
-        <div className="text-2xl font-bold">Earnings: $5000</div>
-        <button className="btn-primary">Cashout</button>
+        <div className="text-lg font-bold">Lifetime: $5000</div>
+        <div className="text-lg font-bold">Available: $3000</div>
+        <div className="text-lg font-bold">Pending: $2000</div>
+        <button className="btn btn-xs lg:btn-sm btn-primary py-3 w-[10rem]">
+          Cashout
+        </button>
       </div>
       <div className="bg-quaternary p-4 rounded-lg">
         <h2 className="text-xl font-bold mb-4">Earnings Over Time</h2>

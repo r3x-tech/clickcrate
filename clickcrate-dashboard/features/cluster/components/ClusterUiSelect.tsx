@@ -5,7 +5,7 @@ export function ClusterUiSelect() {
   const { clusters, setCluster, cluster } = useCluster();
   return (
     <div className="dropdown dropdown-end">
-      <label tabIndex={0} className="btn btn-xs lg:btn-sm btn-outline py-4">
+      <label tabIndex={0} className="btn btn-sm btn-outline py-4">
         {cluster.name}
       </label>
       <ul

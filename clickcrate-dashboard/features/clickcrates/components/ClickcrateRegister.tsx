@@ -5,7 +5,7 @@
 // import { PublicKey } from "@solana/web3.js";
 // import { PlacementType, ProductCategory } from "../../../types";
 // import { ExplorerLink } from "@/components/ExplorerLink";
-// import { ellipsify } from "@/components/UiLayout";
+// import { ellipsify } from "@/components/Layout";
 
 // interface ClickcrateRegisterProps {
 //   show: boolean;

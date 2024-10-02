@@ -192,3 +192,36 @@ export type SquareCredentials = {
   accessToken: string;
   locationId: string;
 };
+
+export interface Order {
+  productId: string;
+  buyerId: string;
+  sellerId: string;
+  quantity: number;
+  totalPrice: number;
+  orderManager: "clickcrate" | "shopify" | "square";
+  id: string;
+  creatorId: string;
+  status:
+    | "Pending"
+    | "Placed"
+    | "Confirmed"
+    | "Fulfilled"
+    | "Delivered"
+    | "Completed"
+    | "Cancelled";
+  createdAt: string;
+  updatedAt: string;
+  shippingName: string;
+  shippingEmail: string;
+  shippingAddress: string;
+  shippingCity: string;
+  shippingStateProvince: string;
+  shippingCountryRegion: string;
+  shippingZipCode: string;
+}
+
+export interface UpdateOrderStatusResponse {
+  message: string;
+  transaction: string;
+}

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Action, Blink } from '@dialectlabs/blinks';
+import React from "react";
+import { Action, Blink } from "@dialectlabs/blinks";
 
 interface BlinkPreviewProps {
   clickcrateId: string;
@@ -7,11 +7,7 @@ interface BlinkPreviewProps {
   action: Action | null;
 }
 
-export const BlinkPreview: React.FC<BlinkPreviewProps> = ({
-  clickcrateId,
-  productCategory,
-  action,
-}) => {
+export const BlinkPreview: React.FC<BlinkPreviewProps> = ({ action }) => {
   if (!action) {
     return (
       <div className="flex justify-center items-center p-6">

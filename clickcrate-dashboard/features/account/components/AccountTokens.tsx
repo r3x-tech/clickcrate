@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { IconRefresh } from "@tabler/icons-react";
 import { useGetTokenAccounts } from "../hooks/useGetTokenAccounts";
 import { ExplorerLink } from "@/components/ExplorerLink";
-import { ellipsify } from "@/components/UiLayout";
+import { ellipsify } from "@/components/Layout";
 
 export function AccountTokens({ address }: { address: PublicKey }) {
   const [showAll, setShowAll] = useState(false);

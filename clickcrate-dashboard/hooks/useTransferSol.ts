@@ -1,4 +1,4 @@
-import { useTransactionToast } from "@/components/UiLayout";
+import { useTransactionToast } from "@/components/Layout";
 import { createTransaction } from "@/utils/createTransaction";
 import { useConnection, useWallet } from "@jup-ag/wallet-adapter";
 import { PublicKey, TransactionSignature } from "@solana/web3.js";
