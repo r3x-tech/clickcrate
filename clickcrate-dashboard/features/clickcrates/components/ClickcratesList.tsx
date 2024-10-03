@@ -1,124 +1,165 @@
-// // components/ClickcratesList.tsx
+import React, { useState } from "react";
+import { PublicKey } from "@solana/web3.js";
+import { ellipsify } from "@/utils/ellipsify";
+import { ExplorerLink } from "@/components/ExplorerLink";
+import { ClickCrate } from "@/types";
+import {
+  IconRefresh,
+  IconEdit,
+  IconShoppingCartFilled,
+} from "@tabler/icons-react";
+import toast from "react-hot-toast";
 
-// import React, { useState, useEffect } from "react";
-// import { PublicKey } from "@solana/web3.js";
-// import { useWallet } from "@solana/wallet-adapter-react";
+interface ClickcratesListProps {
+  clickcrates: ClickCrate[];
+  onSelect: (clickcrateId: string, selected: boolean) => void;
+  selectedClickCrates: string[];
+  onRefetch: () => Promise<void>;
+}
 
-// import {
-//   IconRefresh,
-//   IconEdit,
-//   IconShoppingCartFilled,
-//   IconLink,
-// } from "@tabler/icons-react";
-// import toast from "react-hot-toast";
-// import { useOwnedClickcrates } from "../hooks/useOwnedClickcrates";
+export function ClickcratesList({
+  clickcrates,
+  onSelect,
+  selectedClickCrates,
+  onRefetch,
+}: ClickcratesListProps) {
+  const [allSelected, setAllSelected] = useState(false);
 
-// interface ClickcratesListProps {
-//   onSelect: (account: PublicKey, selected: boolean) => void;
-//   selectedClickCrates: PublicKey[];
-// }
+  const handleRefetch = async () => {
+    try {
+      await onRefetch();
+      toast.success("ClickCrates refreshed");
+    } catch (error) {
+      toast.error("Failed to refresh ClickCrates");
+    }
+  };
 
-// export function ClickcratesList({
-//   onSelect,
-//   selectedClickCrates,
-// }: ClickcratesListProps) {
-//   const { publicKey } = useWallet();
-//   const { clickcratesQuery, program } = useOwnedClickcrates();
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [allSelected, setAllSelected] = useState(false);
+  const handleAllSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isSelected = e.target.checked;
+    setAllSelected(isSelected);
+    clickcrates.forEach((clickcrate) => {
+      onSelect(clickcrate.clickcrateId, isSelected);
+    });
+  };
 
-//   useEffect(() => {
-//     if (clickcratesQuery.isLoading) {
-//       setIsLoading(true);
-//     } else {
-//       const timer = setTimeout(() => setIsLoading(false), 1000);
-//       return () => clearTimeout(timer);
-//     }
-//   }, [clickcratesQuery.isLoading]);
-
-//   useEffect(() => {
-//     if (selectedClickCrates.length == 0) {
-//       setAllSelected(false);
-//     }
-//   }, [selectedClickCrates.length]);
-
-//   const handleRefetch = async () => {
-//     setIsLoading(true);
-//     await clickcratesQuery.refetch();
-//     setIsLoading(false);
-//   };
-
-//   const handleAllSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const isSelected = e.target.checked;
-//     setAllSelected(isSelected);
-//     userClickcrates?.forEach((clickcrate) => {
-//       onSelect(clickcrate.publicKey, isSelected);
-//     });
-//   };
-
-//   const userClickcrates = clickcratesQuery.data?.filter((clickcrate) =>
-//     clickcrate.account.owner.equals(publicKey!)
-//   );
-
-//   if (isLoading) {
-//     return (
-//       <div className="flex justify-center w-[100%] p-6">
-//         <span className="loading loading-spinner loading-md"></span>
-//       </div>
-//     );
-//   }
-
-//   if (!clickcratesQuery.data?.length) {
-//     return (
-//       <div className="mb-20 w-[100%] bg-background border-2 border-quaternary rounded-lg">
-//         <p className="text-sm font-light text-center p-4">
-//           No ClickCrates found. Register one to get started!
-//         </p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="w-[100%] bg-background border-2 border-quaternary rounded-lg">
-//       <button
-//         id="refresh-clickcrates"
-//         className="hidden"
-//         onClick={handleRefetch}
-//       >
-//         Refresh
-//       </button>
-//       <div className="w-[100%] bg-background border-2 border-quaternary rounded-lg">
-//         <div className="flex flex-row justify-start items-center w-[100%] px-4 pb-2 pt-2 border-b-2 border-quaternary">
-//           <div className="flex flex-row w-[5%]">
-//             <p className="text-start font-bold text-xs"></p>
-//           </div>
-//           <div className="flex flex-row w-[10%]">
-//             <p className="text-start font-bold text-xs">ACCOUNT</p>
-//           </div>
-//           <div className="flex flex-row w-[10%]">
-//             <p className="text-start font-bold text-xs">ID</p>
-//           </div>
-//           <div className="flex flex-row w-[10%]">
-//             <p className="text-start font-bold text-xs">STATUS</p>
-//           </div>
-//           <div className="flex flex-row items-center w-[10%]">
-//             <p className="text-start font-bold text-xs">CATEGORY</p>
-//           </div>
-//           <div className="flex flex-row w-[10%]">
-//             <p className="text-start font-bold text-xs">ORIGIN</p>
-//           </div>
-//           <div className="flex flex-row w-[13%]">
-//             <p className="text-start font-bold text-xs">CURRENT PLACEMENT</p>
-//           </div>
-//           <div className="flex flex-row w-[10%] justify-end">
-//             <p className="text-end font-bold text-xs">UNIT PRICE</p>
-//           </div>
-//           <div className="flex flex-row w-[10%] justify-end">
-//             <p className="text-end font-bold text-xs">STOCK</p>
-//           </div>
-//           <div className="flex flex-row w-[10%]"></div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
+  return (
+    <div className="w-[100%] bg-background border-2 border-quaternary rounded-lg">
+      <div className="flex justify-end mb-2">
+        <button className="btn btn-ghost btn-sm" onClick={handleRefetch}>
+          <IconRefresh size={18} />
+          Refresh
+        </button>
+      </div>
+      <div className="flex flex-row justify-start items-center w-[100%] px-4 pb-2 pt-2 border-b-2 border-quaternary">
+        <div className="flex flex-row w-[5%]">
+          <input
+            type="checkbox"
+            checked={allSelected}
+            onChange={handleAllSelectChange}
+            className="checkbox checkbox-xs bg-quaternary border-quaternary rounded-sm"
+          />
+        </div>
+        <div className="flex flex-row w-[15%]">
+          <p className="text-start font-bold text-xs">CLICKCRATE ID</p>
+        </div>
+        <div className="flex flex-row w-[15%]">
+          <p className="text-start font-bold text-xs">OWNER</p>
+        </div>
+        <div className="flex flex-row w-[10%]">
+          <p className="text-start font-bold text-xs">STATUS</p>
+        </div>
+        <div className="flex flex-row items-center w-[15%]">
+          <p className="text-start font-bold text-xs">PLACEMENT TYPE</p>
+        </div>
+        <div className="flex flex-row w-[15%]">
+          <p className="text-start font-bold text-xs">PRODUCT CATEGORY</p>
+        </div>
+        <div className="flex flex-row w-[15%]">
+          <p className="text-start font-bold text-xs">PRODUCT</p>
+        </div>
+        <div className="flex flex-row w-[10%]"></div>
+      </div>
+      {clickcrates.map((clickcrate) => (
+        <div
+          key={clickcrate.clickcrateId}
+          className="px-4 py-2 border-b-2 border-quaternary"
+        >
+          <div className="flex flex-row justify-start items-center w-[100%]">
+            <div className="flex flex-row w-[5%]">
+              <input
+                type="checkbox"
+                checked={selectedClickCrates.includes(clickcrate.clickcrateId)}
+                onChange={(e) =>
+                  onSelect(clickcrate.clickcrateId, e.target.checked)
+                }
+                className="checkbox checkbox-xs bg-quaternary border-quaternary rounded-sm"
+              />
+            </div>
+            <div className="flex flex-row w-[15%]">
+              <p className="text-start font-extralight text-xs">
+                <ExplorerLink
+                  path={`account/${clickcrate.clickcrateId}`}
+                  label={ellipsify(clickcrate.clickcrateId)}
+                  className="font-extralight underline cursor-pointer"
+                />
+              </p>
+            </div>
+            <div className="flex flex-row w-[15%]">
+              <p className="text-start font-extralight text-xs">
+                <ExplorerLink
+                  path={`account/${clickcrate.owner}`}
+                  label={ellipsify(clickcrate.owner)}
+                  className="font-extralight underline cursor-pointer"
+                />
+              </p>
+            </div>
+            <div className="flex flex-row w-[10%]">
+              <p className="text-start font-extralight text-xs">
+                {clickcrate.isActive ? "Active" : "Inactive"}
+              </p>
+            </div>
+            <div className="flex flex-row w-[15%]">
+              <p className="text-start font-extralight text-xs">
+                {clickcrate.eligiblePlacementType}
+              </p>
+            </div>
+            <div className="flex flex-row w-[15%]">
+              <p className="text-start font-extralight text-xs">
+                {clickcrate.eligibleProductCategory}
+              </p>
+            </div>
+            <div className="flex flex-row w-[15%]">
+              <p className="text-start font-extralight text-xs">
+                {clickcrate.product ? (
+                  <ExplorerLink
+                    label={ellipsify(clickcrate.product)}
+                    path={`address/${clickcrate.product}`}
+                    className="font-extralight underline cursor-pointer"
+                  />
+                ) : (
+                  "No product"
+                )}
+              </p>
+            </div>
+            <div className="flex flex-row w-[10%] ml-[2%]">
+              <button
+                className="btn btn-xs btn-mini w-[50%] flex flex-row items-center justify-center m-0 p-0 gap-[0.25em]"
+                style={{ fontSize: "12px", border: "none" }}
+              >
+                <IconEdit size={12} />
+                Edit
+              </button>
+              <button
+                className="btn btn-xs btn-mini w-[50%] flex flex-row items-center justify-center m-0 p-0 gap-[0.25em]"
+                style={{ fontSize: "12px", border: "none" }}
+              >
+                <IconShoppingCartFilled size={12} />
+                Place
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}

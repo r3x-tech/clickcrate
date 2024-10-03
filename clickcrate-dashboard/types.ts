@@ -1,100 +1,23 @@
 import { BN } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 
+export type Origin = "clickcrate" | "shopify" | "square";
 export type PlacementType =
-  | "Digitalreplica"
-  | "Relatedpurchase"
-  | "Targetedplacement";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getPlacementTypeFromString = (placementType: string): any => {
-  switch (placementType) {
-    case "Digitalreplica":
-      return { digitalreplica: {} };
-    case "Relatedpurchase":
-      return { relatedpurchase: {} };
-    case "Targetedplacement":
-      return { targetedplacement: {} };
-    default:
-      throw new Error(`Invalid placement type: ${placementType}`);
-  }
-};
-
+  | "digitalreplica"
+  | "relatedpurchase"
+  | "targetedplacement";
 export type ProductCategory =
-  | "Clothing"
-  | "Electronics"
-  | "Books"
-  | "Home"
-  | "Beauty"
-  | "Toys"
-  | "Sports"
-  | "Automotive"
-  | "Grocery"
-  | "Health";
-
-export const getProductCategoryFromString = (
-  productCategory: string
-): // eslint-disable-next-line @typescript-eslint/no-explicit-any
-any => {
-  switch (productCategory) {
-    case "Clothing":
-      return { clothing: {} };
-    case "Electronics":
-      return { electronics: {} };
-    case "Books":
-      return { boks: {} };
-    case "Home":
-      return { home: {} };
-    case "Beauty":
-      return { beauty: {} };
-    case "Toys":
-      return { toys: {} };
-    case "Sports":
-      return { sports: {} };
-    case "Automotive":
-      return { automotive: {} };
-    case "Grocery":
-      return { grocery: {} };
-    case "Health":
-      return { health: {} };
-    default:
-      throw new Error(`Invalid product category: ${productCategory}`);
-  }
-};
-
-export type Origin = "ClickCrate" | "Shopify" | "Square";
-export const getOriginFromString = (
-  origin: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): any => {
-  switch (origin) {
-    case "Clickcrate":
-      return { clickcrate: {} };
-    case "Shopify":
-      return { shopify: {} };
-    case "Square":
-      return { square: {} };
-    default:
-      throw new Error(`Invalid origin: ${origin}`);
-  }
-};
-
-export type OrderManager = "ClickCrate" | "Shopify" | "Square";
-export const getOrderManagerFromString = (
-  origin: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): any => {
-  switch (origin) {
-    case "Clickcrate":
-      return { clickcrate: {} };
-    case "Shopify":
-      return { shopify: {} };
-    case "Square":
-      return { square: {} };
-    default:
-      throw new Error(`Invalid origin: ${origin}`);
-  }
-};
+  | "clothing"
+  | "electronics"
+  | "books"
+  | "home"
+  | "beauty"
+  | "toys"
+  | "sports"
+  | "automotive"
+  | "grocery"
+  | "health";
+export type OrderManager = "clickcrate" | "shopify" | "square";
 
 export interface ClickCrateState {
   id: PublicKey;
@@ -224,4 +147,38 @@ export interface Order {
 export interface UpdateOrderStatusResponse {
   message: string;
   transaction: string;
+}
+
+export interface ProductListing {
+  productListingId: string;
+  origin: Origin;
+  owner: string;
+  manager: string;
+  placementType: PlacementType;
+  productCategory: ProductCategory;
+  inStock: string;
+  sold: string;
+  clickcratePos: string | null;
+  isActive: boolean;
+  price: number | null;
+  vault: string | null;
+  orderManager: OrderManager;
+}
+
+export interface ProductListingResponse {
+  productListings: ProductListing[];
+}
+
+export interface ClickCrate {
+  clickcrateId: string;
+  owner: string;
+  manager: string;
+  eligiblePlacementType: PlacementType;
+  eligibleProductCategory: ProductCategory;
+  product: string | null;
+  isActive: boolean;
+}
+
+export interface ClickCrateResponse {
+  clickCrates: ClickCrate[];
 }

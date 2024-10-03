@@ -23,10 +23,10 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
     quantity: 1,
     unitPrice: 0,
     currency: "SOL",
-    orderManager: "ClickCrate",
+    orderManager: "clickcrate",
     email: "",
-    placementType: "Relatedpurchase",
-    productCategory: "Clothing",
+    placementType: "relatedpurchase",
+    productCategory: "clothing",
   });
 
   const createProductMutation = useCreateProduct();
@@ -185,12 +185,16 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
           </select>
 
           <div className="modal-action">
-            <button type="button" className="btn btn-outline" onClick={onClose}>
+            <button
+              type="button"
+              className="btn btn-xs lg:btn-sm btn-outline py-2 min-w-[8rem]"
+              onClick={onClose}
+            >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn btn-primary"
+              className="btn btn-xs lg:btn-sm btn-primary py-2 min-w-[8rem]"
               disabled={createProductMutation.isPending}
             >
               {createProductMutation.isPending ? (
@@ -206,8 +210,9 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
         </form>
 
         {createProductMutation.isPending && (
-          <div className="flex justify-center w-[100%] p-6">
+          <div className="flex flex-col items-center justify-center w-[100%] p-6 space-y-2">
             <span className="loading loading-spinner loading-md"></span>
+            <p className="font-body text-sm font-normal">LOADING</p>
           </div>
         )}
       </div>

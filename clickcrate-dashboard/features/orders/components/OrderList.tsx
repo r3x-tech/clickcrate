@@ -27,8 +27,9 @@ export function OrdersList({
 
   if (isLoading) {
     return (
-      <div className="flex justify-center w-[100%] p-6">
+      <div className="flex flex-col items-center justify-center w-[100%] p-6 space-y-2">
         <span className="loading loading-spinner loading-md"></span>
+        <p className="font-body text-xs font-semibold">LOADING</p>
       </div>
     );
   }

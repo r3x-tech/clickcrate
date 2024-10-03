@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { clickcrateApi } from "@/services/clickcrateApi";
-import { PlacementType, ProductCategory } from "@/types";
-import { PublicKey } from "@solana/web3.js";
+import { OrderManager, PlacementType, ProductCategory } from "@/types";
 
 export type ProductCreationData = {
   name: string;
@@ -14,8 +13,6 @@ export type ProductCreationData = {
   placementType: PlacementType;
   productCategory: ProductCategory;
 };
-
-export type OrderManager = "ClickCrate" | "Shopify" | "Square";
 
 export const useCreateProduct = () => {
   return useMutation({

@@ -25,7 +25,12 @@ export default function AccountFeature() {
   }, [params]);
 
   if (!address) {
-    return <div>Error loading account</div>;
+    return (
+      <div className="flex items-center justify-start w-[100vw]">
+        {" "}
+        <p className="text-sm font-normal "> Failed to load account info</p>
+      </div>
+    );
   }
 
   return (

@@ -1,5 +1,5 @@
-import ProductListings from "@/features/product-listing/ProductListings";
+import Clickcrates from "@/features/clickcrates/Clickcrates";
 
 export default function Page() {
-  return <ProductListings />;
+  return <Clickcrates />;
 }

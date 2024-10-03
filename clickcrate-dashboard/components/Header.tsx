@@ -5,19 +5,18 @@ import { usePathname } from "next/navigation";
 import { ClusterUiSelect } from "@/features/cluster/components/ClusterUiSelect";
 
 const links = [
-  { label: "Home", path: "/" },
+  { label: "Account", path: "/" },
   { label: "Create", path: "/create" },
   { label: "Product Listings", path: "/product-listings" },
   { label: "ClickCrates (POS)", path: "/clickcrates" },
   { label: "Orders", path: "/orders" },
-  { label: "Account", path: "/account" },
 ];
 
 export default function Header() {
   const pathname = usePathname();
 
   const isActive = (path: string) => {
-    if (path === "/") {
+    if (path === "/" || path === "/account") {
       return pathname === "/";
     }
     return pathname.startsWith(path + "/") || pathname === path;

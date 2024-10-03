@@ -1,18 +1,63 @@
-import { ProductListingState } from "@/types";
+import React, { useState } from "react";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { ellipsify } from "@/utils/ellipsify";
 import { ExplorerLink } from "@/components/ExplorerLink";
+import { ProductListing } from "@/types";
+import {
+  IconRefresh,
+  IconEdit,
+  IconShoppingCartFilled,
+} from "@tabler/icons-react";
+import toast from "react-hot-toast";
 
-type Props = {
-  listings: ProductListingState[];
-};
+interface ProductListingsListProps {
+  listings: ProductListing[];
+  onSelect: (productListingId: string, selected: boolean) => void;
+  selectedListings: string[];
+  refetch: () => Promise<void>;
+}
 
-export default function ProductListingsList({ listings }: Props) {
+export default function ProductListingsList({
+  listings,
+  onSelect,
+  selectedListings,
+  refetch,
+}: ProductListingsListProps) {
+  const [allSelected, setAllSelected] = useState(false);
+
+  const handleRefetch = async () => {
+    try {
+      await refetch();
+      toast.success("Product listings refreshed");
+    } catch (error) {
+      toast.error("Failed to refresh product listings");
+    }
+  };
+
+  const handleAllSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isSelected = e.target.checked;
+    setAllSelected(isSelected);
+    listings.forEach((listing) => {
+      onSelect(listing.productListingId, isSelected);
+    });
+  };
+
   return (
     <div className="w-[100%] bg-background border-2 border-quaternary rounded-lg">
+      <div className="flex justify-end mb-2">
+        <button className="btn btn-ghost btn-sm" onClick={handleRefetch}>
+          <IconRefresh size={18} />
+          Refresh
+        </button>
+      </div>
       <div className="flex flex-row justify-start items-center w-[100%] px-4 pb-2 pt-2 border-b-2 border-quaternary">
         <div className="flex flex-row w-[5%]">
-          <p className="text-start font-bold text-xs"></p>
+          <input
+            type="checkbox"
+            checked={allSelected}
+            onChange={handleAllSelectChange}
+            className="checkbox checkbox-xs bg-quaternary border-quaternary rounded-sm"
+          />
         </div>
         <div className="flex flex-row w-[10%]">
           <p className="text-start font-bold text-xs">ACCOUNT</p>
@@ -40,23 +85,27 @@ export default function ProductListingsList({ listings }: Props) {
         </div>
         <div className="flex flex-row w-[10%]"></div>
       </div>
-      {/* {listings.map((listing) => (
+      {listings.map((listing) => (
         <div
-          key={listing.id.toString()}
+          key={listing.productListingId}
           className="px-4 py-2 border-b-2 border-quaternary"
         >
           <div className="flex flex-row justify-start items-center w-[100%]">
             <div className="flex flex-row w-[5%]">
               <input
                 type="checkbox"
+                checked={selectedListings.includes(listing.productListingId)}
+                onChange={(e) =>
+                  onSelect(listing.productListingId, e.target.checked)
+                }
                 className="checkbox checkbox-xs bg-quaternary border-quaternary rounded-sm"
               />
             </div>
             <div className="flex flex-row w-[10%]">
               <p className="text-start font-extralight text-xs">
                 <ExplorerLink
-                  path={`account/${listing.id}`}
-                  label={ellipsify(listing.id.toString())}
+                  path={`account/${listing.productListingId}`}
+                  label={ellipsify(listing.productListingId)}
                   className="font-extralight underline cursor-pointer"
                 />
               </p>
@@ -64,8 +113,8 @@ export default function ProductListingsList({ listings }: Props) {
             <div className="flex flex-row w-[10%]">
               <p className="text-start font-extralight text-xs">
                 <ExplorerLink
-                  label={ellipsify(listing.id.toString())}
-                  path={`address/${listing.id}`}
+                  label={ellipsify(listing.productListingId)}
+                  path={`address/${listing.productListingId}`}
                   className="font-extralight underline cursor-pointer"
                 />
               </p>
@@ -89,7 +138,7 @@ export default function ProductListingsList({ listings }: Props) {
               <p className="text-start font-extralight text-xs">
                 {listing.clickcratePos ? (
                   <ExplorerLink
-                    label={ellipsify(listing.clickcratePos.toString())}
+                    label={ellipsify(listing.clickcratePos)}
                     path={`address/${listing.clickcratePos}`}
                     className="font-extralight underline cursor-pointer"
                   />
@@ -100,16 +149,14 @@ export default function ProductListingsList({ listings }: Props) {
             </div>
             <div className="flex flex-row w-[10%] justify-end">
               <p className="text-end font-extralight text-xs">
-                {listing.price !== undefined && listing.clickcratePos !== null
+                {listing.price !== null
                   ? `${listing.price / LAMPORTS_PER_SOL} SOL`
                   : "NA"}
               </p>
             </div>
             <div className="flex flex-row w-[10%] justify-end">
               <p className="text-end font-extralight text-xs">
-                {listing.inStock !== undefined
-                  ? listing.inStock.toString()
-                  : "NA"}
+                {listing.inStock}
               </p>
             </div>
             <div className="flex flex-row w-[10%] ml-[2%]">
@@ -117,18 +164,20 @@ export default function ProductListingsList({ listings }: Props) {
                 className="btn btn-xs btn-mini w-[50%] flex flex-row items-center justify-center m-0 p-0 gap-[0.25em]"
                 style={{ fontSize: "12px", border: "none" }}
               >
+                <IconEdit size={12} />
                 Edit
               </button>
               <button
                 className="btn btn-xs btn-mini w-[50%] flex flex-row items-center justify-center m-0 p-0 gap-[0.25em]"
                 style={{ fontSize: "12px", border: "none" }}
               >
+                <IconShoppingCartFilled size={12} />
                 Place
               </button>
             </div>
           </div>
         </div>
-      ))} */}
+      ))}
     </div>
   );
 }

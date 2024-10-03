@@ -31,8 +31,11 @@ export default function Create() {
     <div className="mx-auto py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-lg font-bold">Recent Products</h1>
-        <button onClick={handleCreateNew} className="btn btn-primary">
-          Create New
+        <button
+          onClick={handleCreateNew}
+          className="btn btn-xs lg:btn-sm btn-primary py-2 min-w-[8rem]"
+        >
+          Create +
         </button>
       </div>
 
