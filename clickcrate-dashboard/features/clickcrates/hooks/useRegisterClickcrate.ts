@@ -3,39 +3,40 @@ import { clickcrateApi } from "@/services/clickcrateApi";
 import { PlacementType, ProductCategory } from "@/types";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import axios from "axios";
 
 export type ClickcrateRegistrationData = {
-  clickcrateId: PublicKey;
+  clickcrateId: string;
   eligiblePlacementType: PlacementType;
   eligibleProductCategory: ProductCategory;
-  manager: PublicKey;
+  manager: string;
 };
 
-export const useRegisterClickcrate = () => {
-  const { connection } = useConnection();
-  const { publicKey, sendTransaction } = useWallet();
-
+export const useRegisterClickcrate = (walletAddress: string | null) => {
   return useMutation({
     mutationFn: async (data: ClickcrateRegistrationData) => {
-      if (!publicKey) {
+      if (!walletAddress) {
         throw new Error("Wallet not connected");
       }
-
-      const response = await clickcrateApi.registerClickcrate(data);
-
-      if (response.data && response.data.transaction) {
-        const transaction = Transaction.from(
-          Buffer.from(response.data.transaction, "base64")
+      try {
+        const response = await clickcrateApi.registerClickcrate(
+          data,
+          walletAddress
         );
-        const signature = await sendTransaction(transaction, connection);
-        await connection.confirmTransaction(signature, "confirmed");
-        return response.data.message;
-      } else {
-        throw new Error("Invalid response from server");
+        if (response.data && response.data.transaction) {
+          // Handle transaction if needed
+          return response.data.message;
+        } else {
+          throw new Error("Invalid response from server");
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          console.error("Unauthorized request");
+        } else {
+          console.error("Error registering ClickCrate:", error);
+        }
+        throw error;
       }
-    },
-    onError: (error) => {
-      console.error("Error registering ClickCrate:", error);
     },
   });
 };

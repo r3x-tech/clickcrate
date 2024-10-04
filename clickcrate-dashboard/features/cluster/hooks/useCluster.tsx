@@ -2,7 +2,7 @@
 import { clusterApiUrl, Connection } from "@solana/web3.js";
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import React, { createContext, ReactNode, useContext } from "react";
+import React, { Context, createContext, ReactNode, useContext } from "react";
 import toast from "react-hot-toast";
 
 export interface Cluster {
@@ -65,7 +65,7 @@ export interface ClusterContextType {
   getExplorerUrl: (path: string) => string;
 }
 
-const ClusterContext: React.Context<ClusterContextType | null> =
+const ClusterContext: Context<ClusterContextType | null> =
   createContext<ClusterContextType | null>(null);
 
 export const ClusterProvider: React.FC<{ children: ReactNode }> = ({

@@ -1,4 +1,4 @@
-import { useConnection } from "@jup-ag/wallet-adapter";
+import { useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { useQuery } from "@tanstack/react-query";
 

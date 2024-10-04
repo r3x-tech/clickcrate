@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import {
   useCreateProduct,
   ProductCreationData,
@@ -32,9 +32,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
   const createProductMutation = useCreateProduct();
 
   const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -44,7 +42,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
       await createProductMutation.mutateAsync(formData);

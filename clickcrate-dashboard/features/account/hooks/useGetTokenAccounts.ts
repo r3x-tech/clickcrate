@@ -1,7 +1,7 @@
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { useConnection } from "@jup-ag/wallet-adapter";
 import { useQuery } from "@tanstack/react-query";
 import { PublicKey } from "@solana/web3.js";
+import { useConnection } from "@solana/wallet-adapter-react";
 
 export function useGetTokenAccounts({ address }: { address: PublicKey }) {
   const { connection } = useConnection();

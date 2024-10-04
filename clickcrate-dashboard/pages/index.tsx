@@ -1,4 +1,3 @@
-import { UnifiedWalletButton, useWallet } from "@jup-ag/wallet-adapter";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -11,6 +10,8 @@ import {
   Legend,
 } from "chart.js";
 import AccountFeature from "@/features/account/Account";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletButton } from "@/solana/solana-provider";
 
 ChartJS.register(
   CategoryScale,
@@ -39,10 +40,10 @@ export default function Home() {
 
   if (!connected) {
     return (
-      <div className="flex items-center justify-center h-[80vh]">
+      <div className="max-w-4xl mx-auto">
         <div className="hero py-[64px]">
           <div className="hero-content text-center">
-            <UnifiedWalletButton />
+            <WalletButton />
           </div>
         </div>
       </div>

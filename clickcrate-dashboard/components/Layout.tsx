@@ -6,7 +6,7 @@ import { AccountChecker } from "@/features/account/components/AccountChecker";
 import { ExplorerLink } from "./ExplorerLink";
 
 interface LayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
@@ -26,7 +26,7 @@ export default function Layout({ children }: LayoutProps) {
       <main className="flex-grow overflow-x-hidden overflow-y-auto px-[4vw]">
         {children}
       </main>
-      <Toaster position="top-center" />
+      <Toaster position="bottom-right" />
     </div>
   );
 }

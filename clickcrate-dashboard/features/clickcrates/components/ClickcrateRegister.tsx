@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useWallet } from "@jup-ag/wallet-adapter";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { PlacementType, ProductCategory } from "@/types";
 import { ExplorerLink } from "@/components/ExplorerLink";
@@ -70,8 +70,8 @@ export function ClickcrateRegister({ show, onClose }: ClickcrateRegisterProps) {
             </p>
             <p className="pl-2 text-start font-normal text-xs">
               <ExplorerLink
-                path={`account/${process.env.REGISTRY_ID!}`}
-                label={ellipsify(process.env.REGISTRY_ID!)}
+                path={`account/${process.env.NEXT_PUBLIC_REGISTRY_ID!}`}
+                label={ellipsify(process.env.NEXT_PUBLIC_REGISTRY_ID!)}
               />
             </p>
           </div>

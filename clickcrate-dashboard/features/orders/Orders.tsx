@@ -1,14 +1,15 @@
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useClickCrateOrders } from "./hooks/useOrders";
 import { useEffect, useRef, useState } from "react";
 import { IconRefresh } from "@tabler/icons-react";
 import { AppHero } from "@/components/Layout";
-import { UnifiedWalletButton } from "@jup-ag/wallet-adapter";
 import { OrdersList } from "./components/OrderList";
+import { useClickcrateOrders } from "./hooks/useClickcrateOrders";
+import { WalletButton } from "@/solana/solana-provider";
 
 export default function Orders() {
   const { publicKey } = useWallet();
-  const ordersQuery = useClickCrateOrders(
+  const ordersQuery = useClickcrateOrders(
+    publicKey ? publicKey.toBase58() : null,
     publicKey ? publicKey.toBase58() : null
   );
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -62,7 +63,7 @@ export default function Orders() {
     <div className="max-w-4xl mx-auto">
       <div className="hero py-[64px]">
         <div className="hero-content text-center">
-          <UnifiedWalletButton />
+          <WalletButton />
         </div>
       </div>
     </div>

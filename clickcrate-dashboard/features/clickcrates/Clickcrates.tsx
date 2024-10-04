@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useOwnedClickcrates } from "./hooks/useOwnedClickcrates";
 import { ClickcrateRegister } from "./components/ClickcrateRegister";
-import { ClickcratesList } from "./components/ClickcratesList";
 import toast from "react-hot-toast";
-import { UnifiedWalletButton } from "@jup-ag/wallet-adapter";
+import { WalletButton } from "@/solana/solana-provider";
+import { IconCaretDownFilled, IconRefresh } from "@tabler/icons-react";
+import { ClickcratesList } from "./components/ClickcratesList";
 
 export default function Clickcrates() {
   const { publicKey } = useWallet();
@@ -13,12 +14,16 @@ export default function Clickcrates() {
     isLoading,
     error,
     refetch,
-  } = useOwnedClickcrates(publicKey);
+  } = useOwnedClickcrates(
+    publicKey ? publicKey.toBase58() : null,
+    publicKey ? publicKey.toBase58() : null
+  );
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [selectedClickCrates, setSelectedClickCrates] = useState<string[]>([]);
+  const [selectedClickcrates, setSelectedClickcrates] = useState<string[]>([]);
+  const [showActionsMenu, setShowActionsMenu] = useState(false);
 
   const handleClickcrateSelect = (clickcrateId: string, selected: boolean) => {
-    setSelectedClickCrates((prev) =>
+    setSelectedClickcrates((prev) =>
       selected
         ? [...prev, clickcrateId]
         : prev.filter((id) => id !== clickcrateId)
@@ -34,54 +39,23 @@ export default function Clickcrates() {
     }
   };
 
+  const handleActivateClickcrates = () => {
+    // Implement the activation logic here
+    toast.success("Activating selected ClickCrates");
+  };
+
+  const handleDeactivateClickcrates = () => {
+    // Implement the deactivation logic here
+    toast.success("Deactivating selected ClickCrates");
+  };
+
   if (!publicKey) {
     return (
       <div className="max-w-4xl mx-auto">
         <div className="hero py-[64px]">
           <div className="hero-content text-center">
-            <UnifiedWalletButton />
+            <WalletButton />
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="w-full">
-        <div className="flex justify-between items-center my-6">
-          <h1 className="text-lg font-bold">My ClickCrates (POS)</h1>
-          <button
-            className="btn btn-sm btn-primary py-2 px-4"
-            onClick={() => setShowRegisterModal(true)}
-          >
-            Register
-          </button>
-        </div>
-        <div className="flex flex-col items-center justify-center w-[100%] p-6 space-y-2">
-          <span className="loading loading-spinner loading-md"></span>
-          <p className="font-body text-xs font-semibold">LOADING</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="w-full">
-        <div className="flex justify-between items-center my-6">
-          <h1 className="text-lg font-bold">My ClickCrates (POS)</h1>
-          <button
-            className="btn btn-sm btn-primary py-2 px-4"
-            onClick={() => setShowRegisterModal(true)}
-          >
-            Register
-          </button>
-        </div>
-        <div className="mb-20 w-[100%] bg-background border-2 border-quaternary rounded-lg">
-          <p className="text-sm font-light text-center p-4">
-            Failed to fetch ClickCrates. Please try again.
-          </p>
         </div>
       </div>
     );
@@ -90,21 +64,91 @@ export default function Clickcrates() {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center my-6">
-        <h1 className="text-lg font-bold">My ClickCrates (POS)</h1>
-        <button
-          className="btn btn-sm btn-primary py-2 px-4"
-          onClick={() => setShowRegisterModal(true)}
-        >
-          Register
-        </button>
+        <div className="flex items-center">
+          <h1 className="text-lg font-bold mr-2">My ClickCrates (POS)</h1>
+          <button
+            className="btn btn-ghost btn-sm text-white bg-transparent hover:bg-transparent p-2"
+            onClick={handleRefetch}
+          >
+            <IconRefresh size={21} />
+          </button>
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="dropdown dropdown-end">
+            <label
+              tabIndex={0}
+              className="btn btn-xs lg:btn-sm btn-outline w-[10rem] py-3 font-light"
+              onClick={() => setShowActionsMenu(!showActionsMenu)}
+            >
+              More Actions
+              <IconCaretDownFilled
+                className={`m-0 p-0 ${showActionsMenu ? "icon-flip" : ""}`}
+                size={12}
+              />
+            </label>
+            {showActionsMenu && (
+              <ul
+                tabIndex={0}
+                className="menu dropdown-content z-[1] p-2 shadow bg-base-100 rounded-box w-[10rem] mt-4 gap-2"
+                style={{ border: "2px solid white" }}
+              >
+                <li>
+                  <button
+                    className="btn btn-sm btn-ghost hover:bg-quaternary"
+                    onClick={() => {
+                      handleActivateClickcrates();
+                      setShowActionsMenu(false);
+                    }}
+                  >
+                    Activate
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="btn btn-sm btn-ghost hover:bg-quaternary"
+                    onClick={() => {
+                      handleDeactivateClickcrates();
+                      setShowActionsMenu(false);
+                    }}
+                  >
+                    Deactivate
+                  </button>
+                </li>
+              </ul>
+            )}
+          </div>
+          <button
+            className="btn btn-xs lg:btn-sm btn-primary w-[10rem] py-3 font-light"
+            onClick={() => setShowRegisterModal(true)}
+          >
+            Register
+          </button>
+        </div>
       </div>
 
-      <ClickcratesList
-        clickcrates={clickcrates || []}
-        onSelect={handleClickcrateSelect}
-        selectedClickCrates={selectedClickCrates}
-        onRefetch={handleRefetch}
-      />
+      {isLoading && (
+        <div className="flex flex-col items-center justify-center w-[100%] p-6 space-y-2">
+          <span className="loading loading-spinner loading-md"></span>
+          <p className="font-body text-xs font-semibold">LOADING</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="mb-20 w-[100%] bg-background border-2 border-quaternary rounded-lg">
+          <p className="text-sm font-light text-center p-4">
+            Failed to fetch ClickCrates. Please try again.
+          </p>
+        </div>
+      )}
+
+      {!isLoading && !error && (
+        <ClickcratesList
+          clickcrates={clickcrates || []}
+          onSelect={handleClickcrateSelect}
+          selectedClickcrates={selectedClickcrates}
+          // onRefetch={handleRefetch}
+        />
+      )}
 
       {showRegisterModal && (
         <ClickcrateRegister

@@ -1,8 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { clickcrateApi } from "@/services/clickcrateApi";
-import { PublicKey } from "@solana/web3.js";
 import { PlacementType, ProductCategory } from "@/types";
-
+import axios from "axios";
 interface ClickCrate {
   clickcrateId: string;
   owner: string;
@@ -17,17 +16,37 @@ interface ClickCrateResponse {
   clickCrates: ClickCrate[];
 }
 
-export function useOwnedClickcrates(owner: PublicKey | null) {
+export function useOwnedClickcrates(
+  owner: string | null,
+  walletAddress: string | null
+) {
   return useQuery<ClickCrate[], Error>({
-    queryKey: ["ownedClickcrates", owner?.toString()],
+    queryKey: ["ownedClickcrates", owner, walletAddress],
     queryFn: async () => {
       if (!owner) {
+        console.error("Owner is null");
         return [];
       }
-      const response = await clickcrateApi.fetchOwnedClickCrates(owner);
-      const data = response.data as ClickCrateResponse;
-      return data.clickCrates;
+      if (!walletAddress) {
+        console.error("Wallet not connected");
+        return [];
+      }
+      try {
+        const response = await clickcrateApi.fetchOwnedClickCrates(
+          owner,
+          walletAddress
+        );
+        const data = response.data as ClickCrateResponse;
+        return data.clickCrates;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          console.error("Unauthorized request");
+        } else {
+          console.error("Error fetching owned clickcrates:", error);
+        }
+        return [];
+      }
     },
-    enabled: !!owner,
+    enabled: !!owner && !!walletAddress,
   });
 }

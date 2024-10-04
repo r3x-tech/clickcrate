@@ -9,7 +9,6 @@ import {
 import { Order } from "@/types";
 import { ExplorerLink } from "@/components/ExplorerLink";
 import { ellipsify } from "@/components/Layout";
-import { useUpdateOrderStatus } from "../hooks/useOrders";
 
 export function OrdersList({
   orders,
@@ -20,7 +19,6 @@ export function OrdersList({
   isLoading: boolean;
   error: Error | null;
 }) {
-  const updateOrderStatus = useUpdateOrderStatus();
   const [showFulfillModal, setShowFulfillModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -35,6 +33,7 @@ export function OrdersList({
   }
 
   if (error) {
+    toast.error(`${error}`);
     return (
       <div className="mb-20 w-[100%] bg-background border-2 border-quaternary rounded-lg">
         <p className="text-sm font-light text-center p-4">
@@ -164,24 +163,24 @@ export function OrdersList({
           order={selectedOrder}
           onClose={closeFulfillModal}
           onFulfill={(fulfillmentProvider, trackingId, trackingLink) => {
-            updateOrderStatus.mutate(
-              {
-                orderId: selectedOrder.id,
-                newStatus: "Fulfilled",
-                // fulfillmentProvider,
-                // trackingId,
-                // trackingLink
-              },
-              {
-                onSuccess: () => {
-                  toast.success("Order fulfilled successfully");
-                  closeFulfillModal();
-                },
-                onError: (error: { message: string }) => {
-                  toast.error(`Failed to fulfill order: ${error.message}`);
-                },
-              }
-            );
+            // useFulfillOrder.mutate(
+            //   {
+            //     orderId: selectedOrder.id,
+            //     newStatus: "Fulfilled",
+            //     // fulfillmentProvider,
+            //     // trackingId,
+            //     // trackingLink
+            //   },
+            //   {
+            //     onSuccess: () => {
+            //       toast.success("Order fulfilled successfully");
+            //       closeFulfillModal();
+            //     },
+            //     onError: (error: { message: string }) => {
+            //       toast.error(`Failed to fulfill order: ${error.message}`);
+            //     },
+            //   }
+            // );
           }}
         />
       )}
@@ -190,18 +189,18 @@ export function OrdersList({
           order={selectedOrder}
           onClose={closeCancelModal}
           onCancel={() => {
-            updateOrderStatus.mutate(
-              { orderId: selectedOrder.id, newStatus: "Cancelled" },
-              {
-                onSuccess: () => {
-                  toast.success("Order cancelled successfully");
-                  closeCancelModal();
-                },
-                onError: (error: { message: string }) => {
-                  toast.error(`Failed to cancel order: ${error.message}`);
-                },
-              }
-            );
+            // useCancelOrder.mutate(
+            //   { orderId: selectedOrder.id, newStatus: "Cancelled" },
+            //   {
+            //     onSuccess: () => {
+            //       toast.success("Order cancelled successfully");
+            //       closeCancelModal();
+            //     },
+            //     onError: (error: { message: string }) => {
+            //       toast.error(`Failed to cancel order: ${error.message}`);
+            //     },
+            //   }
+            // );
           }}
         />
       )}

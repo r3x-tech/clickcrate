@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { PublicKey } from "@solana/web3.js";
-import { useWallet } from "@jup-ag/wallet-adapter";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { Origin, PlacementType, ProductCategory } from "@/types";
 import { clickcrateApi } from "@/services/clickcrateApi";
 import toast from "react-hot-toast";

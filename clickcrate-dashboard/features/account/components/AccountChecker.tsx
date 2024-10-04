@@ -1,7 +1,7 @@
 import { useCluster } from "@/features/cluster/hooks/useCluster";
 import { useRequestAirdrop } from "@/hooks/useRequestAirdrop";
 import { useGetBalance } from "../hooks/useGetBalance";
-import { useWallet } from "@jup-ag/wallet-adapter";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 
 export function AccountChecker() {

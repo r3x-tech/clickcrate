@@ -1,24 +1,38 @@
 import { useMutation } from "@tanstack/react-query";
 import { clickcrateApi } from "@/services/clickcrateApi";
 import { Origin, PlacementType, ProductCategory } from "@/types";
-import { PublicKey } from "@solana/web3.js";
+import axios from "axios";
 
 export type ProductListingRegistrationData = {
-  productListingId: PublicKey;
+  productListingId: string;
   origin: Origin;
   eligiblePlacementType: PlacementType;
   eligibleProductCategory: ProductCategory;
-  manager: PublicKey;
+  manager: string;
   price: number;
   orderManager: Origin;
 };
 
-export const useRegisterProductListing = () => {
+export const useRegisterProductListing = (walletAddress: string | null) => {
   return useMutation({
-    mutationFn: (data: ProductListingRegistrationData) =>
-      clickcrateApi.registerProductListing(data),
-    onError: (error) => {
-      console.error("Error registering Product Listing:", error);
+    mutationFn: async (data: ProductListingRegistrationData) => {
+      if (!walletAddress) {
+        throw new Error("Wallet not connected");
+      }
+      try {
+        const response = await clickcrateApi.registerProductListing(
+          data,
+          walletAddress
+        );
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          console.error("Unauthorized request");
+        } else {
+          console.error("Error registering Product Listing:", error);
+        }
+        throw error;
+      }
     },
   });
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { ellipsify } from "@/utils/ellipsify";
 import { ExplorerLink } from "@/components/ExplorerLink";
@@ -14,27 +14,27 @@ interface ProductListingsListProps {
   listings: ProductListing[];
   onSelect: (productListingId: string, selected: boolean) => void;
   selectedListings: string[];
-  refetch: () => Promise<void>;
+  // refetch: () => Promise<void>;
 }
 
 export default function ProductListingsList({
   listings,
   onSelect,
   selectedListings,
-  refetch,
-}: ProductListingsListProps) {
+}: // refetch,
+ProductListingsListProps) {
   const [allSelected, setAllSelected] = useState(false);
 
-  const handleRefetch = async () => {
-    try {
-      await refetch();
-      toast.success("Product listings refreshed");
-    } catch (error) {
-      toast.error("Failed to refresh product listings");
-    }
-  };
+  // const handleRefetch = async () => {
+  //   try {
+  //     await refetch();
+  //     toast.success("Product listings refreshed");
+  //   } catch (error) {
+  //     toast.error("Failed to refresh product listings");
+  //   }
+  // };
 
-  const handleAllSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAllSelectChange = (e: ChangeEvent<HTMLInputElement>) => {
     const isSelected = e.target.checked;
     setAllSelected(isSelected);
     listings.forEach((listing) => {
@@ -44,12 +44,12 @@ export default function ProductListingsList({
 
   return (
     <div className="w-[100%] bg-background border-2 border-quaternary rounded-lg">
-      <div className="flex justify-end mb-2">
+      {/* <div className="flex justify-end mb-2">
         <button className="btn btn-ghost btn-sm" onClick={handleRefetch}>
           <IconRefresh size={18} />
           Refresh
         </button>
-      </div>
+      </div> */}
       <div className="flex flex-row justify-start items-center w-[100%] px-4 pb-2 pt-2 border-b-2 border-quaternary">
         <div className="flex flex-row w-[5%]">
           <input

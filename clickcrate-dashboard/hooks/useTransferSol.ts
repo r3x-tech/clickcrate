@@ -1,6 +1,6 @@
 import { useTransactionToast } from "@/components/Layout";
 import { createTransaction } from "@/utils/createTransaction";
-import { useConnection, useWallet } from "@jup-ag/wallet-adapter";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, TransactionSignature } from "@solana/web3.js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";

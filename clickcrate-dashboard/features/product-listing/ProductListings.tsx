@@ -4,7 +4,8 @@ import { useOwnedProductListings } from "./hooks/useOwnedProductListings";
 import { ProductListingRegister } from "./components/ProductListingRegister";
 import ProductListingsList from "./components/ProductListingsList";
 import toast from "react-hot-toast";
-import { UnifiedWalletButton } from "@jup-ag/wallet-adapter";
+import { WalletButton } from "@/solana/solana-provider";
+import { IconCaretDownFilled, IconRefresh } from "@tabler/icons-react";
 
 export default function ProductListings() {
   const { publicKey } = useWallet();
@@ -13,9 +14,13 @@ export default function ProductListings() {
     isLoading,
     error,
     refetch,
-  } = useOwnedProductListings(publicKey);
+  } = useOwnedProductListings(
+    publicKey ? publicKey.toBase58() : null,
+    publicKey ? publicKey.toBase58() : null
+  );
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [selectedListings, setSelectedListings] = useState<string[]>([]);
+  const [showActionsMenu, setShowActionsMenu] = useState(false);
 
   const handleListingSelect = (productListingId: string, selected: boolean) => {
     setSelectedListings((prev) =>
@@ -34,54 +39,23 @@ export default function ProductListings() {
     }
   };
 
+  const handleActivateListings = () => {
+    // Implement the activation logic here
+    toast.success("Activating selected listings");
+  };
+
+  const handleDeactivateListings = () => {
+    // Implement the deactivation logic here
+    toast.success("Deactivating selected listings");
+  };
+
   if (!publicKey) {
     return (
       <div className="max-w-4xl mx-auto">
         <div className="hero py-[64px]">
           <div className="hero-content text-center">
-            <UnifiedWalletButton />
+            <WalletButton />
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="w-full">
-        <div className="flex justify-between items-center my-6">
-          <h1 className="text-lg font-bold">My Product Listings</h1>
-          <button
-            className="btn btn-sm btn-primary py-2 px-4"
-            onClick={() => setShowRegisterModal(true)}
-          >
-            Register
-          </button>
-        </div>
-        <div className="flex flex-col items-center justify-center w-[100%] p-6 space-y-2">
-          <span className="loading loading-spinner loading-md"></span>
-          <p className="font-body text-xs font-semibold">LOADING</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="w-full">
-        <div className="flex justify-between items-center my-6">
-          <h1 className="text-lg  font-bold">My Product Listings</h1>
-          <button
-            className="btn btn-sm btn-primary py-2 px-4"
-            onClick={() => setShowRegisterModal(true)}
-          >
-            Register
-          </button>
-        </div>
-        <div className="mb-20 w-[100%] bg-background border-2 border-quaternary rounded-lg">
-          <p className="text-sm font-light text-center p-4">
-            Failed to fetch product listings. Please try again.
-          </p>
         </div>
       </div>
     );
@@ -90,21 +64,91 @@ export default function ProductListings() {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center my-6">
-        <h1 className="text-lg font-bold">My Product Listings</h1>
-        <button
-          className="btn btn-sm btn-primary py-2 px-4"
-          onClick={() => setShowRegisterModal(true)}
-        >
-          Register
-        </button>
+        <div className="flex items-center">
+          <h1 className="text-lg font-bold mr-2">My Product Listings</h1>
+          <button
+            className="btn btn-ghost btn-sm text-white bg-transparent hover:bg-transparent p-2"
+            onClick={handleRefetch}
+          >
+            <IconRefresh size={21} />
+          </button>
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="dropdown dropdown-end">
+            <label
+              tabIndex={0}
+              className="btn btn-xs lg:btn-sm btn-outline w-[10rem] py-3 font-light"
+              onClick={() => setShowActionsMenu(!showActionsMenu)}
+            >
+              More Actions
+              <IconCaretDownFilled
+                className={`m-0 p-0 ${showActionsMenu ? "icon-flip" : ""}`}
+                size={12}
+              />
+            </label>
+            {showActionsMenu && (
+              <ul
+                tabIndex={0}
+                className="menu dropdown-content z-[1] p-2 shadow bg-base-100 rounded-box w-[10rem] mt-4 gap-2"
+                style={{ border: "2px solid white" }}
+              >
+                <li>
+                  <button
+                    className="btn btn-sm btn-ghost hover:bg-quaternary"
+                    onClick={() => {
+                      handleActivateListings();
+                      setShowActionsMenu(false);
+                    }}
+                  >
+                    Activate
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="btn btn-sm btn-ghost hover:bg-quaternary"
+                    onClick={() => {
+                      handleDeactivateListings();
+                      setShowActionsMenu(false);
+                    }}
+                  >
+                    Deactivate
+                  </button>
+                </li>
+              </ul>
+            )}
+          </div>
+          <button
+            className="btn btn-xs lg:btn-sm btn-primary w-[10rem] py-3 font-light"
+            onClick={() => setShowRegisterModal(true)}
+          >
+            Register
+          </button>
+        </div>
       </div>
 
-      <ProductListingsList
-        listings={listings || []}
-        onSelect={handleListingSelect}
-        selectedListings={selectedListings}
-        refetch={handleRefetch}
-      />
+      {isLoading && (
+        <div className="flex flex-col items-center justify-center w-[100%] p-6 space-y-2">
+          <span className="loading loading-spinner loading-md"></span>
+          <p className="font-body text-xs font-semibold">LOADING</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="mb-20 w-[100%] bg-background border-2 border-quaternary rounded-lg">
+          <p className="text-sm font-light text-center p-4">
+            Failed to fetch product listings. Please try again.
+          </p>
+        </div>
+      )}
+
+      {!isLoading && !error && (
+        <ProductListingsList
+          listings={listings || []}
+          onSelect={handleListingSelect}
+          selectedListings={selectedListings}
+          // refetch={handleRefetch}
+        />
+      )}
 
       {showRegisterModal && (
         <ProductListingRegister

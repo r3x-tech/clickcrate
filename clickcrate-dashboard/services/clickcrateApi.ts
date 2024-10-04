@@ -8,216 +8,366 @@ import {
   ShopifyCredentials,
   SquareCredentials,
 } from "../types";
-const API_BASE_URL = process.env.NEXT_PUBLIC_CLICKCRATE_API_URL;
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: "/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// Helper function to set the Authorization header
-const setAuthHeader = (apiKey: string) => {
-  api.defaults.headers.common["Authorization"] = `Bearer ${apiKey}`;
-};
+api.interceptors.request.use((request) => {
+  console.log("Starting Request", JSON.stringify(request, null, 2));
+  return request;
+});
 
+api.interceptors.response.use(
+  (response) => {
+    console.log("Response:", JSON.stringify(response.data, null, 2));
+    return response;
+  },
+  (error) => {
+    console.log(
+      "Error Response:",
+      JSON.stringify(error.response.data, null, 2)
+    );
+    return Promise.reject(error);
+  }
+);
 export const clickcrateApi = {
   // ClickCrate endpoints
-  fetchOwnedClickCrates: (owner: PublicKey) =>
-    api.post("/v1/clickcrate/owned-clickrates", { owner: owner.toString() }),
-
-  fetchRegisteredClickcrate: (clickcrateId: PublicKey) =>
-    api.post("/v1/clickcrate/registered", {
-      clickcrateId: clickcrateId.toString(),
+  fetchOwnedClickCrates: (owner: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/clickcrate/owned-clickrates",
+      params: { owner: owner.toString() },
     }),
 
-  fetchClickCrateDetails: (clickcrateId: PublicKey) =>
-    api.post("/v1/clickcrate/details", {
-      clickcrateId: clickcrateId.toString(),
+  fetchRegisteredClickcrate: (clickcrateId: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/clickcrate/registered",
+      params: { clickcrateId: clickcrateId.toString() },
     }),
 
-  createClickcrate: (data: {
-    name: string;
-    description: string;
-    eligiblePlacementType: PlacementType;
-    eligibleProductCategory: ProductCategory;
-    manager: PublicKey;
-  }) =>
-    api.post("/v1/clickcrate/create", {
-      ...data,
-      manager: data.manager.toString(),
+  fetchClickCrateDetails: (clickcrateId: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/clickcrate/details",
+      params: { clickcrateId: clickcrateId.toString() },
     }),
 
-  registerClickcrate: (data: {
-    clickcrateId: PublicKey;
-    eligiblePlacementType: PlacementType;
-    eligibleProductCategory: ProductCategory;
-    manager: PublicKey;
-  }) =>
-    api.post("/v1/clickcrate/register", {
-      ...data,
-      clickcrateId: data.clickcrateId.toString(),
-      manager: data.manager.toString(),
+  createClickcrate: (
+    data: {
+      name: string;
+      description: string;
+      eligiblePlacementType: PlacementType;
+      eligibleProductCategory: ProductCategory;
+      manager: PublicKey;
+    },
+    walletAddress: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/clickcrate/create",
+      params: {
+        ...data,
+        manager: data.manager.toString(),
+      },
     }),
 
-  updateClickcrate: (data: {
-    clickcrateId: PublicKey;
-    eligiblePlacementType: PlacementType;
-    eligibleProductCategory: ProductCategory;
-    manager: PublicKey;
-  }) =>
-    api.put("/v1/clickcrate/update", {
-      ...data,
-      clickcrateId: data.clickcrateId.toString(),
-      manager: data.manager.toString(),
+  registerClickcrate: (
+    data: {
+      clickcrateId: string;
+      eligiblePlacementType: PlacementType;
+      eligibleProductCategory: ProductCategory;
+      manager: string;
+    },
+    walletAddress: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/clickcrate/register",
+      params: {
+        ...data,
+        clickcrateId: data.clickcrateId.toString(),
+        manager: data.manager.toString(),
+      },
     }),
 
-  activateClickcrate: (clickcrateId: PublicKey) =>
-    api.post("/v1/clickcrate/activate", {
-      clickcrateId: clickcrateId.toString(),
+  updateClickcrate: (
+    data: {
+      clickcrateId: string;
+      eligiblePlacementType: PlacementType;
+      eligibleProductCategory: ProductCategory;
+      manager: string;
+    },
+    walletAddress: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/clickcrate/update",
+      params: {
+        ...data,
+        clickcrateId: data.clickcrateId.toString(),
+        manager: data.manager.toString(),
+      },
     }),
 
-  deactivateClickcrate: (clickcrateId: PublicKey) =>
-    api.post("/v1/clickcrate/deactivate", {
-      clickcrateId: clickcrateId.toString(),
+  activateClickcrate: (clickcrateId: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/clickcrate/activate",
+      params: { clickcrateId: clickcrateId.toString() },
+    }),
+
+  deactivateClickcrate: (clickcrateId: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/clickcrate/deactivate",
+      params: { clickcrateId: clickcrateId.toString() },
     }),
 
   // Product Listing endpoints
-  fetchOwnedProductListings: (owner: PublicKey) =>
-    api.post("/v1/product-listing/owned-listings", { owner: owner.toString() }),
-
-  fetchRegisteredProductListing: (productListingId: PublicKey) =>
-    api.post("/v1/product-listing/registered", {
-      productListingId: productListingId.toString(),
+  fetchOwnedProductListings: (owner: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/product-listing/owned-listings",
+      params: { owner: owner.toString() },
     }),
 
-  fetchProductListingDetails: (productListingId: PublicKey) =>
-    api.post("/v1/product-listing/details", {
-      productListingId: productListingId.toString(),
+  fetchRegisteredProductListing: (
+    productListingId: string,
+    walletAddress: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/product-listing/registered",
+      params: { productListingId: productListingId.toString() },
     }),
 
-  createProduct: (data: {
-    name: string;
-    description: string;
-    quantity: number;
-    unitPrice: number;
-    currency: "SOL" | "USDC";
-    orderManager: OrderManager;
-    email: string;
-  }) => api.post("/v1/product/create", data),
-
-  registerProductListing: (data: {
-    productListingId: PublicKey;
-    origin: Origin;
-    eligiblePlacementType: PlacementType;
-    eligibleProductCategory: ProductCategory;
-    manager: PublicKey;
-    price: number;
-    orderManager: OrderManager;
-  }) =>
-    api.post("/v1/product-listing/register", {
-      ...data,
-      productListingId: data.productListingId.toString(),
-      manager: data.manager.toString(),
+  fetchProductListingDetails: (
+    productListingId: string,
+    walletAddress: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/product-listing/details",
+      params: { productListingId: productListingId.toString() },
     }),
 
-  updateProductListing: (data: {
-    productListingId: PublicKey;
-    eligiblePlacementType: PlacementType;
-    eligibleProductCategory: ProductCategory;
-    manager: PublicKey;
-    price: number;
-  }) =>
-    api.put("/v1/product-listing/update", {
-      ...data,
-      productListingId: data.productListingId.toString(),
-      manager: data.manager.toString(),
+  createProduct: (
+    data: {
+      name: string;
+      description: string;
+      quantity: number;
+      unitPrice: number;
+      currency: "SOL" | "USDC";
+      orderManager: OrderManager;
+      email: string;
+      manager: string;
+    },
+    walletAddress: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/product/create",
+      params: data,
     }),
 
-  activateProductListing: (productListingId: PublicKey) =>
-    api.post("/v1/product-listing/activate", {
-      productListingId: productListingId.toString(),
+  registerProductListing: (
+    data: {
+      productListingId: string;
+      origin: Origin;
+      eligiblePlacementType: PlacementType;
+      eligibleProductCategory: ProductCategory;
+      manager: string;
+      price: number;
+      orderManager: OrderManager;
+    },
+    walletAddress: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/product-listing/register",
+      params: {
+        ...data,
+        productListingId: data.productListingId.toString(),
+        manager: data.manager.toString(),
+      },
     }),
 
-  deactivateProductListing: (productListingId: PublicKey) =>
-    api.post("/v1/product-listing/deactivate", {
-      productListingId: productListingId.toString(),
+  updateProductListing: (
+    data: {
+      productListingId: string;
+      eligiblePlacementType: PlacementType;
+      eligibleProductCategory: ProductCategory;
+      manager: string;
+      price: number;
+    },
+    walletAddress: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/product-listing/update",
+      params: {
+        ...data,
+        productListingId: data.productListingId.toString(),
+        manager: data.manager.toString(),
+      },
     }),
 
-  placeProductListing: (data: {
-    productListingId: PublicKey;
-    clickcrateId: PublicKey;
-    price: number;
-  }) =>
-    api.post("/v1/product-listing/place", {
-      ...data,
-      productListingId: data.productListingId.toString(),
-      clickcrateId: data.clickcrateId.toString(),
+  activateProductListing: (productListingId: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/product-listing/activate",
+      params: { productListingId: productListingId.toString() },
     }),
 
-  removeProductListing: (data: {
-    productListingId: PublicKey;
-    clickcrateId: PublicKey;
-  }) =>
-    api.post("/v1/product-listing/remove", {
-      productListingId: data.productListingId.toString(),
-      clickcrateId: data.clickcrateId.toString(),
+  deactivateProductListing: (productListingId: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/product-listing/deactivate",
+      params: { productListingId: productListingId.toString() },
+    }),
+
+  placeProductListing: (
+    data: {
+      productListingId: string;
+      clickcrateId: string;
+      price: number;
+    },
+    walletAddress: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/product-listing/place",
+      params: {
+        productListingId: data.productListingId.toString(),
+        clickcrateId: data.clickcrateId.toString(),
+        price: data.price,
+      },
+    }),
+
+  removeProductListing: (
+    data: {
+      productListingId: string;
+      clickcrateId: string;
+    },
+    walletAddress: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/product-listing/remove",
+      params: {
+        productListingId: data.productListingId.toString(),
+        clickcrateId: data.clickcrateId.toString(),
+      },
     }),
 
   // Purchase endpoints
-  initiatePurchase: (data: {
-    productListingId: PublicKey;
-    productId: PublicKey;
-    clickcrateId: PublicKey;
-    quantity: number;
-    buyer: PublicKey;
-  }) =>
-    api.post("/v1/clickcrate/purchase", {
-      ...data,
-      productListingId: data.productListingId.toString(),
-      productId: data.productId.toString(),
-      clickcrateId: data.clickcrateId.toString(),
-      buyer: data.buyer.toString(),
+  initiatePurchase: (
+    data: {
+      productListingId: string;
+      productId: string;
+      clickcrateId: string;
+      quantity: number;
+      buyer: string;
+    },
+    walletAddress: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/clickcrate/purchase",
+      params: {
+        ...data,
+        productListingId: data.productListingId.toString(),
+        productId: data.productId.toString(),
+        clickcrateId: data.clickcrateId.toString(),
+        buyer: data.buyer.toString(),
+      },
     }),
 
-  completePurchase: (data: {
-    productListingId: PublicKey;
-    productId: PublicKey;
-    clickcrateId: PublicKey;
-    quantity: number;
-    buyer: PublicKey;
-    payer: PublicKey;
-    paymentProcessor: string;
-  }) =>
-    api.post("/v1/clickcrate/purchase", {
-      ...data,
-      productListingId: data.productListingId.toString(),
-      productId: data.productId.toString(),
-      clickcrateId: data.clickcrateId.toString(),
-      buyer: data.buyer.toString(),
-      payer: data.payer.toString(),
+  completePurchase: (
+    data: {
+      productListingId: string;
+      productId: string;
+      clickcrateId: string;
+      quantity: number;
+      buyer: string;
+      payer: string;
+      paymentProcessor: string;
+    },
+    walletAddress: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/clickcrate/purchase",
+      params: {
+        ...data,
+        productListingId: data.productListingId.toString(),
+        productId: data.productId.toString(),
+        clickcrateId: data.clickcrateId.toString(),
+        buyer: data.buyer.toString(),
+        payer: data.payer.toString(),
+      },
     }),
 
   // Order endpoints
-  getSquareOrder: (orderId: string) => api.get(`/v1/square/order/${orderId}`),
+  getSquareOrder: (orderId: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: `/v1/square/order/${orderId}`,
+      params: {},
+    }),
 
-  getShopifyOrder: (orderId: string) => api.get(`/v1/shopify/order/${orderId}`),
+  getShopifyOrder: (orderId: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: `/v1/shopify/order/${orderId}`,
+      params: {},
+    }),
 
-  getAllNativeOrders: (creatorId?: string) =>
-    api.get("/v1/clickcrate/orders", { params: { creatorId } }),
+  getAllNativeOrders: (creatorId: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/clickcrate/orders",
+      params: { creatorId },
+    }),
 
   // Credential endpoints
-  storeShopifyCredentials: (credentials: ShopifyCredentials) =>
-    api.post("/v1/shopify/credentials", credentials),
+  storeShopifyCredentials: (
+    credentials: ShopifyCredentials,
+    walletAddress: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/shopify/credentials",
+      params: credentials,
+    }),
 
-  storeSquareCredentials: (credentials: SquareCredentials) =>
-    api.post("/v1/square/credentials", credentials),
+  storeSquareCredentials: (
+    credentials: SquareCredentials,
+    walletAddress: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/square/credentials",
+      params: credentials,
+    }),
 
   // Verification endpoints
-  initiateVerification: (email: string) =>
-    api.post("/v1/initiate-verification", { email }),
+  initiateVerification: (email: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/initiate-verification",
+      params: { email },
+    }),
 
-  verifyCode: (email: string, code: string) =>
-    api.post("/v1/verify-code", { email, code }),
-
-  // Helper function to set the API key
-  setApiKey: (apiKey: string) => setAuthHeader(apiKey),
+  verifyCode: (email: string, code: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      endpoint: "/v1/verify-code",
+      params: { email, code },
+    }),
 };

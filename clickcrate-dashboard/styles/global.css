@@ -151,12 +151,12 @@ html, body {
   font-weight: 600 !important;
   border-width: 2px !important;
   color: white !important;
-}
-
-.btn-ghost:hover {
-  @apply bg-[#202020] text-white border-2 border-[#202020] rounded-full !important;
 } */
 
+/* .btn-ghost:hover {
+  @apply bg-[#202020] text-white border-2 border-[#202020] rounded-full !important;
+}  */
+  
 .blink-preview-container {
   width: 100%;
   max-width: 400px;
@@ -189,13 +189,15 @@ html, body {
 
 .wallet-adapter-modal-wrapper {
   background: var(--wallet-adapter-modal-background-color) !important;
-  border-radius: 9999px !important;
-  padding: 24px !important;
+  border-color: #ffffff;
+  border-width: 2px;
+  padding: 0px !important;
   margin: 16px !important;
 }
 
 .wallet-adapter-modal-button-close {
-  background-color: blue !important;
+  background-color: transparent !important;
+  color: #ffffff !important;
 }
 
 /* Make the wallet button darker and fully rounded */
@@ -205,9 +207,13 @@ html, body {
   border-radius: 9999px !important;
   padding-left: 22px !important;
   padding-right: 22px !important;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  margin: 0px !important;
   font-size: 14px !important;
 }
 
 .wallet-adapter-button-trigger:hover {
   background-color: #1a1a1a !important;
+  
 }

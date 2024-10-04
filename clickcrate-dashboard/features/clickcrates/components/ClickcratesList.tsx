@@ -13,26 +13,26 @@ import toast from "react-hot-toast";
 interface ClickcratesListProps {
   clickcrates: ClickCrate[];
   onSelect: (clickcrateId: string, selected: boolean) => void;
-  selectedClickCrates: string[];
-  onRefetch: () => Promise<void>;
+  selectedClickcrates: string[];
+  // refetch: () => Promise<void>;
 }
 
 export function ClickcratesList({
   clickcrates,
   onSelect,
-  selectedClickCrates,
-  onRefetch,
-}: ClickcratesListProps) {
+  selectedClickcrates,
+}: // refetch,
+ClickcratesListProps) {
   const [allSelected, setAllSelected] = useState(false);
 
-  const handleRefetch = async () => {
-    try {
-      await onRefetch();
-      toast.success("ClickCrates refreshed");
-    } catch (error) {
-      toast.error("Failed to refresh ClickCrates");
-    }
-  };
+  // const handleRefetch = async () => {
+  //   try {
+  //     await refetch();
+  //     toast.success("ClickCrates refreshed");
+  //   } catch (error) {
+  //     toast.error("Failed to refresh ClickCrates");
+  //   }
+  // };
 
   const handleAllSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isSelected = e.target.checked;
@@ -44,12 +44,12 @@ export function ClickcratesList({
 
   return (
     <div className="w-[100%] bg-background border-2 border-quaternary rounded-lg">
-      <div className="flex justify-end mb-2">
+      {/* <div className="flex justify-end mb-2">
         <button className="btn btn-ghost btn-sm" onClick={handleRefetch}>
           <IconRefresh size={18} />
           Refresh
         </button>
-      </div>
+      </div> */}
       <div className="flex flex-row justify-start items-center w-[100%] px-4 pb-2 pt-2 border-b-2 border-quaternary">
         <div className="flex flex-row w-[5%]">
           <input
@@ -88,7 +88,7 @@ export function ClickcratesList({
             <div className="flex flex-row w-[5%]">
               <input
                 type="checkbox"
-                checked={selectedClickCrates.includes(clickcrate.clickcrateId)}
+                checked={selectedClickcrates.includes(clickcrate.clickcrateId)}
                 onChange={(e) =>
                   onSelect(clickcrate.clickcrateId, e.target.checked)
                 }

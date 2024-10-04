@@ -1,8 +1,9 @@
-import { UnifiedWalletButton } from "@jup-ag/wallet-adapter";
+import React, { useState } from "react";
+import { WalletButton } from "@/solana/solana-provider";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { ClusterUiSelect } from "@/features/cluster/components/ClusterUiSelect";
+import { IconMenu2 } from "@tabler/icons-react";
 
 const links = [
   { label: "Account", path: "/" },
@@ -14,6 +15,7 @@ const links = [
 
 export default function Header() {
   const pathname = usePathname();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const isActive = (path: string) => {
     if (path === "/" || path === "/account") {
@@ -23,8 +25,15 @@ export default function Header() {
   };
 
   return (
-    <header className="navbar text-neutral-content px-[4vw] flex items-center border-b-2 border-tertiary">
-      <div className="flex-none justify-start">
+    <header className="navbar text-neutral-content px-[4vw] flex flex-col md:flex-row items-center border-b-2 border-tertiary">
+      {/* Mobile Header */}
+      <div className="w-full md:hidden flex justify-between items-center">
+        <button
+          className="btn btn-ghost"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          <IconMenu2 size={24} />
+        </button>
         <Link
           className="btn btn-ghost p-0 h-auto"
           href="https://clickcrate.r3x.tech/"
@@ -38,30 +47,52 @@ export default function Header() {
             height={80}
           />
         </Link>
+        <WalletButton />
       </div>
-      <div className="flex-1 justify-center">
-        <nav className="w-full">
-          <ul className="menu menu-horizontal justify-center w-full px-1 space-x-4 font-semibold">
-            {links.map(({ label, path }) => (
-              <li key={path}>
-                <Link
-                  className={`${
-                    isActive(path)
-                      ? "active underline decoration-4 underline-offset-8 decoration-primary"
-                      : ""
-                  }`}
-                  href={path}
-                >
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+
+      {/* Desktop Header */}
+      <div className="hidden md:flex md:flex-none justify-start">
+        <Link
+          className="btn btn-ghost px-4 py-0 h-auto hover:bg-transparent"
+          href="https://clickcrate.r3x.tech/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            src="/clickcrate-logo-small.svg"
+            alt="clickcrate logo"
+            width={120}
+            height={80}
+          />
+        </Link>
       </div>
-      <div className="flex-none justify-end space-x-2 flex">
-        <UnifiedWalletButton />
-        {/* <ClusterUiSelect /> */}
+
+      <nav
+        className={`w-full md:flex-1 ${
+          isMenuOpen ? "block" : "hidden"
+        } md:block`}
+      >
+        <ul className="menu menu-vertical md:menu-horizontal justify-center w-full px-1 space-y-2 md:space-y-0 md:space-x-4 font-semibold">
+          {links.map(({ label, path }) => (
+            <li key={path}>
+              <Link
+                className={`${
+                  isActive(path)
+                    ? "active underline decoration-4 underline-offset-8 decoration-primary"
+                    : ""
+                } hover:bg-quaternary`}
+                href={path}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div className="hidden md:flex md:flex-none justify-end">
+        <WalletButton />
       </div>
     </header>
   );
