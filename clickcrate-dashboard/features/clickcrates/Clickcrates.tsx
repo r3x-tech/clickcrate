@@ -63,8 +63,8 @@ export default function Clickcrates() {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center my-6">
-        <div className="flex items-center">
+      <div className="flex justify-between items-end mb-4 mt-8">
+        <div className="flex items-end m-0 p-0">
           <h1 className="text-lg font-bold mr-2">My ClickCrates (POS)</h1>
           <button
             className="btn btn-ghost btn-sm text-white bg-transparent hover:bg-transparent p-2"
@@ -73,11 +73,11 @@ export default function Clickcrates() {
             <IconRefresh size={21} />
           </button>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-end space-x-4 m-0 p-0">
           <div className="dropdown dropdown-end">
             <label
               tabIndex={0}
-              className="btn btn-xs lg:btn-sm btn-outline w-[10rem] py-3 font-light"
+              className="btn btn-xs lg:btn-sm btn-outline w-[10rem] py-3 font-normal"
               onClick={() => setShowActionsMenu(!showActionsMenu)}
             >
               More Actions
@@ -118,7 +118,7 @@ export default function Clickcrates() {
             )}
           </div>
           <button
-            className="btn btn-xs lg:btn-sm btn-primary w-[10rem] py-3 font-light"
+            className="btn btn-xs lg:btn-sm btn-primary w-[10rem] py-3 font-normal"
             onClick={() => setShowRegisterModal(true)}
           >
             Register
@@ -134,20 +134,27 @@ export default function Clickcrates() {
       )}
 
       {error && (
-        <div className="mb-20 w-[100%] bg-background border-2 border-quaternary rounded-lg">
-          <p className="text-sm font-light text-center p-4">
+        <div className="mb-20 w-full bg-background border-2 border-quaternary rounded-lg">
+          <p className="text-sm font-normal text-center p-4">
             Failed to fetch ClickCrates. Please try again.
           </p>
         </div>
       )}
 
-      {!isLoading && !error && (
+      {!isLoading && !error && clickcrates && clickcrates.length > 0 && (
         <ClickcratesList
-          clickcrates={clickcrates || []}
+          clickcrates={clickcrates}
           onSelect={handleClickcrateSelect}
           selectedClickcrates={selectedClickcrates}
-          // onRefetch={handleRefetch}
         />
+      )}
+
+      {!isLoading && !error && (!clickcrates || clickcrates.length === 0) && (
+        <div className="mb-20 w-full bg-background border-2 border-quaternary rounded-lg">
+          <p className="text-sm font-normal text-center p-4">
+            No ClickCrates found. Try registering a new one!
+          </p>
+        </div>
       )}
 
       {showRegisterModal && (

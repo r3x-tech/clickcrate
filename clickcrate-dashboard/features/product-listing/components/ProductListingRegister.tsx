@@ -46,15 +46,18 @@ export function ProductListingRegister({
     }
 
     try {
-      await clickcrateApi.registerProductListing({
-        productListingId: new PublicKey(productId),
-        origin: productOrigin!,
-        eligiblePlacementType: productPlacementType!,
-        eligibleProductCategory: productCategory!,
-        manager: publicKey,
-        price: 0, // You may want to add a price input field
-        orderManager: productOrderManager!,
-      });
+      await clickcrateApi.registerProductListing(
+        {
+          productListingId: productId,
+          origin: productOrigin!,
+          eligiblePlacementType: productPlacementType!,
+          eligibleProductCategory: productCategory!,
+          manager: publicKey.toString(),
+          price: 0, // You may want to add a price input field
+          orderManager: productOrderManager!,
+        },
+        publicKey.toString()
+      );
       toast.success("Product listing registered successfully");
       onClose();
     } catch (error) {

@@ -9,6 +9,10 @@ import {
   IconShoppingCartFilled,
 } from "@tabler/icons-react";
 import toast from "react-hot-toast";
+import {
+  formatPlacementType,
+  formatProductCategory,
+} from "@/utils/conversions";
 
 interface ClickcratesListProps {
   clickcrates: ClickCrate[];
@@ -60,29 +64,33 @@ ClickcratesListProps) {
           />
         </div>
         <div className="flex flex-row w-[15%]">
-          <p className="text-start font-bold text-xs">CLICKCRATE ID</p>
+          <p className="text-start font-extrabold text-xs">CLICKCRATE ID</p>
         </div>
         <div className="flex flex-row w-[15%]">
-          <p className="text-start font-bold text-xs">OWNER</p>
+          <p className="text-start font-extrabold text-xs">OWNER</p>
         </div>
         <div className="flex flex-row w-[10%]">
-          <p className="text-start font-bold text-xs">STATUS</p>
+          <p className="text-start font-extrabold text-xs">STATUS</p>
         </div>
         <div className="flex flex-row items-center w-[15%]">
-          <p className="text-start font-bold text-xs">PLACEMENT TYPE</p>
+          <p className="text-start font-extrabold text-xs">PLACEMENT TYPE</p>
         </div>
         <div className="flex flex-row w-[15%]">
-          <p className="text-start font-bold text-xs">PRODUCT CATEGORY</p>
+          <p className="text-start font-extrabold text-xs">PRODUCT CATEGORY</p>
         </div>
         <div className="flex flex-row w-[15%]">
-          <p className="text-start font-bold text-xs">PRODUCT</p>
+          <p className="text-start font-extrabold text-xs">PRODUCT</p>
         </div>
         <div className="flex flex-row w-[10%]"></div>
       </div>
-      {clickcrates.map((clickcrate) => (
+      {clickcrates.map((clickcrate, index) => (
         <div
           key={clickcrate.clickcrateId}
-          className="px-4 py-2 border-b-2 border-quaternary"
+          className={`px-4 py-2 ${
+            index !== clickcrates.length - 1
+              ? "border-b-2 border-quaternary"
+              : ""
+          }`}
         >
           <div className="flex flex-row justify-start items-center w-[100%]">
             <div className="flex flex-row w-[5%]">
@@ -96,45 +104,49 @@ ClickcratesListProps) {
               />
             </div>
             <div className="flex flex-row w-[15%]">
-              <p className="text-start font-extralight text-xs">
+              <p className="text-start font-normal text-xs">
                 <ExplorerLink
                   path={`account/${clickcrate.clickcrateId}`}
                   label={ellipsify(clickcrate.clickcrateId)}
-                  className="font-extralight underline cursor-pointer"
+                  className="font-normal underline cursor-pointer"
                 />
               </p>
             </div>
             <div className="flex flex-row w-[15%]">
-              <p className="text-start font-extralight text-xs">
+              <p className="text-start font-normal text-xs">
                 <ExplorerLink
                   path={`account/${clickcrate.owner}`}
                   label={ellipsify(clickcrate.owner)}
-                  className="font-extralight underline cursor-pointer"
+                  className="font-normal underline cursor-pointer"
                 />
               </p>
             </div>
             <div className="flex flex-row w-[10%]">
-              <p className="text-start font-extralight text-xs">
+              <p className="text-start font-normal text-xs">
                 {clickcrate.isActive ? "Active" : "Inactive"}
               </p>
             </div>
             <div className="flex flex-row w-[15%]">
-              <p className="text-start font-extralight text-xs">
-                {clickcrate.eligiblePlacementType}
+              <p className="text-start font-normal text-xs">
+                {clickcrate.eligiblePlacementType
+                  ? formatPlacementType(clickcrate.eligiblePlacementType)
+                  : "N/A"}
               </p>
             </div>
             <div className="flex flex-row w-[15%]">
-              <p className="text-start font-extralight text-xs">
-                {clickcrate.eligibleProductCategory}
+              <p className="text-start font-normal text-xs">
+                {clickcrate.eligibleProductCategory
+                  ? formatProductCategory(clickcrate.eligibleProductCategory)
+                  : "N/A"}
               </p>
             </div>
             <div className="flex flex-row w-[15%]">
-              <p className="text-start font-extralight text-xs">
+              <p className="text-start font-normal text-xs">
                 {clickcrate.product ? (
                   <ExplorerLink
                     label={ellipsify(clickcrate.product)}
                     path={`address/${clickcrate.product}`}
-                    className="font-extralight underline cursor-pointer"
+                    className="font-normal underline cursor-pointer"
                   />
                 ) : (
                   "No product"

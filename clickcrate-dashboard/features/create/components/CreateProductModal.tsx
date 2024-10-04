@@ -4,6 +4,9 @@ import {
   ProductCreationData,
 } from "../hooks/useCreateProduct";
 import toast from "react-hot-toast";
+import { ExplorerLink } from "@/components/ExplorerLink";
+import { ellipsify } from "@/utils/ellipsify";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 interface CreateProductModalProps {
   isOpen: boolean;
@@ -14,6 +17,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const { publicKey } = useWallet();
   const [productType, setProductType] = useState<
     "custom" | "template" | "csv" | "url"
   >("custom");
@@ -56,12 +60,29 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="modal modal-open">
-      <div className="modal-box bg-background p-6 flex flex-col border-2 border-white rounded-lg space-y-4 w-[92vw] max-w-3xl">
-        <h2 className="text-lg font-bold">Create New Product</h2>
+    <div className="modal modal-open absolute top-0 left-0 right-0 bottom-0">
+      <div className="modal-box bg-background p-6 flex flex-col border-2 border-white rounded-lg space-y-4 w-[92vw]">
+        <div className="flex flex-row justify-between items-end">
+          <h1 className="text-lg font-bold text-start tracking-wide">
+            Create New Product
+          </h1>
+          {publicKey && (
+            <div className="flex flex-row justify-end items-end mb-[0.15em] p-0">
+              <p className="text-start font-semibold tracking-wide text-xs">
+                Owner:{" "}
+              </p>
+              <p className="pl-2 text-start font-normal text-xs">
+                <ExplorerLink
+                  path={`account/${publicKey}`}
+                  label={ellipsify(publicKey.toString())}
+                />
+              </p>
+            </div>
+          )}
+        </div>
 
         <select
-          className="select select-bordered w-full"
+          className="rounded-lg p-2 text-black w-full"
           value={productType}
           onChange={(e) =>
             setProductType(
@@ -70,7 +91,9 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
           }
         >
           <option value="custom">Custom Product</option>
-          {/* Add other options in the future */}
+          <option value="template">Template</option>
+          <option value="csv">CSV</option>
+          <option value="url">URL</option>
         </select>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -80,7 +103,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
             value={formData.name}
             onChange={handleInputChange}
             placeholder="Product Name"
-            className="input input-bordered w-full"
+            className="rounded-lg p-2 text-black w-full"
             required
           />
 
@@ -89,7 +112,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
             value={formData.description}
             onChange={handleInputChange}
             placeholder="Product Description"
-            className="textarea textarea-bordered w-full rounded-2xl"
+            className="rounded-lg p-2 text-black w-full"
             required
           />
 
@@ -102,7 +125,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
               placeholder="Quantity"
               min="1"
               max="10"
-              className="input input-bordered w-1/2"
+              className="rounded-lg p-2 text-black w-1/2"
               required
             />
 
@@ -115,14 +138,14 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                 placeholder="Unit Price"
                 step="0.000000001"
                 min="0"
-                className="input input-bordered w-2/3"
+                className="rounded-lg p-2 text-black w-2/3"
                 required
               />
               <select
                 name="currency"
                 value={formData.currency}
                 onChange={handleInputChange}
-                className="select select-bordered w-1/3"
+                className="rounded-lg p-2 text-black w-1/3"
               >
                 <option value="SOL">SOL</option>
                 <option value="USDC" disabled>
@@ -136,11 +159,12 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
             name="orderManager"
             value={formData.orderManager}
             onChange={handleInputChange}
-            className="select select-bordered w-full"
+            className="rounded-lg p-2 text-black w-full"
           >
-            <option value="ClickCrate">ClickCrate</option>
-            <option value="Shopify">Shopify</option>
-            <option value="Square">Square</option>
+            <option value="">Select an order manager</option>
+            <option value="clickcrate">ClickCrate</option>
+            <option value="shopify">Shopify</option>
+            <option value="square">Square</option>
           </select>
 
           <input
@@ -149,7 +173,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
             value={formData.email}
             onChange={handleInputChange}
             placeholder="Email"
-            className="input input-bordered w-full"
+            className="rounded-lg p-2 text-black w-full"
             required
           />
 
@@ -157,51 +181,53 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
             name="placementType"
             value={formData.placementType}
             onChange={handleInputChange}
-            className="select select-bordered w-full"
+            className="rounded-lg p-2 text-black w-full"
           >
-            <option value="Relatedpurchase">Related Purchase</option>
-            <option value="Digitalreplica">Digital Replica</option>
-            <option value="Targetedplacement">Targeted Placement</option>
+            <option value="">Select a placement type</option>
+            <option value="relatedpurchase">Related Purchase</option>
+            <option value="digitalreplica">Digital Replica</option>
+            <option value="targetedplacement">Targeted Placement</option>
           </select>
 
           <select
             name="productCategory"
             value={formData.productCategory}
             onChange={handleInputChange}
-            className="select select-bordered w-full"
+            className="rounded-lg p-2 text-black w-full"
           >
-            <option value="Clothing">Clothing</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Books">Books</option>
-            <option value="Home">Home</option>
-            <option value="Beauty">Beauty</option>
-            <option value="Toys">Toys</option>
-            <option value="Sports">Sports</option>
-            <option value="Automotive">Automotive</option>
-            <option value="Grocery">Grocery</option>
-            <option value="Health">Health</option>
+            <option value="">Select a product category</option>
+            <option value="clothing">Clothing</option>
+            <option value="electronics">Electronics</option>
+            <option value="books">Books</option>
+            <option value="home">Home</option>
+            <option value="beauty">Beauty</option>
+            <option value="toys">Toys</option>
+            <option value="sports">Sports</option>
+            <option value="automotive">Automotive</option>
+            <option value="grocery">Grocery</option>
+            <option value="health">Health</option>
           </select>
 
-          <div className="modal-action">
+          <div className="flex flex-row gap-[4%] py-2">
             <button
               type="button"
-              className="btn btn-xs lg:btn-sm btn-outline py-2 min-w-[8rem]"
+              className="btn btn-xs lg:btn-sm btn-outline w-[48%] py-3"
               onClick={onClose}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn btn-xs lg:btn-sm btn-primary py-2 min-w-[8rem]"
+              className="btn btn-xs lg:btn-sm btn-primary w-[48%] py-3"
               disabled={createProductMutation.isPending}
             >
               {createProductMutation.isPending ? (
                 <>
                   <span className="loading loading-spinner loading-sm mr-2"></span>
-                  LOADING
+                  Creating...
                 </>
               ) : (
-                "Create"
+                "Create Product"
               )}
             </button>
           </div>

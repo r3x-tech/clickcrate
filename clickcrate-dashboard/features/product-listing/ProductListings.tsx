@@ -63,8 +63,8 @@ export default function ProductListings() {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center my-6">
-        <div className="flex items-center">
+      <div className="flex justify-between items-end mb-4 mt-8">
+        <div className="flex items-end m-0 p-0">
           <h1 className="text-lg font-bold mr-2">My Product Listings</h1>
           <button
             className="btn btn-ghost btn-sm text-white bg-transparent hover:bg-transparent p-2"
@@ -73,7 +73,7 @@ export default function ProductListings() {
             <IconRefresh size={21} />
           </button>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-end space-x-4 m-0 p-0">
           <div className="dropdown dropdown-end">
             <label
               tabIndex={0}
@@ -127,27 +127,34 @@ export default function ProductListings() {
       </div>
 
       {isLoading && (
-        <div className="flex flex-col items-center justify-center w-[100%] p-6 space-y-2">
+        <div className="flex flex-col items-center justify-center w-full p-6 space-y-2">
           <span className="loading loading-spinner loading-md"></span>
           <p className="font-body text-xs font-semibold">LOADING</p>
         </div>
       )}
 
       {error && (
-        <div className="mb-20 w-[100%] bg-background border-2 border-quaternary rounded-lg">
+        <div className="mb-20 w-full bg-background border-2 border-quaternary rounded-lg">
           <p className="text-sm font-light text-center p-4">
             Failed to fetch product listings. Please try again.
           </p>
         </div>
       )}
 
-      {!isLoading && !error && (
+      {!isLoading && !error && listings && listings.length > 0 && (
         <ProductListingsList
-          listings={listings || []}
+          listings={listings}
           onSelect={handleListingSelect}
           selectedListings={selectedListings}
-          // refetch={handleRefetch}
         />
+      )}
+
+      {!isLoading && !error && (!listings || listings.length === 0) && (
+        <div className="mb-20 w-full bg-background border-2 border-quaternary rounded-lg">
+          <p className="text-sm font-light text-center p-4">
+            No product listings found. Try registering a new one!
+          </p>
+        </div>
       )}
 
       {showRegisterModal && (

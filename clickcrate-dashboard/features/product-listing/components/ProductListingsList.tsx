@@ -9,6 +9,7 @@ import {
   IconShoppingCartFilled,
 } from "@tabler/icons-react";
 import toast from "react-hot-toast";
+import { formatOrigin, formatProductCategory } from "@/utils/conversions";
 
 interface ProductListingsListProps {
   listings: ProductListing[];
@@ -85,10 +86,12 @@ ProductListingsListProps) {
         </div>
         <div className="flex flex-row w-[10%]"></div>
       </div>
-      {listings.map((listing) => (
+      {listings.map((listing, index) => (
         <div
           key={listing.productListingId}
-          className="px-4 py-2 border-b-2 border-quaternary"
+          className={`px-4 py-2 ${
+            index !== listings.length - 1 ? "border-b-2 border-quaternary" : ""
+          }`}
         >
           <div className="flex flex-row justify-start items-center w-[100%]">
             <div className="flex flex-row w-[5%]">
@@ -102,45 +105,47 @@ ProductListingsListProps) {
               />
             </div>
             <div className="flex flex-row w-[10%]">
-              <p className="text-start font-extralight text-xs">
+              <p className="text-start font-normal text-xs">
                 <ExplorerLink
                   path={`account/${listing.productListingId}`}
                   label={ellipsify(listing.productListingId)}
-                  className="font-extralight underline cursor-pointer"
+                  className="font-normal underline cursor-pointer"
                 />
               </p>
             </div>
             <div className="flex flex-row w-[10%]">
-              <p className="text-start font-extralight text-xs">
+              <p className="text-start font-normal text-xs">
                 <ExplorerLink
                   label={ellipsify(listing.productListingId)}
                   path={`address/${listing.productListingId}`}
-                  className="font-extralight underline cursor-pointer"
+                  className="font-normal underline cursor-pointer"
                 />
               </p>
             </div>
             <div className="flex flex-row w-[10%]">
-              <p className="text-start font-extralight text-xs">
+              <p className="text-start font-normal text-xs">
                 {listing.isActive ? "Active" : "Inactive"}
               </p>
             </div>
             <div className="flex flex-row w-[10%]">
-              <p className="text-start font-extralight text-xs">
-                {listing.productCategory}
+              <p className="text-start font-normal text-xs">
+                {listing.productCategory
+                  ? formatProductCategory(listing.productCategory)
+                  : "N/A"}
               </p>
             </div>
             <div className="flex flex-row w-[10%]">
-              <p className="text-start font-extralight text-xs">
-                {listing.origin}
+              <p className="text-start font-normal text-xs">
+                {listing.origin ? formatOrigin(listing.origin) : "N/A"}
               </p>
             </div>
             <div className="flex flex-row w-[13%]">
-              <p className="text-start font-extralight text-xs">
+              <p className="text-start font-normal text-xs">
                 {listing.clickcratePos ? (
                   <ExplorerLink
                     label={ellipsify(listing.clickcratePos)}
                     path={`address/${listing.clickcratePos}`}
-                    className="font-extralight underline cursor-pointer"
+                    className="font-normal underline cursor-pointer"
                   />
                 ) : (
                   "Not placed"
@@ -148,15 +153,15 @@ ProductListingsListProps) {
               </p>
             </div>
             <div className="flex flex-row w-[10%] justify-end">
-              <p className="text-end font-extralight text-xs">
+              <p className="text-end font-normal text-xs">
                 {listing.price !== null
                   ? `${listing.price / LAMPORTS_PER_SOL} SOL`
                   : "NA"}
               </p>
             </div>
             <div className="flex flex-row w-[10%] justify-end">
-              <p className="text-end font-extralight text-xs">
-                {listing.inStock}
+              <p className="text-end font-normal text-xs">
+                {listing.inStock !== undefined ? listing.inStock : "N/A"}
               </p>
             </div>
             <div className="flex flex-row w-[10%] ml-[2%]">

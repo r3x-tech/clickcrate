@@ -14,7 +14,9 @@ interface ClickcrateRegisterProps {
 
 export function ClickcrateRegister({ show, onClose }: ClickcrateRegisterProps) {
   const { publicKey } = useWallet();
-  const registerClickCrate = useRegisterClickcrate();
+  const registerClickCrate = useRegisterClickcrate(
+    publicKey ? publicKey.toBase58() : null
+  );
 
   const [clickcrateId, setClickcrateId] = useState("");
   const [clickcratePlacementType, setClickcratePlacementType] = useState<
@@ -42,10 +44,10 @@ export function ClickcrateRegister({ show, onClose }: ClickcrateRegisterProps) {
 
     try {
       await registerClickCrate.mutateAsync({
-        clickcrateId: new PublicKey(clickcrateId),
+        clickcrateId: clickcrateId,
         eligiblePlacementType: clickcratePlacementType!,
         eligibleProductCategory: clickcrateProductCategory!,
-        manager: publicKey,
+        manager: publicKey.toString(),
       });
       toast.success("ClickCrate registered successfully");
       onClose();
