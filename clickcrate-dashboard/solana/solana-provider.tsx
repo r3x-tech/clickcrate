@@ -71,5 +71,3 @@ export function useAnchorProvider() {
     commitment: "confirmed",
   });
 }
-
-export { useWallet, useConnection } from "@solana/wallet-adapter-react";

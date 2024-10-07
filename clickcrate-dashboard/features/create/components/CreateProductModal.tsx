@@ -1,12 +1,10 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import {
-  useCreateProduct,
-  ProductCreationData,
-} from "../hooks/useCreateProduct";
+import { useCreateProduct } from "../hooks/useCreateProduct";
 import toast from "react-hot-toast";
 import { ExplorerLink } from "@/components/ExplorerLink";
 import { ellipsify } from "@/utils/ellipsify";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { ProductCreationData } from "@/types";
 
 interface CreateProductModalProps {
   isOpen: boolean;
@@ -33,7 +31,9 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
     productCategory: "clothing",
   });
 
-  const createProductMutation = useCreateProduct();
+  const createProductMutation = useCreateProduct(
+    publicKey ? publicKey.toBase58() : null
+  );
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>

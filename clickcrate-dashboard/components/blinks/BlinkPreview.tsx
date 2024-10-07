@@ -3,7 +3,6 @@ import { Action, Blink } from "@dialectlabs/blinks";
 
 interface BlinkPreviewProps {
   clickcrateId: string;
-  productCategory: { [key: string]: object };
   action: Action | null;
 }
 

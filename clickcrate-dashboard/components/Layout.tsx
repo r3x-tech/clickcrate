@@ -26,7 +26,7 @@ export default function Layout({ children }: LayoutProps) {
       <main className="flex-grow overflow-x-hidden overflow-y-auto px-[4vw]">
         {children}
       </main>
-      <Toaster position="bottom-right" />
+      <Toaster position="top-center" />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import {
   OrderManager,
   ShopifyCredentials,
   SquareCredentials,
+  ProductCreationData,
 } from "../types";
 
 const api = axios.create({
@@ -157,16 +158,17 @@ export const clickcrateApi = {
     }),
 
   createProduct: (
-    data: {
-      name: string;
-      description: string;
-      quantity: number;
-      unitPrice: number;
-      currency: "SOL" | "USDC";
-      orderManager: OrderManager;
-      email: string;
-      manager: string;
-    },
+    // data: {
+    //   name: string;
+    //   description: string;
+    //   quantity: number;
+    //   unitPrice: number;
+    //   currency: "SOL" | "USDC";
+    //   orderManager: OrderManager;
+    //   email: string;
+    //   manager: string;
+    // },
+    data: ProductCreationData,
     walletAddress: string
   ) =>
     api.post("/clickcrate-proxy", {
