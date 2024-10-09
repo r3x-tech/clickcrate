@@ -17,9 +17,9 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    outputStandalone: true,
-  },
+  // experimental: {
+  //   outputStandalone: true,
+  // },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {

@@ -26,23 +26,41 @@ export function ClickCratePosUpdateModal({
   );
   const [productCategory, setProductCategory] =
     useState<ProductCategory | null>(null);
-  const [manager, setManager] = useState<PublicKey | null>(null);
+  const [managerInput, setManagerInput] = useState<string>("");
 
   const handleUpdateClickCrate = () => {
-    if (
-      manager === null ||
-      placementType === null ||
-      productCategory === null
-    ) {
+    if (!placementType || !productCategory || !managerInput) {
       toast.error("All fields required");
-    } else if (publicKey && isUpdateClickCrateFormValid) {
-      updateClickcrate.mutate({
-        clickcrateId: currentClickcrateId.toString(),
-        eligiblePlacementType: placementType,
-        eligibleProductCategory: productCategory,
-        manager: manager.toString(),
-      });
-      onClose();
+      return;
+    }
+
+    let manager: PublicKey;
+    try {
+      manager = new PublicKey(managerInput);
+    } catch (error) {
+      toast.error("Invalid manager public key");
+      return;
+    }
+
+    if (publicKey && isUpdateClickCrateFormValid) {
+      updateClickcrate.mutate(
+        {
+          clickcrateId: currentClickcrateId.toString(),
+          eligiblePlacementType: placementType,
+          eligibleProductCategory: productCategory,
+          manager: manager.toString(),
+        },
+        {
+          onSuccess: () => {
+            onClose();
+            toast.success("ClickCrate updated successfully");
+          },
+          onError: (error) => {
+            console.error("Error in mutation:", error);
+            toast.error("Failed to update ClickCrate");
+          },
+        }
+      );
     } else {
       toast.error("Update unavailable");
     }
@@ -78,9 +96,9 @@ export function ClickCratePosUpdateModal({
           className="rounded-lg p-2 text-black"
         >
           <option value="">Select a placement type</option>
-          <option value="Relatedpurchase">Related Purchase</option>
-          <option value="Digitalreplica">Digital Replica</option>
-          <option value="Targetedplacement">Targeted Placement</option>
+          <option value="relatedpurchase">Related Purchase</option>
+          <option value="digitalreplica">Digital Replica</option>
+          <option value="targetedplacement">Targeted Placement</option>
         </select>
         <select
           value={productCategory || ""}
@@ -90,21 +108,22 @@ export function ClickCratePosUpdateModal({
           className="rounded-lg p-2 text-black"
         >
           <option value="">Select a product category</option>
-          <option value="Clothing">Clothing</option>
-          <option value="Electronics">Electronics</option>
-          <option value="Books">Books</option>
-          <option value="Home">Home</option>
-          <option value="Beauty">Beauty</option>
-          <option value="Toys">Toys</option>
-          <option value="Sports">Sports</option>
-          <option value="Automotive">Automotive</option>
-          <option value="Grocery">Grocery</option>
-          <option value="Health">Health</option>
+          <option value="clothing">Clothing</option>
+          <option value="electronics">Electronics</option>
+          <option value="books">Books</option>
+          <option value="home">Home</option>
+          <option value="beauty">Beauty</option>
+          <option value="toys">Toys</option>
+          <option value="sports">Sports</option>
+          <option value="automotive">Automotive</option>
+          <option value="grocery">Grocery</option>
+          <option value="health">Health</option>
         </select>
         <input
           type="text"
           placeholder="Manager"
-          onChange={(e) => setManager(new PublicKey(e.target.value))}
+          value={managerInput}
+          onChange={(e) => setManagerInput(e.target.value)}
           className="rounded-lg p-2 text-black"
         />
         <div className="flex flex-row gap-[4%] py-2">

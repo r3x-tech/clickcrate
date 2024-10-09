@@ -1,9 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { clickcrateApi } from "@/services/clickcrateApi";
 import { PlacementType, ProductCategory } from "@/types";
-import { PublicKey, Transaction } from "@solana/web3.js";
+import { VersionedTransaction } from "@solana/web3.js";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import axios from "axios";
+import { signAndSendVersionedTransaction } from "@/services/solanaService";
 
 export type ClickcrateRegistrationData = {
   clickcrateId: string;
@@ -12,28 +13,54 @@ export type ClickcrateRegistrationData = {
   manager: string;
 };
 
-export const useRegisterClickcrate = (walletAddress: string | null) => {
+export const useRegisterClickcrate = () => {
+  const { connection } = useConnection();
+  const wallet = useWallet();
+
   return useMutation({
     mutationFn: async (data: ClickcrateRegistrationData) => {
-      if (!walletAddress) {
+      if (!wallet.publicKey) {
         throw new Error("Wallet not connected");
       }
       try {
         const response = await clickcrateApi.registerClickcrate(
           data,
-          walletAddress
+          wallet.publicKey.toString()
         );
         if (response.data && response.data.transaction) {
-          // Handle transaction if needed
-          return response.data.message;
+          const transactionBuffer = Buffer.from(
+            response.data.transaction,
+            "base64"
+          );
+          const deserializedTx =
+            VersionedTransaction.deserialize(transactionBuffer);
+          const signature = await signAndSendVersionedTransaction(
+            deserializedTx,
+            connection,
+            wallet
+          );
+          return { message: response.data.message, signature };
         } else {
           throw new Error("Invalid response from server");
         }
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          console.error("Unauthorized request");
+        console.error("Error registering ClickCrate:", error);
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 401) {
+            console.error(
+              "Unauthorized request. Please check your credentials."
+            );
+          } else if (error.response?.status === 404) {
+            console.error(
+              "API endpoint not found. Please check the API configuration."
+            );
+          } else {
+            console.error(`Error registering ClickCrate: ${error.message}`);
+          }
         } else {
-          console.error("Error registering ClickCrate:", error);
+          console.error(
+            "An unexpected error occurred while registering ClickCrate"
+          );
         }
         throw error;
       }

@@ -92,7 +92,7 @@ export const ClusterProvider: React.FC<{ children: ReactNode }> = ({
     },
     setCluster: (cluster: Cluster) => setCluster(cluster),
     getExplorerUrl: (path: string) =>
-      `https://solana.fm/${path}${getClusterUrlParam(cluster)}`,
+      `https://solana.fm/${path}${getClusterUrlParam(cluster)}-alpha`,
   };
 
   return (

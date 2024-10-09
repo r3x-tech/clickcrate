@@ -19,19 +19,27 @@ export function useOwnedProductListings(
         return [];
       }
       try {
+        console.log("Fetching owned product listings for:", owner);
         const response = await clickcrateApi.fetchOwnedProductListings(
           owner,
           walletAddress
         );
+        console.log("Response received:", response);
         const data = response.data as ProductListingResponse;
         return data.productListings;
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          console.error("Unauthorized request");
+        if (axios.isAxiosError(error)) {
+          console.error("Axios error:", error.message);
+          console.error("Error response:", error.response?.data);
+          if (error.response?.status === 401) {
+            console.error("Unauthorized request");
+          } else if (error.response?.status === 400) {
+            console.error("Bad request:", error.response.data);
+          }
         } else {
           console.error("Error fetching owned product listings:", error);
         }
-        return [];
+        throw error;
       }
     },
     enabled: !!owner && !!walletAddress,

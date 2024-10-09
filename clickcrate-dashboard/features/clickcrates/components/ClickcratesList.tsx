@@ -83,10 +83,10 @@ ClickcratesListProps) {
         <div className="flex flex-row w-[10%]">
           <p className="text-start font-extrabold text-xs">OWNER</p>
         </div>
-        <div className="flex flex-row w-[10%]">
+        <div className="flex flex-row w-[8%]">
           <p className="text-start font-extrabold text-xs">STATUS</p>
         </div>
-        <div className="flex flex-row w-[10%]">
+        <div className="flex flex-row w-[12%]">
           <p className="text-start font-extrabold text-xs">CATEGORY</p>
         </div>
         <div className="flex flex-row items-center w-[13%]">
@@ -300,25 +300,22 @@ function ClickCratePosCard({
               )}
             </p>
           </div>
-          <div className="flex flex-row w-[10%]">
+          <div className="flex flex-row w-[8%]">
             <p className="text-start font-normal text-xs">
               {clickcrateDetails?.asset.ownership.frozen
                 ? "Inactive"
                 : "Active"}
             </p>
           </div>
-          <div className="flex flex-row w-[10%]">
+          <div className="flex flex-row w-[12%]">
             <p className="text-start font-normal text-xs">
-              {clickcrateDetails?.asset.content.metadata.attributes.find(
-                (attr) => attr.trait_type === "eligibleProductCategory"
-              )?.value || "NA"}
+              {formatPlacementType(clickcrate.eligiblePlacementType) || "NA"}
             </p>
           </div>
           <div className="flex flex-row w-[13%]">
             <p className="text-start font-normal text-xs">
-              {clickcrateDetails?.asset.content.metadata.attributes.find(
-                (attr) => attr.trait_type === "eligiblePlacementType"
-              )?.value || "NA"}
+              {formatProductCategory(clickcrate.eligibleProductCategory) ||
+                "NA"}
             </p>
           </div>
           <div className="flex flex-row w-[10%]">
@@ -333,7 +330,7 @@ function ClickCratePosCard({
           </div>
           <div className="flex flex-row w-[10%] justify-end">
             <p className="text-end font-normal text-xs">
-              {clickcrate.product ? (
+              {/* {clickcrate.product ? (
                 <ExplorerLink
                   label={ellipsify(clickcrate.product)}
                   path={`address/${clickcrate.product}`}
@@ -341,7 +338,8 @@ function ClickCratePosCard({
                 />
               ) : (
                 "NA"
-              )}
+              )} */}
+              {"NA"}
             </p>
           </div>
           <div className="flex flex-row w-[20%] justify-end">

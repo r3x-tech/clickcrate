@@ -66,8 +66,10 @@ export function ClickCratePosShareModal({
       fetchAction().then(({ finalApiUrl, fetchedAction }) => {
         setFetchedAction(fetchedAction);
         setBlinkUrl(
-          `https://discover.clickcrate.xyz/?action=solana-action:${finalApiUrl}`
+          // `https://discover.clickcrate.xyz/?action=solana-action:${finalApiUrl}`
+          `https://dial.to/?action=solana-action:${finalApiUrl}`
         );
+
         setIsLoading(false);
       });
     }

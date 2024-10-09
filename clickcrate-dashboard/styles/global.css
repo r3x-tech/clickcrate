@@ -119,6 +119,7 @@ html, body {
 .btn-outline {
   @apply bg-background text-white border-2 border-white rounded-full !important;
   height: auto !important;
+  font-size: var(--btn-text-size) !important;
   font-weight: 600 !important;
   border-width: 2px !important;
   color: white !important;

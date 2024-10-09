@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 import { WalletButton } from "@/solana/solana-provider";
 import { IconCaretDownFilled, IconRefresh } from "@tabler/icons-react";
 import { ClickcratesList } from "./components/ClickcratesList";
+import { useActivateClickcrate } from "./hooks/useActivateClickcrate";
+import { useDeactivateClickcrate } from "./hooks/useDeactivateClickcrate";
 
 export default function Clickcrates() {
   const { publicKey } = useWallet();
@@ -21,6 +23,9 @@ export default function Clickcrates() {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [selectedClickcrates, setSelectedClickcrates] = useState<string[]>([]);
   const [showActionsMenu, setShowActionsMenu] = useState(false);
+
+  const activateClickcrate = useActivateClickcrate();
+  const deactivateClickcrate = useDeactivateClickcrate();
 
   const handleClickcrateSelect = (clickcrateId: string, selected: boolean) => {
     setSelectedClickcrates((prev) =>
@@ -39,14 +44,32 @@ export default function Clickcrates() {
     }
   };
 
-  const handleActivateClickcrates = () => {
-    // Implement the activation logic here
-    toast.success("Activating selected ClickCrates");
+  const handleActivateClickcrates = async () => {
+    for (const clickcrateId of selectedClickcrates) {
+      try {
+        await activateClickcrate.mutateAsync(clickcrateId);
+        toast.success(`ClickCrate ${clickcrateId} activated successfully`);
+      } catch (error) {
+        console.error(`Error activating ClickCrate ${clickcrateId}:`, error);
+        toast.error(`Failed to activate ClickCrate ${clickcrateId}`);
+      }
+    }
+    setShowActionsMenu(false);
+    refetch();
   };
 
-  const handleDeactivateClickcrates = () => {
-    // Implement the deactivation logic here
-    toast.success("Deactivating selected ClickCrates");
+  const handleDeactivateClickcrates = async () => {
+    for (const clickcrateId of selectedClickcrates) {
+      try {
+        await deactivateClickcrate.mutateAsync(clickcrateId);
+        toast.success(`ClickCrate ${clickcrateId} deactivated successfully`);
+      } catch (error) {
+        console.error(`Error deactivating ClickCrate ${clickcrateId}:`, error);
+        toast.error(`Failed to deactivate ClickCrate ${clickcrateId}`);
+      }
+    }
+    setShowActionsMenu(false);
+    refetch();
   };
 
   if (!publicKey) {

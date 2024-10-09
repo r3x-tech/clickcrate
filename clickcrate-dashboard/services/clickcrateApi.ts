@@ -8,6 +8,8 @@ import {
   ShopifyCredentials,
   SquareCredentials,
   ProductCreationData,
+  CreateProductData,
+  CreateClickcrateData,
 } from "../types";
 
 const api = axios.create({
@@ -35,11 +37,21 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
 export const clickcrateApi = {
+  fetchRecentCreations: (owner: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      method: "POST",
+      endpoint: "/v1/recent-creations",
+      params: { owner: owner.toString() },
+    }),
+
   // ClickCrate endpoints
   fetchOwnedClickCrates: (owner: string, walletAddress: string) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/clickcrate/owned-clickrates",
       params: { owner: owner.toString() },
     }),
@@ -47,6 +59,7 @@ export const clickcrateApi = {
   fetchRegisteredClickcrate: (clickcrateId: string, walletAddress: string) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/clickcrate/registered",
       params: { clickcrateId: clickcrateId.toString() },
     }),
@@ -54,26 +67,36 @@ export const clickcrateApi = {
   fetchClickCrateDetails: (clickcrateId: string, walletAddress: string) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/clickcrate/details",
       params: { clickcrateId: clickcrateId.toString() },
     }),
 
   createClickcrate: (
-    data: {
-      name: string;
-      description: string;
-      eligiblePlacementType: PlacementType;
-      eligibleProductCategory: ProductCategory;
-      manager: PublicKey;
-    },
+    // data: {
+    //   name: string;
+    //   symbol: string;
+    //   description: string;
+    //   image: string;
+    //   placementType: PlacementType;
+    //   additionalPlacementRequirements: string;
+    //   placementFee: number;
+    //   creator: PublicKey;
+    //   feePayer: PublicKey;
+    //   external_url: string;
+    //   creator_url: string;
+    // },
+    data: CreateClickcrateData,
     walletAddress: string
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/clickcrate/create",
       params: {
         ...data,
-        manager: data.manager.toString(),
+        creator: data.creator.toString(),
+        feePayer: data.feePayer.toString(),
       },
     }),
 
@@ -88,6 +111,7 @@ export const clickcrateApi = {
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/clickcrate/register",
       params: {
         ...data,
@@ -107,6 +131,7 @@ export const clickcrateApi = {
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "PUT",
       endpoint: "/v1/clickcrate/update",
       params: {
         ...data,
@@ -118,6 +143,7 @@ export const clickcrateApi = {
   activateClickcrate: (clickcrateId: string, walletAddress: string) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/clickcrate/activate",
       params: { clickcrateId: clickcrateId.toString() },
     }),
@@ -125,6 +151,7 @@ export const clickcrateApi = {
   deactivateClickcrate: (clickcrateId: string, walletAddress: string) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/clickcrate/deactivate",
       params: { clickcrateId: clickcrateId.toString() },
     }),
@@ -133,6 +160,8 @@ export const clickcrateApi = {
   fetchOwnedProductListings: (owner: string, walletAddress: string) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
+
       endpoint: "/v1/product-listing/owned-listings",
       params: { owner: owner.toString() },
     }),
@@ -143,6 +172,7 @@ export const clickcrateApi = {
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/product-listing/registered",
       params: { productListingId: productListingId.toString() },
     }),
@@ -153,6 +183,8 @@ export const clickcrateApi = {
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
+
       endpoint: "/v1/product-listing/details",
       params: { productListingId: productListingId.toString() },
     }),
@@ -168,11 +200,13 @@ export const clickcrateApi = {
     //   email: string;
     //   manager: string;
     // },
-    data: ProductCreationData,
+    data: CreateProductData,
     walletAddress: string
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
+
       endpoint: "/v1/product/create",
       params: data,
     }),
@@ -191,6 +225,7 @@ export const clickcrateApi = {
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/product-listing/register",
       params: {
         ...data,
@@ -211,6 +246,7 @@ export const clickcrateApi = {
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "PUT",
       endpoint: "/v1/product-listing/update",
       params: {
         ...data,
@@ -222,6 +258,7 @@ export const clickcrateApi = {
   activateProductListing: (productListingId: string, walletAddress: string) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/product-listing/activate",
       params: { productListingId: productListingId.toString() },
     }),
@@ -229,6 +266,7 @@ export const clickcrateApi = {
   deactivateProductListing: (productListingId: string, walletAddress: string) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/product-listing/deactivate",
       params: { productListingId: productListingId.toString() },
     }),
@@ -243,6 +281,7 @@ export const clickcrateApi = {
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/product-listing/place",
       params: {
         productListingId: data.productListingId.toString(),
@@ -260,6 +299,7 @@ export const clickcrateApi = {
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/product-listing/remove",
       params: {
         productListingId: data.productListingId.toString(),
@@ -267,7 +307,6 @@ export const clickcrateApi = {
       },
     }),
 
-  // Purchase endpoints
   initiatePurchase: (
     data: {
       productListingId: string;
@@ -280,6 +319,7 @@ export const clickcrateApi = {
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/clickcrate/purchase",
       params: {
         ...data,
@@ -304,6 +344,7 @@ export const clickcrateApi = {
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/clickcrate/purchase",
       params: {
         ...data,
@@ -319,6 +360,7 @@ export const clickcrateApi = {
   getSquareOrder: (orderId: string, walletAddress: string) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "GET",
       endpoint: `/v1/square/order/${orderId}`,
       params: {},
     }),
@@ -326,6 +368,7 @@ export const clickcrateApi = {
   getShopifyOrder: (orderId: string, walletAddress: string) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "GET",
       endpoint: `/v1/shopify/order/${orderId}`,
       params: {},
     }),
@@ -333,6 +376,7 @@ export const clickcrateApi = {
   getAllNativeOrders: (creatorId: string, walletAddress: string) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "GET",
       endpoint: "/v1/clickcrate/orders",
       params: { creatorId },
     }),
@@ -344,6 +388,7 @@ export const clickcrateApi = {
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/shopify/credentials",
       params: credentials,
     }),
@@ -354,6 +399,7 @@ export const clickcrateApi = {
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/square/credentials",
       params: credentials,
     }),
@@ -362,6 +408,7 @@ export const clickcrateApi = {
   initiateVerification: (email: string, walletAddress: string) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/initiate-verification",
       params: { email },
     }),
@@ -369,6 +416,7 @@ export const clickcrateApi = {
   verifyCode: (email: string, code: string, walletAddress: string) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
+      method: "POST",
       endpoint: "/v1/verify-code",
       params: { email, code },
     }),

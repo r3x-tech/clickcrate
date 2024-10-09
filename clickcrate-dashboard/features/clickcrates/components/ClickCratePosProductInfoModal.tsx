@@ -1,11 +1,11 @@
-// File: ClickCratePosProductInfoModal.tsx
 import React from "react";
 import { PublicKey } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { ExplorerLink } from "@/components/ExplorerLink";
 import { ellipsify } from "@/utils/ellipsify";
 import { useRemoveProductListing } from "../hooks/useRemoveProductListing";
-import { useProductListingDetails } from "../hooks/useProductListingDetails";
+import toast from "react-hot-toast";
+import { useProductListingDetails } from "@/features/product-listing/hooks/useProductListingDetails";
 
 export function ClickCratePosProductInfoModal({
   show,
@@ -21,9 +21,7 @@ export function ClickCratePosProductInfoModal({
   isProductInfoFormValid: boolean;
 }) {
   const { publicKey } = useWallet();
-  const removeProductListing = useRemoveProductListing(
-    publicKey?.toString() || null
-  );
+  const removeProductListing = useRemoveProductListing();
   const { data: productDetails, isLoading } = useProductListingDetails(
     currentProductId.toString(),
     publicKey?.toString() || null
@@ -36,9 +34,11 @@ export function ClickCratePosProductInfoModal({
           productListingId: currentProductId.toString(),
           clickcrateId: currentClickcrateId.toString(),
         });
+        toast.success("Product listing removed successfully");
         onClose();
       } catch (error) {
         console.error("Failed to remove product:", error);
+        toast.error("Failed to remove product listing");
       }
     }
   };

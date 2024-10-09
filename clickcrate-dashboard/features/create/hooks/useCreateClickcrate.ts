@@ -1,12 +1,17 @@
 import { useMutation } from "@tanstack/react-query";
 import { clickcrateApi } from "@/services/clickcrateApi";
-import { ClickcrateCreationData, PlacementType, ProductCategory } from "@/types";
+import {
+  ClickcrateCreationData,
+  CreateClickcrateData,
+  PlacementType,
+  ProductCategory,
+} from "@/types";
 import { PublicKey } from "@solana/web3.js";
 import axios from "axios";
 
 export const useCreateClickcrate = (walletAddress: string | null) => {
   return useMutation({
-    mutationFn: async (data: ClickcrateCreationData) => {
+    mutationFn: async (data: CreateClickcrateData) => {
       if (!walletAddress) {
         throw new Error("Wallet not connected");
       }

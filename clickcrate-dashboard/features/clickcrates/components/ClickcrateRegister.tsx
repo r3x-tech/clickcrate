@@ -14,9 +14,7 @@ interface ClickcrateRegisterProps {
 
 export function ClickcrateRegister({ show, onClose }: ClickcrateRegisterProps) {
   const { publicKey } = useWallet();
-  const registerClickCrate = useRegisterClickcrate(
-    publicKey ? publicKey.toBase58() : null
-  );
+  const registerClickCrate = useRegisterClickcrate();
 
   const [clickcrateId, setClickcrateId] = useState("");
   const [clickcratePlacementType, setClickcratePlacementType] = useState<

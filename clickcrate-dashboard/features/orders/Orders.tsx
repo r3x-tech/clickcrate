@@ -36,7 +36,7 @@ export default function Orders() {
         <div className="flex flex-row items-end w-[100%] h-[3rem] mb-4">
           <div className="flex flex-row flex-1 justify-start items-end">
             <p className="text-start font-bold text-xl text-white tracking-wide">
-              My Orders
+              Current Orders
             </p>
             <button
               className="btn btn-ghost btn-sm ml-2 text-white bg-transparent hover:bg-transparent p-2"

@@ -1,10 +1,10 @@
-// File: ClickCratePosPurchaseModal.tsx
 import React from "react";
 import { PublicKey } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { ExplorerLink } from "@/components/ExplorerLink";
 import { ellipsify } from "@/utils/ellipsify";
 import { useMakePurchase } from "../hooks/useMakePurchase";
+import toast from "react-hot-toast";
 
 export function ClickCratePosPurchaseModal({
   show,
@@ -20,18 +20,24 @@ export function ClickCratePosPurchaseModal({
   isMakePurchaseFormValid: boolean;
 }) {
   const { publicKey } = useWallet();
-  const makePurchase = useMakePurchase(publicKey?.toString() || null);
+  const makePurchase = useMakePurchase();
 
-  const handleMakePurchase = () => {
+  const handleMakePurchase = async () => {
     if (publicKey && isMakePurchaseFormValid) {
-      makePurchase.mutate({
-        productListingId: currentProductId.toString(),
-        productId: currentProductId.toString(),
-        clickcrateId: currentClickcrateId.toString(),
-        quantity: 1,
-        buyer: publicKey.toString(),
-      });
-      onClose();
+      try {
+        await makePurchase.mutateAsync({
+          productListingId: currentProductId.toString(),
+          productId: currentProductId.toString(),
+          clickcrateId: currentClickcrateId.toString(),
+          quantity: 1,
+          buyer: publicKey.toString(),
+        });
+        toast.success("Purchase completed successfully");
+        onClose();
+      } catch (error) {
+        console.error("Failed to complete purchase:", error);
+        toast.error("Failed to complete purchase");
+      }
     }
   };
 

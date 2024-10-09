@@ -1,10 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import { clickcrateApi } from "@/services/clickcrateApi";
 import { PlacementType, ProductCategory } from "@/types";
-import { Transaction } from "@solana/web3.js";
+import { Transaction, VersionedTransaction } from "@solana/web3.js";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import axios from "axios";
-import { signAndSendTransaction } from "@/services/solanaService";
+import { signAndSendVersionedTransaction } from "@/services/solanaService";
+import toast from "react-hot-toast";
 
 export type ClickcrateUpdateData = {
   clickcrateId: string;
@@ -28,11 +29,14 @@ export const useUpdateClickcrate = () => {
           wallet.publicKey.toString()
         );
         if (response.data && response.data.transaction) {
-          const transaction = Transaction.from(
-            Buffer.from(response.data.transaction, "base64")
+          const transactionBuffer = Buffer.from(
+            response.data.transaction,
+            "base64"
           );
-          const signature = await signAndSendTransaction(
-            transaction,
+          const deserializedTx =
+            VersionedTransaction.deserialize(transactionBuffer);
+          const signature = await signAndSendVersionedTransaction(
+            deserializedTx,
             connection,
             wallet
           );
@@ -41,10 +45,23 @@ export const useUpdateClickcrate = () => {
           throw new Error("Invalid response from server");
         }
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          console.error("Unauthorized request");
+        console.error("Error updating ClickCrate:", error);
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 401) {
+            console.error(
+              "Unauthorized request. Please check your credentials."
+            );
+          } else if (error.response?.status === 404) {
+            console.error(
+              "API endpoint not found. Please check the API configuration."
+            );
+          } else {
+            console.error(`Error updating ClickCrate: ${error.message}`);
+          }
         } else {
-          console.error("Error updating ClickCrate:", error);
+          console.error(
+            "An unexpected error occurred while updating ClickCrate"
+          );
         }
         throw error;
       }

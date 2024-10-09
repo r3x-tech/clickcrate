@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { clickcrateApi } from "@/services/clickcrateApi";
 import {
+  CreateProductData,
   OrderManager,
   PlacementType,
   ProductCategory,
@@ -10,7 +11,7 @@ import axios from "axios";
 
 export const useCreateProduct = (walletAddress: string | null) => {
   return useMutation({
-    mutationFn: async (data: ProductCreationData) => {
+    mutationFn: async (data: CreateProductData) => {
       if (!walletAddress) {
         throw new Error("Wallet not connected");
       }

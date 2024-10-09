@@ -30,11 +30,22 @@ export interface ClickCrateState {
 }
 
 export type ClickcrateCreationData = {
+  // name: string;
+  // description: string;
+  // eligiblePlacementType: PlacementType;
+  // eligibleProductCategory: ProductCategory;
+  // manager: PublicKey;
   name: string;
+  symbol: string;
   description: string;
-  eligiblePlacementType: PlacementType;
-  eligibleProductCategory: ProductCategory;
-  manager: PublicKey;
+  image: string;
+  placementType: PlacementType;
+  additionalPlacementRequirements: string;
+  placementFee: number;
+  creator: PublicKey;
+  feePayer: PublicKey;
+  external_url: string;
+  creator_url: string;
 };
 
 export type RegisterClickCrateArgs = {
@@ -344,3 +355,53 @@ export interface DetailedClickCrateState {
     };
   };
 }
+
+export interface RecentCreation {
+  mintAddress: string;
+  name: string;
+  image: string;
+  type: string;
+}
+
+export type CreateProductData = {
+  listingName: string;
+  listingSymbol: string;
+  listingDescription: string;
+  listingImage: string;
+  productCategory: ProductCategory;
+  placementType: PlacementType;
+  additionalPlacementRequirements: string;
+  discount: string;
+  customerProfileUri?: string;
+  sku: string;
+  products: Array<{
+    name: string;
+    symbol: string;
+    description: string;
+    image: string;
+    animation_url?: string;
+    external_url: string;
+    creator_url: string;
+    brand: string;
+    size: string;
+  }>;
+  creator: string;
+  feePayer: string;
+  external_url: string;
+  creator_url: string;
+};
+
+export type CreateClickcrateData = {
+  name: string;
+  symbol: string;
+  description: string;
+  image: string;
+  placementType: PlacementType;
+  additionalPlacementRequirements: string;
+  placementFee: number;
+  userProfileUri?: string;
+  creator: string;
+  feePayer: string;
+  external_url: string;
+  creator_url: string;
+};

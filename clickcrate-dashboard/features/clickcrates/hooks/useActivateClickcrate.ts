@@ -5,26 +5,18 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import axios from "axios";
 import { signAndSendVersionedTransaction } from "@/services/solanaService";
 
-export type PurchaseData = {
-  productListingId: string;
-  productId: string;
-  clickcrateId: string;
-  quantity: number;
-  buyer: string;
-};
-
-export const useMakePurchase = () => {
+export const useActivateClickcrate = () => {
   const { connection } = useConnection();
   const wallet = useWallet();
 
   return useMutation({
-    mutationFn: async (data: PurchaseData) => {
+    mutationFn: async (clickcrateId: string) => {
       if (!wallet.publicKey) {
         throw new Error("Wallet not connected");
       }
       try {
-        const response = await clickcrateApi.initiatePurchase(
-          data,
+        const response = await clickcrateApi.activateClickcrate(
+          clickcrateId,
           wallet.publicKey.toString()
         );
         if (response.data && response.data.transaction) {
@@ -44,7 +36,7 @@ export const useMakePurchase = () => {
           throw new Error("Invalid response from server");
         }
       } catch (error) {
-        console.error("Error initiating purchase:", error);
+        console.error("Error activating ClickCrate:", error);
         if (axios.isAxiosError(error)) {
           if (error.response?.status === 401) {
             console.error(
@@ -55,11 +47,11 @@ export const useMakePurchase = () => {
               "API endpoint not found. Please check the API configuration."
             );
           } else {
-            console.error(`Error initiating purchase: ${error.message}`);
+            console.error(`Error activating ClickCrate: ${error.message}`);
           }
         } else {
           console.error(
-            "An unexpected error occurred while initiating purchase"
+            "An unexpected error occurred while activating ClickCrate"
           );
         }
         throw error;

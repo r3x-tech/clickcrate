@@ -1,10 +1,18 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useCreateProduct } from "../hooks/useCreateProduct";
-import toast from "react-hot-toast";
+import { useCreateClickcrate } from "../hooks/useCreateClickcrate";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import {
+  PlacementType,
+  ProductCategory,
+  OrderManager,
+  CreateProductData,
+  CreateClickcrateData,
+} from "@/types";
 import { ExplorerLink } from "@/components/ExplorerLink";
 import { ellipsify } from "@/utils/ellipsify";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { ProductCreationData } from "@/types";
+import toast from "react-hot-toast";
+import { uploadImageToStorage } from "@/services/solanaService";
 
 interface CreateProductModalProps {
   isOpen: boolean;
@@ -15,56 +23,159 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const { publicKey } = useWallet();
-  const [productType, setProductType] = useState<
-    "custom" | "template" | "csv" | "url"
-  >("custom");
-  const [formData, setFormData] = useState<ProductCreationData>({
-    name: "",
-    description: "",
-    quantity: 1,
-    unitPrice: 0,
-    currency: "SOL",
-    orderManager: "clickcrate",
-    email: "",
-    placementType: "relatedpurchase",
-    productCategory: "clothing",
-  });
-
-  const createProductMutation = useCreateProduct(
-    publicKey ? publicKey.toBase58() : null
+  const [creationType, setCreationType] = useState<"product" | "clickcrate">(
+    "product"
   );
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [urlInput, setUrlInput] = useState("");
+  const [formData, setFormData] = useState<
+    Partial<CreateProductData> | Partial<CreateClickcrateData>
+  >({});
+
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const { publicKey, wallet } = useWallet();
+  const { connection } = useConnection();
+  const createProduct = useCreateProduct(publicKey?.toBase58() || null);
+  const createClickcrate = useCreateClickcrate(publicKey?.toBase58() || null);
 
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        name === "quantity" || name === "unitPrice" ? Number(value) : value,
-    }));
+    setFormData((prev) => {
+      if (!prev) return { [name]: value };
+      if (name === "placementFee") {
+        return {
+          ...prev,
+          [name]: value === "" ? undefined : parseFloat(value),
+        };
+      }
+      return { ...prev, [name]: value };
+    });
   };
+
+  const handleCsvUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setCsvFile(e.target.files[0]);
+    }
+  };
+
+  const handleUrlParse = () => {
+    console.log("Parsing URL:", urlInput);
+  };
+
+  function isProductData(
+    data: Partial<CreateProductData> | Partial<CreateClickcrateData>
+  ): data is Partial<CreateProductData> {
+    return "listingName" in data;
+  }
+
+  function isClickcrateData(
+    data: Partial<CreateProductData> | Partial<CreateClickcrateData>
+  ): data is Partial<CreateClickcrateData> {
+    return "name" in data;
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    try {
-      await createProductMutation.mutateAsync(formData);
-      toast.success("Product created successfully");
-      onClose();
-    } catch (error) {
-      toast.error("Failed to create product");
+    if (!wallet || !publicKey) {
+      toast.error("Please connect your wallet");
+      return;
     }
+
+    try {
+      let imageUri: string | undefined;
+
+      if (imageFile) {
+        imageUri = await uploadImageToStorage(imageFile);
+      } else {
+        if (isProductData(formData)) {
+          imageUri = formData.listingImage;
+        } else {
+          imageUri = formData.image;
+        }
+      }
+
+      if (!imageUri) {
+        toast.error("Please provide an image");
+        return;
+      }
+
+      const baseData = {
+        creator: publicKey.toBase58(),
+        feePayer: publicKey.toBase58(),
+        creator_url: "https://www.clickcrate.xyz/",
+      };
+
+      if (isProductData(formData)) {
+        // Generate symbol for product
+        const symbol = generateSymbol(formData.listingName || "");
+
+        const productData = {
+          ...formData,
+          ...baseData,
+          listingImage: imageUri,
+          symbol, // Include the symbol here
+        };
+        if (validateProductData(productData)) {
+          await createProduct.mutateAsync(productData);
+          toast.success("Product created successfully");
+          onClose();
+        }
+      } else {
+        // Generate symbol for clickcrate
+        const symbol = generateSymbol(formData.name || "");
+
+        const clickcrateData = {
+          ...formData,
+          ...baseData,
+          image: imageUri,
+          symbol, // Include the symbol here
+        };
+        if (validateClickcrateData(clickcrateData)) {
+          await createClickcrate.mutateAsync(clickcrateData);
+          toast.success("ClickCrate created successfully");
+          onClose();
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error(
+        `Failed to create ${isProductData(formData) ? "product" : "ClickCrate"}`
+      );
+    }
+  };
+
+  const handleCreationTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const newType = e.target.value as "product" | "clickcrate";
+    setCreationType(newType);
+    setFormData({});
+  };
+
+  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+      setFormData((prev) => ({
+        ...prev,
+        [creationType === "product" ? "listingImage" : "image"]: "",
+      }));
+    }
+  };
+
+  const generateSymbol = (name: string) => {
+    return name.slice(0, 5).toUpperCase();
   };
 
   if (!isOpen) return null;
 
   return (
     <div className="modal modal-open absolute top-0 left-0 right-0 bottom-0">
-      <div className="modal-box bg-background p-6 flex flex-col border-2 border-white rounded-lg space-y-4 w-[92vw]">
+      <div className="modal-box bg-background p-6 flex flex-col border-2 border-white rounded-lg space-y-6 w-[92vw]">
         <div className="flex flex-row justify-between items-end">
           <h1 className="text-lg font-bold text-start tracking-wide">
-            Create New Product
+            Create{" "}
+            {creationType === "product" ? "Product Listing" : "ClickCrate"}
           </h1>
           {publicKey && (
             <div className="flex flex-row justify-end items-end mb-[0.15em] p-0">
@@ -83,163 +194,376 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
 
         <select
           className="rounded-lg p-2 text-black w-full"
-          value={productType}
-          onChange={(e) =>
-            setProductType(
-              e.target.value as "custom" | "template" | "csv" | "url"
-            )
-          }
+          value={creationType}
+          onChange={handleCreationTypeChange}
         >
-          <option value="custom">Custom Product</option>
-          <option value="template">Template</option>
-          <option value="csv">CSV</option>
-          <option value="url">URL</option>
+          <option value="product">Create Product Listing</option>
+          <option value="clickcrate">Create ClickCrate</option>
         </select>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            placeholder="Product Name"
-            className="rounded-lg p-2 text-black w-full"
-            required
-          />
-
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            placeholder="Product Description"
-            className="rounded-lg p-2 text-black w-full"
-            required
-          />
-
-          <div className="flex space-x-4">
+        <div className="flex items-center space-x-2 justify-between border-t-2 pt-6">
+          <div className="flex flex-1 items-center justify-start w-full ">
             <input
-              type="number"
-              name="quantity"
-              value={formData.quantity}
-              onChange={handleInputChange}
-              placeholder="Quantity"
-              min="1"
-              max="10"
-              className="rounded-lg p-2 text-black w-1/2"
-              required
+              type="file"
+              accept=".csv"
+              onChange={handleCsvUpload}
+              className="hidden"
+              id="csvUpload"
             />
-
-            <div className="flex w-1/2">
-              <input
-                type="number"
-                name="unitPrice"
-                value={formData.unitPrice}
-                onChange={handleInputChange}
-                placeholder="Unit Price"
-                step="0.000000001"
-                min="0"
-                className="rounded-lg p-2 text-black w-2/3"
-                required
-              />
-              <select
-                name="currency"
-                value={formData.currency}
-                onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-1/3"
-              >
-                <option value="SOL">SOL</option>
-                <option value="USDC" disabled>
-                  USDC
-                </option>
-              </select>
-            </div>
+            <label
+              htmlFor="csvUpload"
+              className="btn btn-xs lg:btn-sm btn-outline w-full py-3"
+            >
+              Import from CSV
+            </label>
           </div>
 
-          <select
-            name="orderManager"
-            value={formData.orderManager}
-            onChange={handleInputChange}
-            className="rounded-lg p-2 text-black w-full"
-          >
-            <option value="">Select an order manager</option>
-            <option value="clickcrate">ClickCrate</option>
-            <option value="shopify">Shopify</option>
-            <option value="square">Square</option>
-          </select>
+          <p className="flex-none">OR</p>
+          <div className="flex flex-1 items-center w-full justify-end">
+            <input
+              type="text"
+              placeholder="Load from URL"
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              className="rounded-lg p-2 text-black w-2/3"
+            />
+            <button
+              onClick={handleUrlParse}
+              className="btn btn-xs lg:btn-sm btn-outline w-1/3 py-1"
+            >
+              Parse URL
+            </button>
+          </div>
+        </div>
 
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            placeholder="Email"
-            className="rounded-lg p-2 text-black w-full"
-            required
-          />
-
-          <select
-            name="placementType"
-            value={formData.placementType}
-            onChange={handleInputChange}
-            className="rounded-lg p-2 text-black w-full"
-          >
-            <option value="">Select a placement type</option>
-            <option value="relatedpurchase">Related Purchase</option>
-            <option value="digitalreplica">Digital Replica</option>
-            <option value="targetedplacement">Targeted Placement</option>
-          </select>
-
-          <select
-            name="productCategory"
-            value={formData.productCategory}
-            onChange={handleInputChange}
-            className="rounded-lg p-2 text-black w-full"
-          >
-            <option value="">Select a product category</option>
-            <option value="clothing">Clothing</option>
-            <option value="electronics">Electronics</option>
-            <option value="books">Books</option>
-            <option value="home">Home</option>
-            <option value="beauty">Beauty</option>
-            <option value="toys">Toys</option>
-            <option value="sports">Sports</option>
-            <option value="automotive">Automotive</option>
-            <option value="grocery">Grocery</option>
-            <option value="health">Health</option>
-          </select>
-
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {creationType === "product" ? (
+            <>
+              <input
+                type="text"
+                name="listingName"
+                placeholder="Product Name"
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+                required
+              />
+              <textarea
+                name="listingDescription"
+                placeholder="Product Description"
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+                required
+              />
+              <div className="flex items-start space-x-4">
+                <div className="w-[200px] h-[200px] bg-gray-200 rounded-lg overflow-hidden">
+                  {imageFile ||
+                  (formData as Partial<CreateProductData>).listingImage ? (
+                    <img
+                      src={
+                        imageFile
+                          ? URL.createObjectURL(imageFile)
+                          : (formData as Partial<CreateProductData>)
+                              .listingImage
+                      }
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      No image
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 flex flex-col justify-end">
+                  <div className="flex items-center space-x-2 justify-between mb-2">
+                    <div className="flex flex-1 items-center justify-start w-full">
+                      <input
+                        type="file"
+                        accept=".png,.svg"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                        id="imageUpload"
+                      />
+                      <label
+                        htmlFor="imageUpload"
+                        className="btn btn-xs lg:btn-sm btn-outline w-full py-3"
+                      >
+                        Upload Image
+                      </label>
+                    </div>
+                    <p className="flex-none">OR</p>
+                    <div className="flex flex-1 items-center w-full justify-end">
+                      <input
+                        type="url"
+                        name="listingImage"
+                        placeholder="Product Image URL"
+                        onChange={handleInputChange}
+                        className="rounded-lg p-2 text-black w-full"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 truncate">
+                    {imageFile
+                      ? imageFile.name
+                      : (formData as Partial<CreateProductData>).listingImage ||
+                        "No file selected"}
+                  </p>
+                </div>
+              </div>{" "}
+              <select
+                name="productCategory"
+                value={(formData as CreateProductData)?.productCategory || ""}
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+                required
+              >
+                <option value="">Select a product category</option>
+                <option value="clothing">Clothing</option>
+                <option value="electronics">Electronics</option>
+                <option value="books">Books</option>
+                <option value="home">Home</option>
+                <option value="beauty">Beauty</option>
+                <option value="toys">Toys</option>
+                <option value="sports">Sports</option>
+                <option value="automotive">Automotive</option>
+                <option value="grocery">Grocery</option>
+                <option value="health">Health</option>
+              </select>
+              <select
+                name="placementType"
+                value={(formData as CreateProductData)?.placementType || ""}
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+                required
+              >
+                <option value="">Select a placement type</option>
+                <option value="relatedpurchase">Related Purchase</option>
+                <option value="digitalreplica">Digital Replica</option>
+                <option value="targetedplacement">Targeted Placement</option>
+              </select>
+              <input
+                type="text"
+                name="additionalPlacementRequirements"
+                placeholder="Additional Placement Requirements (optional)"
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+              />
+              <input
+                type="text"
+                name="discount"
+                placeholder="Discount (optional)"
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+              />
+              <input
+                type="url"
+                name="customerProfileUri"
+                placeholder="Customer Profile URI (optional)"
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+              />
+              <input
+                type="text"
+                name="sku"
+                placeholder="SKU (optional)"
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+              />
+              <input
+                type="url"
+                name="external_url"
+                placeholder="Product Creator Website"
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+                required
+              />
+            </>
+          ) : (
+            <>
+              <input
+                type="text"
+                name="name"
+                placeholder="Point of Sale Name"
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+                required
+              />
+              <textarea
+                name="description"
+                placeholder="Point of Sale Description"
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+                required
+              />
+              <div className="flex items-start space-x-4">
+                <div className="w-[200px] h-[200px] bg-gray-200 rounded-lg overflow-hidden">
+                  {imageFile ||
+                  (formData as Partial<CreateClickcrateData>).image ? (
+                    <img
+                      src={
+                        imageFile
+                          ? URL.createObjectURL(imageFile)
+                          : (formData as Partial<CreateClickcrateData>).image
+                      }
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      No image
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 flex flex-col justify-end">
+                  <div className="flex items-center space-x-2 justify-between mb-2">
+                    <div className="flex flex-1 items-center justify-start w-full">
+                      <input
+                        type="file"
+                        accept=".png,.svg"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                        id="imageUpload"
+                      />
+                      <label
+                        htmlFor="imageUpload"
+                        className="btn btn-xs lg:btn-sm btn-outline w-full py-3"
+                      >
+                        Upload Image
+                      </label>
+                    </div>
+                    <p className="flex-none">OR</p>
+                    <div className="flex flex-1 items-center w-full justify-end">
+                      <input
+                        type="url"
+                        name="image"
+                        placeholder="Product Image URL"
+                        onChange={handleInputChange}
+                        className="rounded-lg p-2 text-black w-full"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 truncate">
+                    {imageFile
+                      ? imageFile.name
+                      : (formData as Partial<CreateClickcrateData>).image ||
+                        "No file selected"}
+                  </p>
+                </div>
+              </div>{" "}
+              <select
+                name="placementType"
+                value={(formData as CreateClickcrateData)?.placementType || ""}
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+                required
+              >
+                <option value="">Select a placement type</option>
+                <option value="relatedpurchase">Related Purchase</option>
+                <option value="digitalreplica">Digital Replica</option>
+                <option value="targetedplacement">Targeted Placement</option>
+              </select>
+              <input
+                type="text"
+                name="additionalPlacementRequirements"
+                placeholder="Additional Placement Requirements (optional)"
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+              />
+              <input
+                type="number"
+                name="placementFee"
+                placeholder="Placement Fee (in SOL)"
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+                required
+              />
+              <input
+                type="url"
+                name="userProfileUri"
+                placeholder="User Profile URI (optional)"
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+              />
+              <input
+                type="url"
+                name="external_url"
+                placeholder="External URL"
+                onChange={handleInputChange}
+                className="rounded-lg p-2 text-black w-full"
+                required
+              />
+            </>
+          )}
           <div className="flex flex-row gap-[4%] py-2">
             <button
               type="button"
-              className="btn btn-xs lg:btn-sm btn-outline w-[48%] py-3"
               onClick={onClose}
+              className="btn btn-xs lg:btn-sm btn-outline w-[48%] py-3"
+              disabled={createProduct.isPending || createClickcrate.isPending}
             >
               Cancel
             </button>
             <button
               type="submit"
               className="btn btn-xs lg:btn-sm btn-primary w-[48%] py-3"
-              disabled={createProductMutation.isPending}
+              disabled={createProduct.isPending || createClickcrate.isPending}
             >
-              {createProductMutation.isPending ? (
+              {createProduct.isPending || createClickcrate.isPending ? (
                 <>
                   <span className="loading loading-spinner loading-sm mr-2"></span>
                   Creating...
                 </>
               ) : (
-                "Create Product"
+                "Create"
               )}
             </button>
           </div>
         </form>
-
-        {createProductMutation.isPending && (
-          <div className="flex flex-col items-center justify-center w-[100%] p-6 space-y-2">
-            <span className="loading loading-spinner loading-md"></span>
-            <p className="font-body text-sm font-normal">LOADING</p>
-          </div>
-        )}
       </div>
     </div>
   );
 };
+
+function validateProductData(
+  data: Partial<CreateProductData>
+): data is CreateProductData {
+  const requiredFields: (keyof CreateProductData)[] = [
+    "listingName",
+    "listingDescription",
+    "productCategory",
+    "placementType",
+    "external_url",
+  ];
+  for (const field of requiredFields) {
+    if (!data[field]) {
+      toast.error(`Please fill in the ${field} field`);
+      console.error(`Missing required field: ${field}`);
+      return false;
+    }
+  }
+  return true;
+}
+
+function validateClickcrateData(
+  data: Partial<CreateClickcrateData>
+): data is CreateClickcrateData {
+  const requiredFields: (keyof CreateClickcrateData)[] = [
+    "name",
+    "description",
+    "placementType",
+    "placementFee",
+    "external_url",
+  ];
+  for (const field of requiredFields) {
+    if (data[field] === undefined || data[field] === null) {
+      toast.error(`Please fill in the ${field} field`);
+      console.error(`Missing required field: ${field}`);
+      return false;
+    }
+  }
+  if (typeof data.placementFee !== "number" || isNaN(data.placementFee)) {
+    toast.error("Placement fee must be a valid number");
+    return false;
+  }
+  return true;
+}
