@@ -82,7 +82,7 @@ export function ClickcrateRegister({ show, onClose }: ClickcrateRegisterProps) {
           placeholder="Collection ID (Core NFT Address)"
           value={clickcrateId}
           onChange={(e) => setClickcrateId(e.target.value)}
-          className="rounded-lg p-2 text-black"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         />
 
         <select
@@ -90,7 +90,7 @@ export function ClickcrateRegister({ show, onClose }: ClickcrateRegisterProps) {
           onChange={(e) =>
             setClickcratePlacementType(e.target.value as PlacementType)
           }
-          className="rounded-lg p-2 text-black"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         >
           <option value="">Select a placement type</option>
           <option value="Relatedpurchase">Related Purchase</option>
@@ -103,7 +103,7 @@ export function ClickcrateRegister({ show, onClose }: ClickcrateRegisterProps) {
           onChange={(e) =>
             setClickcrateProductCategory(e.target.value as ProductCategory)
           }
-          className="rounded-lg p-2 text-black"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         >
           <option value="">Select a product category</option>
           <option value="Clothing">Clothing</option>

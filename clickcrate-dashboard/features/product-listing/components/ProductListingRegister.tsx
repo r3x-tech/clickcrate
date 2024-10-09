@@ -95,13 +95,13 @@ export function ProductListingRegister({
           placeholder="Product ID (Core NFT Address)"
           value={productId}
           onChange={(e) => setProductId(e.target.value)}
-          className="rounded-lg p-2 text-black"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         />
 
         <select
           value={productOrigin || ""}
           onChange={(e) => setProductOrigin(e.target.value as Origin)}
-          className="rounded-lg p-2 text-black"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         >
           <option value="">Select an origin</option>
           <option value="Clickcrate">ClickCrate</option>
@@ -114,7 +114,7 @@ export function ProductListingRegister({
           onChange={(e) =>
             setProductPlacementType(e.target.value as PlacementType)
           }
-          className="rounded-lg p-2 text-black"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         >
           <option value="">Select a placement type</option>
           <option value="Relatedpurchase">Related Purchase</option>
@@ -127,7 +127,7 @@ export function ProductListingRegister({
           onChange={(e) =>
             setProductCategory(e.target.value as ProductCategory)
           }
-          className="rounded-lg p-2 text-black"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         >
           <option value="">Select a product category</option>
           <option value="Clothing">Clothing</option>
@@ -145,7 +145,7 @@ export function ProductListingRegister({
         <select
           value={productOrderManager || ""}
           onChange={(e) => setProductOrderManager(e.target.value as Origin)}
-          className="rounded-lg p-2 text-black"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         >
           <option value="">Select an order manager</option>
           <option value="Clickcrate">ClickCrate</option>

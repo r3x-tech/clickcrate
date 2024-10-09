@@ -288,7 +288,7 @@ function FulfillModal({
         <select
           value={fulfillmentProvider}
           onChange={(e) => setFulfillmentProvider(e.target.value)}
-          className="rounded-lg p-2 text-black"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         >
           <option value="">Select a fulfillment provider</option>
           <option value="DHL">DHL</option>
@@ -304,7 +304,7 @@ function FulfillModal({
           placeholder="Tracking ID/Number"
           value={trackingId}
           onChange={(e) => setTrackingId(e.target.value)}
-          className="rounded-lg p-2 text-black"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         />
 
         <input
@@ -312,7 +312,7 @@ function FulfillModal({
           placeholder="Tracking Link"
           value={trackingLink}
           onChange={(e) => setTrackingLink(e.target.value)}
-          className="rounded-lg p-2 text-black"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         />
 
         <div className="flex flex-row gap-[4%] py-2">

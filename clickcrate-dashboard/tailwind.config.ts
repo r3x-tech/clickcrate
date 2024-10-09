@@ -38,6 +38,9 @@ const config: Config = {
         heading: ["var(--font-anton)", "sans-serif"],
         code: ["IBM Plex Mono", "monospace"],
       },
+      fontSize: {
+        base: "12px",
+      },
     },
   },
   plugins: [require("daisyui")],
@@ -68,6 +71,7 @@ const config: Config = {
           "--btn-text-size": "14px",
           "--btn-tracking": "0.05em",
           "--font-family": "Montserrat, sans-serif",
+          "--input-text-size": "12px",
         },
       },
     ],

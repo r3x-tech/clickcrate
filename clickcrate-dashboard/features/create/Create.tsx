@@ -49,7 +49,12 @@ export default function Create() {
             className="btn btn-ghost btn-sm text-white bg-transparent hover:bg-transparent p-2"
             onClick={handleRefetch}
           >
-            <IconRefresh size={21} />
+            <IconRefresh
+              size={21}
+              className={`refresh-icon ${
+                isLoading ? "animate-spin-counterclockwise" : ""
+              }`}
+            />
           </button>
         </div>
         <div className="flex items-end space-x-4 m-0 p-0">
