@@ -23,6 +23,7 @@ export default function Clickcrates() {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [selectedClickcrates, setSelectedClickcrates] = useState<string[]>([]);
   const [showActionsMenu, setShowActionsMenu] = useState(false);
+  const [isRefetching, setIsRefetching] = useState(false);
 
   const activateClickcrate = useActivateClickcrate();
   const deactivateClickcrate = useDeactivateClickcrate();
@@ -37,11 +38,13 @@ export default function Clickcrates() {
 
   const handleRefetch = async () => {
     try {
+      setIsRefetching(true);
       await refetch();
       toast.success("ClickCrates refreshed");
     } catch (error) {
       toast.error("Failed to refresh ClickCrates");
     }
+    setIsRefetching(false);
   };
 
   const handleActivateClickcrates = async () => {
@@ -92,8 +95,14 @@ export default function Clickcrates() {
           <button
             className="btn btn-ghost btn-sm text-white bg-transparent hover:bg-transparent p-2"
             onClick={handleRefetch}
+            disabled={isRefetching || !publicKey}
           >
-            <IconRefresh size={21} />
+            <IconRefresh
+              size={21}
+              className={`refresh-icon ${
+                isLoading || isRefetching ? "animate-spin-counterclockwise" : ""
+              }`}
+            />
           </button>
         </div>
         <div className="flex items-end space-x-4 m-0 p-0">

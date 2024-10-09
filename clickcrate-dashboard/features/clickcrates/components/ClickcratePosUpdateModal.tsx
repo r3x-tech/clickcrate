@@ -72,7 +72,7 @@ export function ClickCratePosUpdateModal({
         show ? "modal-open" : ""
       } absolute top-0 left-0 right-0 bottom-0`}
     >
-      <div className="modal-box bg-background p-6 flex flex-col border-2 border-white rounded-lg space-y-6 w-[92vw]">
+      <div className="modal-box bg-background p-6 flex flex-col border-2 border-white rounded-lg space-y-4 w-[92vw]">
         <div className="flex flex-row justify-between items-end">
           <h1 className="text-lg font-bold text-start">
             Update ClickCrate POS
@@ -93,7 +93,7 @@ export function ClickCratePosUpdateModal({
         <select
           value={placementType || ""}
           onChange={(e) => setPlacementType(e.target.value as PlacementType)}
-          className="rounded-lg p-2 text-black"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         >
           <option value="">Select a placement type</option>
           <option value="relatedpurchase">Related Purchase</option>
@@ -105,7 +105,7 @@ export function ClickCratePosUpdateModal({
           onChange={(e) =>
             setProductCategory(e.target.value as ProductCategory)
           }
-          className="rounded-lg p-2 text-black"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         >
           <option value="">Select a product category</option>
           <option value="clothing">Clothing</option>
@@ -124,7 +124,7 @@ export function ClickCratePosUpdateModal({
           placeholder="Manager"
           value={managerInput}
           onChange={(e) => setManagerInput(e.target.value)}
-          className="rounded-lg p-2 text-black"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         />
         <div className="flex flex-row gap-[4%] py-2">
           <button

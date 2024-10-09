@@ -13,6 +13,7 @@ import { ExplorerLink } from "@/components/ExplorerLink";
 import { ellipsify } from "@/utils/ellipsify";
 import toast from "react-hot-toast";
 import { uploadImageToStorage } from "@/services/solanaService";
+import { IconTrash } from "@tabler/icons-react";
 
 interface CreateProductModalProps {
   isOpen: boolean;
@@ -63,6 +64,14 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
 
   const handleUrlParse = () => {
     console.log("Parsing URL:", urlInput);
+  };
+
+  const handleClearImage = () => {
+    setImageFile(null);
+    setFormData((prev) => ({
+      ...prev,
+      [creationType === "product" ? "listingImage" : "image"]: "",
+    }));
   };
 
   function isProductData(
@@ -193,7 +202,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
         </div>
 
         <select
-          className="rounded-lg p-2 text-black w-full"
+          className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
           value={creationType}
           onChange={handleCreationTypeChange}
         >
@@ -202,7 +211,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
         </select>
 
         <div className="flex items-center space-x-2 justify-between border-t-2 pt-6">
-          <div className="flex flex-1 items-center justify-start w-full ">
+          <div className="flex flex-[0_0_35%] items-center justify-start">
             <input
               type="file"
               accept=".csv"
@@ -214,24 +223,25 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
               htmlFor="csvUpload"
               className="btn btn-xs lg:btn-sm btn-outline w-full py-3"
             >
-              Import from CSV
+              Load from CSV
             </label>
           </div>
 
-          <p className="flex-none">OR</p>
-          <div className="flex flex-1 items-center w-full justify-end">
+          <p className="flex-[0_0_5%] text-sm">OR</p>
+
+          <div className="flex flex-[0_0_50%] items-center justify-end">
             <input
               type="text"
               placeholder="Load from URL"
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
-              className="rounded-lg p-2 text-black w-2/3"
+              className="rounded-l-full p-2 text-white w-2/3 border-4 border-tertiary bg-tertiary text-sm"
             />
             <button
               onClick={handleUrlParse}
-              className="btn btn-xs lg:btn-sm btn-outline w-1/3 py-1"
+              className="btn btn-xs lg:btn-sm btn-primary-alt w-1/3 py-3"
             >
-              Parse URL
+              Parse
             </button>
           </div>
         </div>
@@ -244,17 +254,17 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                 name="listingName"
                 placeholder="Product Name"
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-2 text-white w-full bg-tertiary  text-sm"
                 required
               />
               <textarea
                 name="listingDescription"
                 placeholder="Product Description"
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
                 required
               />
-              <div className="flex items-start space-x-4">
+              <div className="flex items-center space-x-4 flex-1 h-full">
                 <div className="w-[200px] h-[200px] bg-gray-200 rounded-lg overflow-hidden">
                   {imageFile ||
                   (formData as Partial<CreateProductData>).listingImage ? (
@@ -274,8 +284,31 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                     </div>
                   )}
                 </div>
-                <div className="flex-1 flex flex-col justify-end">
-                  <div className="flex items-center space-x-2 justify-between mb-2">
+                <div className="flex flex-1 flex-col">
+                  <p className="text-sm text-white font-bold mb-2">
+                    PRODUCT IMAGE
+                  </p>
+
+                  <div className="flex items-center space-x-2">
+                    <p className="text-sm text-gray-500 truncate">
+                      {imageFile
+                        ? imageFile.name
+                        : (formData as Partial<CreateProductData>)
+                            .listingImage || "No file selected"}
+                    </p>
+                    {(imageFile ||
+                      (formData as Partial<CreateProductData>)
+                        .listingImage) && (
+                      <button
+                        onClick={handleClearImage}
+                        className="text-red-500 hover:text-red-700"
+                        aria-label="Clear image"
+                      >
+                        <IconTrash size={20} />
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-center justify-between mt-4">
                     <div className="flex flex-1 items-center justify-start w-full">
                       <input
                         type="file"
@@ -291,30 +324,25 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                         Upload Image
                       </label>
                     </div>
-                    <p className="flex-none">OR</p>
+                    <p className="flex-none text-sm my-2">OR</p>
                     <div className="flex flex-1 items-center w-full justify-end">
                       <input
                         type="url"
                         name="listingImage"
-                        placeholder="Product Image URL"
+                        placeholder="Enter Image URL"
                         onChange={handleInputChange}
-                        className="rounded-lg p-2 text-black w-full"
+                        className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
                       />
                     </div>
                   </div>
-                  <p className="text-sm text-gray-500 truncate">
-                    {imageFile
-                      ? imageFile.name
-                      : (formData as Partial<CreateProductData>).listingImage ||
-                        "No file selected"}
-                  </p>
                 </div>
-              </div>{" "}
+              </div>
+
               <select
                 name="productCategory"
                 value={(formData as CreateProductData)?.productCategory || ""}
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
                 required
               >
                 <option value="">Select a product category</option>
@@ -333,7 +361,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                 name="placementType"
                 value={(formData as CreateProductData)?.placementType || ""}
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
                 required
               >
                 <option value="">Select a placement type</option>
@@ -346,35 +374,35 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                 name="additionalPlacementRequirements"
                 placeholder="Additional Placement Requirements (optional)"
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
               />
               <input
                 type="text"
                 name="discount"
                 placeholder="Discount (optional)"
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
               />
               <input
                 type="url"
                 name="customerProfileUri"
                 placeholder="Customer Profile URI (optional)"
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
               />
               <input
                 type="text"
                 name="sku"
                 placeholder="SKU (optional)"
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
               />
               <input
                 type="url"
                 name="external_url"
-                placeholder="Product Creator Website"
+                placeholder="Creator Website"
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
                 required
               />
             </>
@@ -385,17 +413,17 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                 name="name"
                 placeholder="Point of Sale Name"
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
                 required
               />
               <textarea
                 name="description"
                 placeholder="Point of Sale Description"
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
                 required
               />
-              <div className="flex items-start space-x-4">
+              <div className="flex items-center space-x-4 flex-1 h-full">
                 <div className="w-[200px] h-[200px] bg-gray-200 rounded-lg overflow-hidden">
                   {imageFile ||
                   (formData as Partial<CreateClickcrateData>).image ? (
@@ -414,47 +442,64 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                     </div>
                   )}
                 </div>
-                <div className="flex-1 flex flex-col justify-end">
-                  <div className="flex items-center space-x-2 justify-between mb-2">
+                <div className="flex flex-1 flex-col">
+                  <p className="text-sm text-white font-bold mb-2">
+                    CLICKCRATE IMAGE
+                  </p>
+
+                  <div className="flex items-center space-x-2">
+                    <p className="text-sm text-gray-500 truncate">
+                      {imageFile
+                        ? imageFile.name
+                        : (formData as Partial<CreateClickcrateData>).image ||
+                          "No file selected"}
+                    </p>
+                    {(imageFile ||
+                      (formData as Partial<CreateClickcrateData>).image) && (
+                      <button
+                        onClick={handleClearImage}
+                        className="text-red-500 hover:text-red-700"
+                        aria-label="Clear image"
+                      >
+                        <IconTrash size={20} />
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-center justify-between mt-4">
                     <div className="flex flex-1 items-center justify-start w-full">
                       <input
                         type="file"
                         accept=".png,.svg"
                         onChange={handleImageUpload}
                         className="hidden"
-                        id="imageUpload"
+                        id="clickcrateImageUpload"
                       />
                       <label
-                        htmlFor="imageUpload"
+                        htmlFor="clickcrateImageUpload"
                         className="btn btn-xs lg:btn-sm btn-outline w-full py-3"
                       >
                         Upload Image
                       </label>
                     </div>
-                    <p className="flex-none">OR</p>
+                    <p className="flex-none text-sm my-2">OR</p>
                     <div className="flex flex-1 items-center w-full justify-end">
                       <input
                         type="url"
                         name="image"
-                        placeholder="Product Image URL"
+                        placeholder="Enter Image URL"
                         onChange={handleInputChange}
-                        className="rounded-lg p-2 text-black w-full"
+                        className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
                       />
                     </div>
                   </div>
-                  <p className="text-sm text-gray-500 truncate">
-                    {imageFile
-                      ? imageFile.name
-                      : (formData as Partial<CreateClickcrateData>).image ||
-                        "No file selected"}
-                  </p>
                 </div>
-              </div>{" "}
+              </div>
+
               <select
                 name="placementType"
                 value={(formData as CreateClickcrateData)?.placementType || ""}
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
                 required
               >
                 <option value="">Select a placement type</option>
@@ -467,14 +512,14 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                 name="additionalPlacementRequirements"
                 placeholder="Additional Placement Requirements (optional)"
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
               />
               <input
                 type="number"
                 name="placementFee"
                 placeholder="Placement Fee (in SOL)"
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
                 required
               />
               <input
@@ -482,14 +527,14 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                 name="userProfileUri"
                 placeholder="User Profile URI (optional)"
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
               />
               <input
                 type="url"
                 name="external_url"
-                placeholder="External URL"
+                placeholder="Creator Website"
                 onChange={handleInputChange}
-                className="rounded-lg p-2 text-black w-full"
+                className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
                 required
               />
             </>

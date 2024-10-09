@@ -21,6 +21,7 @@ export default function ProductListings() {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [selectedListings, setSelectedListings] = useState<string[]>([]);
   const [showActionsMenu, setShowActionsMenu] = useState(false);
+  const [isRefetching, setIsRefetching] = useState(false);
 
   const handleListingSelect = (productListingId: string, selected: boolean) => {
     setSelectedListings((prev) =>
@@ -31,12 +32,14 @@ export default function ProductListings() {
   };
 
   const handleRefetch = async () => {
+    setIsRefetching(true);
     try {
       await refetch();
       toast.success("Product listings refreshed");
     } catch (error) {
       toast.error("Failed to refresh product listings");
     }
+    setIsRefetching(false);
   };
 
   const handleActivateListings = () => {
@@ -69,8 +72,14 @@ export default function ProductListings() {
           <button
             className="btn btn-ghost btn-sm text-white bg-transparent hover:bg-transparent p-2"
             onClick={handleRefetch}
+            disabled={isRefetching || !publicKey}
           >
-            <IconRefresh size={21} />
+            <IconRefresh
+              size={21}
+              className={`refresh-icon ${
+                isLoading || isRefetching ? "animate-spin-counterclockwise" : ""
+              }`}
+            />
           </button>
         </div>
         <div className="flex items-end space-x-4 m-0 p-0">

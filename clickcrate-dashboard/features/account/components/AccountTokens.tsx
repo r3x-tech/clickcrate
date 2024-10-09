@@ -17,6 +17,16 @@ export function AccountTokens({ address }: { address: PublicKey }) {
     if (showAll) return query.data;
     return query.data?.slice(0, 5);
   }, [query.data, showAll]);
+  const [isRefetching, setIsRefetching] = useState(false);
+
+  const handleRefetch = async () => {
+    setIsRefetching(true);
+    await query.refetch();
+    await client.invalidateQueries({
+      queryKey: ["getTokenAccountBalance"],
+    });
+    setIsRefetching(false);
+  };
 
   return (
     <div className="space-y-2">
@@ -29,14 +39,14 @@ export function AccountTokens({ address }: { address: PublicKey }) {
             ) : (
               <button
                 className="btn btn-sm btn-ghost border-none bg-transparent hover:bg-transparent text-white hover:text-white"
-                onClick={async () => {
-                  await query.refetch();
-                  await client.invalidateQueries({
-                    queryKey: ["getTokenAccountBalance"],
-                  });
-                }}
+                onClick={handleRefetch}
               >
-                <IconRefresh size={21} />
+                <IconRefresh
+                  size={21}
+                  className={`refresh-icon ${
+                    isRefetching ? "animate-spin-counterclockwise" : ""
+                  }`}
+                />
               </button>
             )}
           </div>

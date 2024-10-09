@@ -49,7 +49,12 @@ export default function Create() {
             className="btn btn-ghost btn-sm text-white bg-transparent hover:bg-transparent p-2"
             onClick={handleRefetch}
           >
-            <IconRefresh size={21} />
+            <IconRefresh
+              size={21}
+              className={`refresh-icon ${
+                isLoading ? "animate-spin-counterclockwise" : ""
+              }`}
+            />
           </button>
         </div>
         <div className="flex items-end space-x-4 m-0 p-0">
@@ -81,7 +86,7 @@ export default function Create() {
         !error &&
         recentCreations &&
         recentCreations.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 max-h-[70vh] overflow-y-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 max-h-[78vh] overflow-y-auto">
             {recentCreations.map((creation: RecentCreation) => (
               <div
                 key={creation.mintAddress}

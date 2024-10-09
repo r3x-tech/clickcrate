@@ -130,7 +130,7 @@ export function ClickCratePosShareModal({
         ) : (
           <div>
             {blinkUrl && (
-              <div className="bg-quaternary p-2 rounded w-full">
+              <div className="bg-tertiary p-2 rounded w-full">
                 <p className="text-white text-sm break-all">{blinkUrl}</p>
               </div>
             )}

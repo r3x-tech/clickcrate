@@ -11,11 +11,18 @@ import { useGetSignatures } from "../hooks/useGetSignatures";
 export function AccountTransactions({ address }: { address: PublicKey }) {
   const query = useGetSignatures({ address });
   const [showAll, setShowAll] = useState(false);
+  const [isRefetching, setIsRefetching] = useState(false);
 
   const items = useMemo(() => {
     if (showAll) return query.data;
     return query.data?.slice(0, 5);
   }, [query.data, showAll]);
+
+  const handleRefetch = async () => {
+    setIsRefetching(true);
+    await query.refetch();
+    setIsRefetching(false);
+  };
 
   return (
     <div className="space-y-2">
@@ -27,9 +34,15 @@ export function AccountTransactions({ address }: { address: PublicKey }) {
           ) : (
             <button
               className="btn btn-sm btn-ghost border-none bg-transparent hover:bg-transparent text-white hover:text-white"
-              onClick={() => query.refetch()}
+              onClick={handleRefetch}
+              disabled={isRefetching}
             >
-              <IconRefresh size={21} />
+              <IconRefresh
+                size={21}
+                className={`refresh-icon ${
+                  isRefetching ? "animate-spin-counterclockwise" : ""
+                }`}
+              />
             </button>
           )}
         </div>

@@ -12,7 +12,7 @@ export default function Orders() {
     publicKey ? publicKey.toBase58() : null,
     publicKey ? publicKey.toBase58() : null
   );
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isRefetching, setIsRefetching] = useState(false);
   const hasInitiallyFetched = useRef(false);
 
   useEffect(() => {
@@ -22,11 +22,11 @@ export default function Orders() {
     }
   }, [publicKey, ordersQuery]);
 
-  const handleRefresh = async () => {
+  const handleRefetch = async () => {
     if (publicKey) {
-      setIsRefreshing(true);
+      setIsRefetching(true);
       await ordersQuery.refetch();
-      setIsRefreshing(false);
+      setIsRefetching(false);
     }
   };
 
@@ -35,18 +35,17 @@ export default function Orders() {
       <AppHero title="" subtitle="">
         <div className="flex flex-row items-end w-[100%] h-[3rem] mb-4">
           <div className="flex flex-row flex-1 justify-start items-end">
-            <p className="text-start font-bold text-xl text-white tracking-wide">
-              Current Orders
-            </p>
+            <h1 className="text-lg font-bold mr-2"> Inbound Orders</h1>
+
             <button
               className="btn btn-ghost btn-sm ml-2 text-white bg-transparent hover:bg-transparent p-2"
-              onClick={handleRefresh}
-              disabled={isRefreshing || !publicKey}
+              onClick={handleRefetch}
+              disabled={isRefetching || !publicKey}
             >
               <IconRefresh
                 size={21}
                 className={`refresh-icon ${
-                  isRefreshing ? "animate-spin-counterclockwise" : ""
+                  isRefetching ? "animate-spin-counterclockwise" : ""
                 }`}
               />
             </button>
