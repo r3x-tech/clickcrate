@@ -11,7 +11,7 @@ A social e-commerce platform that lets you sell physical goods at the click of a
 
 To get started with the dashboard see: [https://github.com/r3x-tech/clickcrate/blob/main/clickcrate-dashboard/README.md](https://github.com/r3x-tech/clickcrate/blob/main/clickcrate-dashboard/README.md) OR [https://dashboard.clickcrate.xyz/](https://dashboard.clickcrate.xyz/)
 
-To get started with the on-chain program: [https://github.com/r3x-tech/clickcrate/blob/main/clickcrate-program/README.md](https://github.com/r3x-tech/clickcrate/blob/main/clickcrate-program/README.md)
+To get started with the on-chain program see: [https://github.com/r3x-tech/clickcrate/blob/main/clickcrate-program/README.md](https://github.com/r3x-tech/clickcrate/blob/main/clickcrate-program/README.md)
 
 To join our beta & become a verified seller signup here: [https://forms.gle/4bfY9yQpxXngyFEb9](https://forms.gle/4bfY9yQpxXngyFEb9)
 
