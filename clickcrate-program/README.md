@@ -1,14 +1,6 @@
 # clickcrate-program
  ClickCrate on-chain program
 
-### anchor
-
-This is a Solana program written in Rust using the Anchor framework.
-
-#### Commands
-
-You can use any normal anchor commands. Either move to the `anchor` directory and run the `anchor` command or prefix the command with `npm run`, eg: `npm run anchor`.
-
 ### Prerequisites
 
 - Node v18.18.0 or higher
@@ -18,6 +10,14 @@ You can use any normal anchor commands. Either move to the `anchor` directory an
 - Solana CLI 1.18.0 or higher
 
 ### Installation
+
+### anchor
+
+This is a Solana program written in Rust using the Anchor framework.
+
+#### Commands
+
+You can use any normal anchor commands. Either move to the `anchor` directory and run the `anchor` command or prefix the command with `npm run`, eg: `npm run anchor`.
 
 #### Clone the repo
 
