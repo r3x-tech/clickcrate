@@ -1,7 +1,7 @@
 # ClickCrate
 A social e-commerce platform that lets you sell physical goods at the click of a button directly in any game, social media post, or digital experience. 
 
-[ClickCrate Chrome Extension](https://github.com/r3x-tech/clickcrate-chrome-extension) - [ClickCrate Storefronts](https://github.com/r3x-tech/clickcrate-storefronts) - [ClickCrate API](https://github.com/r3x-tech/clickcrate-api-test) - [ClickCrate Blinks & Actions](https://github.com/r3x-tech/creator-blink-api) - [ClickCrate Docs](https://docs.clickcrate.xyz/) - [Website](https://www.clickcrate.xyz/) - [Pitch Deck](https://www.canva.com/design/DAGSe9jrasA/ygRTI9BWmVDMayE8K4i0kQ/view?utm_content=DAGSe9jrasA&utm_campaign=designshare&utm_medium=link&utm_source=editor)
+[ClickCrate Chrome Extension](https://github.com/r3x-tech/clickcrate-chrome-extension) - [ClickCrate Storefronts](https://github.com/r3x-tech/clickcrate-storefronts) - [ClickCrate API](https://github.com/r3x-tech/clickcrate-api-test) - [ClickCrate Blinks & Actions](https://github.com/r3x-tech/creator-blink-api) - [Docs](https://docs.clickcrate.xyz/) - [Website](https://www.clickcrate.xyz/) - [Pitch Deck](https://www.canva.com/design/DAGSe9jrasA/ygRTI9BWmVDMayE8K4i0kQ/view?utm_content=DAGSe9jrasA&utm_campaign=designshare&utm_medium=link&utm_source=editor)
 
 ## Getting Started 
 
