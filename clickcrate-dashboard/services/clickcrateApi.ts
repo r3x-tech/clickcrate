@@ -64,12 +64,16 @@ export const clickcrateApi = {
       params: { clickcrateId: clickcrateId.toString() },
     }),
 
-  fetchClickCrateDetails: (clickcrateId: string, walletAddress: string) =>
+  fetchClickCrateDetails: (
+    clickcrateId: string,
+    walletAddress: string,
+    network: string
+  ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
       method: "POST",
       endpoint: "/v1/clickcrate/details",
-      params: { clickcrateId: clickcrateId.toString() },
+      params: { clickcrateId: clickcrateId.toString(), network },
     }),
 
   createClickcrate: (
@@ -179,14 +183,26 @@ export const clickcrateApi = {
 
   fetchProductListingDetails: (
     productListingId: string,
-    walletAddress: string
+    walletAddress: string,
+    network: string
   ) =>
     api.post("/clickcrate-proxy", {
       walletAddress,
       method: "POST",
-
       endpoint: "/v1/product-listing/details",
-      params: { productListingId: productListingId.toString() },
+      params: { productListingId: productListingId.toString(), network },
+    }),
+
+  fetchProductDetails: (
+    productId: string,
+    walletAddress: string,
+    network: string
+  ) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      method: "POST",
+      endpoint: "/v1/product/details",
+      params: { productId: productId.toString(), network },
     }),
 
   createProduct: (

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useOwnedClickcrates } from "./hooks/useOwnedClickcrates";
-import { ClickcrateRegister } from "./components/ClickcrateRegister";
+import { ClickcrateRegisterModal } from "./components/ClickcrateRegisterModal";
 import toast from "react-hot-toast";
 import { WalletButton } from "@/solana/solana-provider";
 import { IconCaretDownFilled, IconRefresh } from "@tabler/icons-react";
@@ -190,7 +190,7 @@ export default function Clickcrates() {
       )}
 
       {showRegisterModal && (
-        <ClickcrateRegister
+        <ClickcrateRegisterModal
           show={showRegisterModal}
           onClose={() => setShowRegisterModal(false)}
         />

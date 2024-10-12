@@ -1,3 +1,5 @@
+import { Cluster, ClusterNetwork } from "@/features/cluster/hooks/useCluster";
+
 export const formatPlacementType = (placementType: string): string => {
   switch (placementType) {
     case "digitalreplica":
@@ -63,3 +65,22 @@ export const formatOrderManager = (orderManager: string): string => {
       return "Unavailable";
   }
 };
+
+export function generateSymbol(name: string): string {
+  const cleanedName = name.replace(/[^a-zA-Z0-9]/g, "");
+  const uppercaseName = cleanedName.toUpperCase();
+  return uppercaseName.slice(0, 5).padEnd(5, "X");
+}
+
+export function getNetwork(cluster: Cluster) {
+  let network = "mainnet";
+  switch (cluster.network) {
+    case ClusterNetwork.Devnet:
+      network = "devnet";
+      break;
+    case ClusterNetwork.Mainnet:
+      network = "mainnet";
+      break;
+  }
+  return network;
+}

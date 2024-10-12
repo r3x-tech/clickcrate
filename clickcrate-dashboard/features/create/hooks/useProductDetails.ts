@@ -1,28 +1,28 @@
 import { useQuery } from "@tanstack/react-query";
 import { clickcrateApi } from "@/services/clickcrateApi";
-import { useCluster } from "@/features/cluster/hooks/useCluster";
 import { getNetwork } from "@/utils/conversions";
+import { useCluster } from "@/features/cluster/hooks/useCluster";
 
-export const useProductListingDetails = (
-  productListingId: string,
+export const useProductDetails = (
+  productId: string,
   walletAddress: string | null
 ) => {
   const { cluster } = useCluster();
   const network = getNetwork(cluster);
 
   return useQuery({
-    queryKey: ["productListingDetails", productListingId],
+    queryKey: ["productDetails", productId],
     queryFn: async () => {
       if (!walletAddress) {
         throw new Error("Wallet not connected");
       }
-      const response = await clickcrateApi.fetchProductListingDetails(
-        productListingId,
+      const response = await clickcrateApi.fetchProductDetails(
+        productId,
         walletAddress,
         network
       );
       return response.data;
     },
-    enabled: !!walletAddress && !!productListingId,
+    enabled: !!walletAddress && !!productId,
   });
 };

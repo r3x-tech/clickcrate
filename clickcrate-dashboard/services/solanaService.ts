@@ -1,4 +1,9 @@
-import { Connection, Transaction, VersionedTransaction } from "@solana/web3.js";
+import {
+  Connection,
+  Transaction,
+  TransactionSignature,
+  VersionedTransaction,
+} from "@solana/web3.js";
 import { WalletContextState } from "@solana/wallet-adapter-react";
 
 async function getRecentBlockhashWithRetry(
@@ -69,6 +74,39 @@ export const signAndSendTransaction = async (
   }
 };
 
+async function confirmTransaction(
+  connection: Connection,
+  signature: TransactionSignature,
+  timeout: number = 30000,
+  pollInterval: number = 1000
+): Promise<boolean> {
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    const { value: statuses } = await connection.getSignatureStatuses([
+      signature,
+    ]);
+    if (!statuses || statuses.length === 0) {
+      throw new Error("Failed to get signature status");
+    }
+    const status = statuses[0];
+    if (status === null) {
+      await new Promise((resolve) => setTimeout(resolve, pollInterval));
+      continue;
+    }
+    if (status.err) {
+      throw new Error(`Transaction failed: ${JSON.stringify(status.err)}`);
+    }
+    if (
+      status.confirmationStatus === "confirmed" ||
+      status.confirmationStatus === "finalized"
+    ) {
+      return true;
+    }
+    await new Promise((resolve) => setTimeout(resolve, pollInterval));
+  }
+  throw new Error(`Transaction confirmation timeout after ${timeout}ms`);
+}
+
 export const signAndSendVersionedTransaction = async (
   transaction: VersionedTransaction,
   connection: Connection,
@@ -85,15 +123,19 @@ export const signAndSendVersionedTransaction = async (
       skipPreflight: true,
       maxRetries: 5,
     });
-    const confirmation = await connection.confirmTransaction(txId, "confirmed");
 
-    if (confirmation.value.err) {
+    console.log("Transaction sent with ID:", txId);
+
+    const confirmed = await confirmTransaction(connection, txId);
+
+    if (confirmed) {
+      console.log("Transaction confirmed successfully");
+      return txId;
+    } else {
       throw new Error(
-        `Transaction failed: ${confirmation.value.err.toString()}`
+        "Transaction failed to confirm within the timeout period"
       );
     }
-
-    return txId;
   } catch (error) {
     console.error("Error in signAndSendVersionedTransaction:", error);
     throw error;
