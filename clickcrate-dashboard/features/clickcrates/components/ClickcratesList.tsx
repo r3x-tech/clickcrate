@@ -201,7 +201,16 @@ function ClickCratePosCard({
   };
 
   const toggleShareModal = () => {
+    if (clickcrate?.isActive === undefined || clickcrate?.isActive === false) {
+      toast.error("Clickcrate not active");
+      return;
+    }
     setShowShareModal(!showShareModal);
+    if (clickcrate?.product && clickcrate?.product !== undefined) {
+      setShowPurchaseModal(!showPurchaseModal);
+    } else {
+      toast.error("No product in ClickCrate");
+    }
   };
 
   const [selected, setSelected] = useState(false);
@@ -224,10 +233,10 @@ function ClickCratePosCard({
 
   useEffect(() => {
     const fetchImageUrl = async () => {
-      if (clickcrateDetails?.asset.content.json_uri) {
+      if (clickcrateDetails?.collection.content.json_uri) {
         try {
           const response = await fetch(
-            clickcrateDetails.asset.content.json_uri
+            clickcrateDetails.collection.content.json_uri
           );
           const data = await response.json();
           setImageUrl(data.image || "/placeholder-image.svg");
@@ -289,10 +298,12 @@ function ClickCratePosCard({
           </div>
           <div className="flex flex-row w-[10%]">
             <p className="text-start font-normal text-xs">
-              {clickcrateDetails?.asset.ownership.owner ? (
+              {clickcrateDetails?.collection.ownership.owner ? (
                 <ExplorerLink
-                  label={ellipsify(clickcrateDetails.asset.ownership.owner)}
-                  path={`address/${clickcrateDetails.asset.ownership.owner}`}
+                  label={ellipsify(
+                    clickcrateDetails.collection.ownership.owner
+                  )}
+                  path={`address/${clickcrateDetails.collection.ownership.owner}`}
                   className="font-normal underline cursor-pointer"
                 />
               ) : (
@@ -302,7 +313,7 @@ function ClickCratePosCard({
           </div>
           <div className="flex flex-row w-[8%]">
             <p className="text-start font-normal text-xs">
-              {clickcrateDetails?.asset.ownership.frozen
+              {clickcrateDetails?.collection.ownership.frozen
                 ? "Inactive"
                 : "Active"}
             </p>

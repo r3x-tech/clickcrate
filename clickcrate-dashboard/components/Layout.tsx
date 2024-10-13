@@ -118,17 +118,17 @@ export function AppHero({
 export function useTransactionToast() {
   return (signature: string) => {
     const toastId = toast.success(
-      <div className=" flex flex-col">
-        <div className="flex flex-row justify-center">
+      <div className="flex flex-col">
+        <div className="flex flex-row justify-between">
           <button
-            className="btn btn-xs btn-ghost p-0 m-0"
+            className="btn btn-xs btn-ghost p-0 m-0 text-xs"
             onClick={() => toast.dismiss(toastId)}
           >
             DISMISS
           </button>
         </div>
-        <div className="flex flex-col justify-center items-center pt-0 mt-0">
-          <div className="text-md justify-center text-center mb-[1px]">
+        <div className="flex flex-col justify-center items-center pt-0 mt-2">
+          <div className="text-xs justify-center text-center mb-2">
             Transaction sent!
           </div>
           <ExplorerLink

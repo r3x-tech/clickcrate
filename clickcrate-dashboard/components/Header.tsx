@@ -8,8 +8,8 @@ import { IconMenu2 } from "@tabler/icons-react";
 const links = [
   { label: "Account", path: "/" },
   { label: "Create", path: "/create" },
-  { label: "Product Listings", path: "/product-listings" },
   { label: "ClickCrates (POS)", path: "/clickcrates" },
+  { label: "Product Listings", path: "/product-listings" },
   { label: "Orders", path: "/orders" },
 ];
 
@@ -53,7 +53,7 @@ export default function Header() {
       {/* Desktop Header */}
       <div className="hidden md:flex md:flex-none justify-start">
         <Link
-          className="btn btn-ghost px-4 py-0 h-auto hover:bg-transparent"
+          className="btn btn-ghost px-4 py-0 h-auto hover:bg-transparent ml-[-16px]"
           href="https://clickcrate.r3x.tech/"
           target="_blank"
           rel="noopener noreferrer"

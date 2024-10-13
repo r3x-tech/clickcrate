@@ -12,7 +12,10 @@ interface ClickcrateRegisterProps {
   onClose: () => void;
 }
 
-export function ClickcrateRegister({ show, onClose }: ClickcrateRegisterProps) {
+export function ClickcrateRegisterModal({
+  show,
+  onClose,
+}: ClickcrateRegisterProps) {
   const { publicKey } = useWallet();
   const registerClickCrate = useRegisterClickcrate();
 

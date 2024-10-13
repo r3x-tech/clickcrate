@@ -55,7 +55,7 @@ export default async function handler(
 
       const file = fileArray[0];
 
-      const umi = createUmiUploader("devnet");
+      const umi = createUmiUploader("mainnet");
       const secretKeyUint8Array = bs58.decode(process.env.SERVER_WALLET_SK!);
       const userWallet = Keypair.fromSecretKey(
         Uint8Array.from(secretKeyUint8Array)

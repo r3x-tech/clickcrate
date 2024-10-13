@@ -215,8 +215,8 @@ export interface ClickCrateResponse {
 }
 
 export interface DetailedClickCrateState {
-  asset: {
-    interface: "V1_NFT";
+  collection: {
+    interface: "MplCoreCollection";
     id: string;
     content: {
       $schema: string;
@@ -230,6 +230,8 @@ export interface DetailedClickCrateState {
       };
       links: {
         external_url: string;
+        image: string;
+        animation_url: string;
       };
     };
     authorities: {
@@ -248,7 +250,7 @@ export interface DetailedClickCrateState {
       group_key: string;
       group_value: string;
     };
-    royalty: {
+    royalty?: {
       royalty_model: string;
       target: string;
       percent: number;

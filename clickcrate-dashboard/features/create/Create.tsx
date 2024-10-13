@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { CreateProductModal } from "./components/CreateProductModal";
 import { IconRefresh, IconClipboard } from "@tabler/icons-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
@@ -7,6 +6,7 @@ import { RecentCreation } from "@/types";
 import { useRecentCreations } from "./hooks/useRecentCreations";
 import { ExplorerLink } from "@/components/ExplorerLink";
 import { ellipsify } from "@/components/Layout";
+import { CreateModal } from "./components/CreateModal";
 
 export default function Create() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,24 +16,28 @@ export default function Create() {
     error,
     refetch,
   } = useRecentCreations();
+  const [isRefetching, setIsRefetching] = useState(false);
 
   const handleCreateNew = () => {
     setIsModalOpen(true);
   };
 
   const handleRefetch = async () => {
+    setIsRefetching(true);
+
     try {
       await refetch();
       toast.success("Recent creations refreshed");
     } catch (error) {
       toast.error("Failed to refresh recent creations");
     }
+    setIsRefetching(false);
   };
 
   const handleCopyMintAddress = async (mintAddress: string) => {
     try {
       await navigator.clipboard.writeText(mintAddress);
-      toast.success("Mint address copied to clipboard");
+      toast.success("Copied ID to clipboard");
     } catch (err) {
       console.error("Failed to copy mint address:", err);
       toast.error("Failed to copy mint address");
@@ -48,11 +52,12 @@ export default function Create() {
           <button
             className="btn btn-ghost btn-sm text-white bg-transparent hover:bg-transparent p-2"
             onClick={handleRefetch}
+            disabled={isLoading || isRefetching}
           >
             <IconRefresh
               size={21}
               className={`refresh-icon ${
-                isLoading ? "animate-spin-counterclockwise" : ""
+                isLoading || isRefetching ? "animate-spin-counterclockwise" : ""
               }`}
             />
           </button>
@@ -90,33 +95,48 @@ export default function Create() {
             {recentCreations.map((creation: RecentCreation) => (
               <div
                 key={creation.mintAddress}
-                className="bg-quaternary rounded-lg p-4 flex flex-col items-center"
+                className="bg-tertiary rounded-lg p-4 flex flex-col items-center"
               >
                 <img
                   src={creation.image}
                   alt={creation.name}
-                  className="w-full h-40 object-cover rounded-lg mb-2"
+                  className="w-full h-40 object-cover rounded-lg"
                 />
-                <div className="flex flex-col items-center h-full w-full justify-center">
-                  <div className="flex items-center">
-                    <ExplorerLink
-                      path={`account/${creation.mintAddress}`}
-                      label={ellipsify(creation.mintAddress.toString())}
-                    />
-                    <button
-                      onClick={() =>
-                        handleCopyMintAddress(creation.mintAddress)
-                      }
-                      className="btn btn-ghost btn-xs p-0 ml-1"
-                      aria-label="Copy mint address to clipboard"
+                <div className="flex flex-col items-start justify-center w-full py-2">
+                  <div className="flex w-full justify-between items-center">
+                    <span
+                      className={`text-xs ${
+                        creation.type == "ClickCrate"
+                          ? "bg-primary"
+                          : creation.type == "Product"
+                          ? "bg-purple"
+                          : "bg-pink"
+                      }  rounded-full px-2`}
                     >
-                      <IconClipboard size={16} className="text-white" />
-                    </button>
+                      {creation.type == "Product Listing"
+                        ? "Listing"
+                        : creation.type}
+                    </span>
+                    <div className="flex items-center text-xs">
+                      <ExplorerLink
+                        path={`account/${creation.mintAddress}`}
+                        label={ellipsify(creation.mintAddress.toString())}
+                      />
+                      <button
+                        onClick={() =>
+                          handleCopyMintAddress(creation.mintAddress)
+                        }
+                        className="btn btn-ghost btn-xs p-0"
+                        aria-label="Copy mint address to clipboard"
+                      >
+                        <IconClipboard size={16} className="text-white" />
+                      </button>
+                    </div>
                   </div>
-                  <span className="text-sm font-semibold mt-1 text-center">
+
+                  <span className="text-sm font-semibold mt-2 text-start">
                     {creation.name}
                   </span>
-                  <span className="text-xs mt-1">{creation.type}</span>
                 </div>
               </div>
             ))}
@@ -133,10 +153,7 @@ export default function Create() {
           </div>
         )}
 
-      <CreateProductModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <CreateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
