@@ -44,11 +44,6 @@ export const CreateModal: React.FC<CreateProductModalProps> = ({
 
   const handleCreationFailure = () => {
     setIsCreating(false);
-    setCreationSuccess(false);
-    // setCreatedId("");
-    // setCreatedProductIds([]);
-    // setCreationType("product");
-    // onClose();
   };
 
   const handleCopyId = async () => {
@@ -69,7 +64,6 @@ export const CreateModal: React.FC<CreateProductModalProps> = ({
   };
 
   const handleRegisterAndActivate = () => {
-    // Placeholder function for now
     console.log("Register and activate clicked");
     toast.success("Registration and activation initiated");
   };
@@ -95,43 +89,51 @@ export const CreateModal: React.FC<CreateProductModalProps> = ({
             </div>
           )}
         </div>
-        {!isCreating && !creationSuccess && (
+
+        {!creationSuccess && (
           <>
-            <div className="space-y-2">
-              <p className="text-start font-semibold tracking-wide text-xs">
-                What would you like to create?{" "}
-              </p>
-              <select
-                className="rounded-lg p-[10px] text-white font-semibold w-full bg-tertiary text-sm"
-                value={creationType}
-                onChange={(e) =>
-                  setCreationType(e.target.value as "product" | "clickcrate")
-                }
-              >
-                <option value="product">Create Product Listing</option>
-                <option value="clickcrate">Create ClickCrate</option>
-              </select>
-            </div>
+            {!isCreating && (
+              <div className="space-y-2">
+                <p className="text-start font-semibold tracking-wide text-xs">
+                  What would you like to create?{" "}
+                </p>
+                <select
+                  className="rounded-lg p-[10px] text-white font-semibold w-full bg-tertiary text-sm"
+                  value={creationType}
+                  disabled={isCreating}
+                  onChange={(e) =>
+                    setCreationType(e.target.value as "product" | "clickcrate")
+                  }
+                >
+                  <option value="product">Create Product Listing</option>
+                  <option value="clickcrate">Create ClickCrate</option>
+                </select>
+              </div>
+            )}
 
             {creationType === "product" ? (
               <ProductForm
+                key="product-form"
                 onClose={onClose}
                 onCreationStart={handleCreationStart}
                 onCreationSuccess={handleCreationSuccess}
                 onCreationFailure={handleCreationFailure}
+                isCreating={isCreating}
               />
             ) : (
               <ClickcrateForm
+                key="clickcrate-form"
                 onClose={onClose}
                 onCreationStart={handleCreationStart}
                 onCreationSuccess={handleCreationSuccess}
                 onCreationFailure={handleCreationFailure}
+                isCreating={isCreating}
               />
             )}
           </>
         )}
 
-        {isCreating && (
+        {/* {isCreating && (
           <div className="flex flex-col items-center justify-center space-y-4 h-full">
             <div className="loading loading-spinner loading-sm"></div>
             <p className="text-sm font-bold">CREATING</p>
@@ -139,7 +141,7 @@ export const CreateModal: React.FC<CreateProductModalProps> = ({
               WARNING: CLOSING THIS WINDOW MAY RESULT IN A FAILED CREATION
             </p>
           </div>
-        )}
+        )} */}
 
         {creationSuccess && (
           <div className="flex flex-col items-between justify-between h-full w-full">

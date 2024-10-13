@@ -111,9 +111,11 @@ function ProductListingCard({
 
   useEffect(() => {
     const fetchImageUrl = async () => {
-      if (listingDetails?.asset.content.json_uri) {
+      if (listingDetails?.collection.content.json_uri) {
         try {
-          const response = await fetch(listingDetails.asset.content.json_uri);
+          const response = await fetch(
+            listingDetails.collection.content.json_uri
+          );
           const data = await response.json();
           setImageUrl(data.image || "/placeholder-image.svg");
         } catch (error) {

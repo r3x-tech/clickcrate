@@ -4,11 +4,15 @@ import { IconTrash } from "@tabler/icons-react";
 interface ImageUploadProps {
   onImageChange: (image: string, file: File | null) => void;
   initialImage?: string;
+  imageType?: string;
+  identifier: string;
 }
 
 export const ImageUploadMini: React.FC<ImageUploadProps> = ({
   onImageChange,
   initialImage,
+  imageType = "",
+  identifier,
 }) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
@@ -76,7 +80,9 @@ export const ImageUploadMini: React.FC<ImageUploadProps> = ({
         )}
       </div>
       <div className="flex flex-1 flex-col">
-        <p className="text-xs text-white font-bold mb-2">IMAGE</p>
+        <p className="text-xs text-white font-bold mb-2">
+          {imageType && `${imageType.toUpperCase()} `}IMAGE (.svg, .png only)
+        </p>
         <div className="flex items-center space-x-2">
           <p className="text-sm text-gray-500 truncate max-w-[200px]">
             {imageFile
@@ -100,10 +106,10 @@ export const ImageUploadMini: React.FC<ImageUploadProps> = ({
               accept="image/*"
               onChange={handleImageUpload}
               className="hidden"
-              id="imageUpload"
+              id={`imageUpload-${identifier}`} // Use the identifier here
             />
             <label
-              htmlFor="imageUpload"
+              htmlFor={`imageUpload-${identifier}`} // And here
               className="btn btn-xs lg:btn-sm btn-outline w-full py-3"
             >
               Upload Image

@@ -12,6 +12,7 @@ interface ClickcrateFormProps {
   onCreationStart: () => void;
   onCreationSuccess: (id: string) => void;
   onCreationFailure: () => void;
+  isCreating: boolean;
 }
 
 export const ClickcrateForm: React.FC<ClickcrateFormProps> = ({
@@ -19,6 +20,7 @@ export const ClickcrateForm: React.FC<ClickcrateFormProps> = ({
   onCreationStart,
   onCreationSuccess,
   onCreationFailure,
+  isCreating,
 }) => {
   const [formData, setFormData] = useState<Partial<CreateClickcrateData>>({});
   const [csvFile, setCsvFile] = useState<File | null>(null);
@@ -113,6 +115,18 @@ export const ClickcrateForm: React.FC<ClickcrateFormProps> = ({
     }
   };
 
+  if (isCreating) {
+    return (
+      <div className="flex flex-col items-center justify-center space-y-4 h-full">
+        <div className="loading loading-spinner loading-sm"></div>
+        <p className="text-sm font-bold">CREATING</p>
+        <p className="text-xs font-semibold text-red my-4 p-2 bg-tertiary text-center rounded-md">
+          WARNING: CLOSING THIS WINDOW MAY RESULT IN A FAILED CREATION
+        </p>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="flex items-center space-x-2 justify-between border-t-2 pt-6">
@@ -178,6 +192,7 @@ export const ClickcrateForm: React.FC<ClickcrateFormProps> = ({
           setImageFile(file);
         }}
         initialImage={formData.image}
+        identifier="clickcrate-image"
       />
       <select
         name="placementType"

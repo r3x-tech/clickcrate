@@ -10,20 +10,34 @@ import { generateSymbol } from "@/utils/conversions";
 interface ProductFormProps {
   onClose: () => void;
   onCreationStart: () => void;
-  onCreationSuccess: (id: string) => void;
+  onCreationSuccess: (id: string, productIds: string[]) => void;
   onCreationFailure: () => void;
+  isCreating: boolean;
 }
+
+type ExtendedCreateProductData = CreateProductData & {
+  productImage: string;
+  brand: string;
+  size: string;
+};
 
 export const ProductForm: React.FC<ProductFormProps> = ({
   onClose,
   onCreationStart,
   onCreationSuccess,
   onCreationFailure,
+  isCreating,
 }) => {
-  const [formData, setFormData] = useState<Partial<CreateProductData>>({});
+  const [formData, setFormData] = useState<Partial<ExtendedCreateProductData>>(
+    {}
+  );
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [urlInput, setUrlInput] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [listingImageFile, setListingImageFile] = useState<File | null>(null);
+  const [productImageFile, setProductImageFile] = useState<File | null>(null);
+  const [numProducts, setNumProducts] = useState<string>(
+    "# of Products (1-10)"
+  );
 
   const wallet = useWallet();
   const { createProduct } = useCreateProduct();
@@ -35,17 +49,38 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleNumProductsChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === "" || (parseInt(value) >= 1 && parseInt(value) <= 10)) {
+      setNumProducts(value);
+    }
+  };
+
   const handleCsvUpload = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setCsvFile(e.target.files[0]);
-      // TODO: Implement CSV parsing logic
       console.log("CSV file selected:", e.target.files[0].name);
     }
   };
 
   const handleUrlParse = () => {
-    // TODO: Implement URL parsing logic
     console.log("Parsing URL:", urlInput);
+  };
+
+  const generateProductMetadata = (
+    baseData: Partial<ExtendedCreateProductData>,
+    index: number
+  ) => {
+    return {
+      name: `${baseData.listingName} #${index + 1}`,
+      symbol: generateSymbol(`${baseData.listingName} #${index + 1}`),
+      description: baseData.listingDescription || "",
+      image: baseData.productImage || "",
+      external_url: baseData.external_url || "https://www.clickcrate.xyz/",
+      creator_url: "https://www.clickcrate.xyz/",
+      brand: baseData.brand || "",
+      size: baseData.size || "",
+    };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,59 +90,122 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       return;
     }
 
-    if (!formData.listingImage) {
-      toast.error("Please provide an image");
+    if (!formData.listingImage || !formData.productImage) {
+      toast.error("Please provide both listing and product images");
       return;
     }
 
     if (validateProductData(formData)) {
       onCreationStart();
       try {
-        let imageUri = formData.listingImage;
+        let listingImageUri = formData.listingImage;
+        let productImageUri = formData.productImage;
 
-        if (imageFile) {
+        if (listingImageFile) {
           try {
-            imageUri = await uploadFile(imageFile, wallet, "mainnet");
+            listingImageUri = await uploadFile(
+              listingImageFile,
+              wallet,
+              "mainnet"
+            );
           } catch (uploadError) {
-            if (uploadError instanceof Error) {
-              throw Error(`Image upload failed: ${uploadError.message}`);
-            } else {
-              throw Error("Image upload failed due to an unknown error");
-            }
+            throw Error(
+              `Listing image upload failed: ${
+                uploadError instanceof Error
+                  ? uploadError.message
+                  : "Unknown error"
+              }`
+            );
           }
         }
 
-        const productData: CreateProductData = {
-          ...formData,
+        if (productImageFile) {
+          try {
+            productImageUri = await uploadFile(
+              productImageFile,
+              wallet,
+              "mainnet"
+            );
+          } catch (uploadError) {
+            throw Error(
+              `Product image upload failed: ${
+                uploadError instanceof Error
+                  ? uploadError.message
+                  : "Unknown error"
+              }`
+            );
+          }
+        }
+
+        const numProductsValue = parseInt(numProducts) || 1;
+        const products = Array.from({ length: numProductsValue }, (_, i) =>
+          generateProductMetadata(
+            { ...formData, productImage: productImageUri },
+            i
+          )
+        );
+
+        const productListingData: CreateProductData = {
+          listingImage: listingImageUri,
+          listingName: formData.listingName || "",
+          listingDescription: formData.listingDescription || "",
+          productCategory: formData.productCategory,
+          placementType: formData.placementType,
+          external_url: formData.external_url || "https://www.clickcrate.xyz/",
+          sku: formData.sku || "None",
+          discount: formData.discount || "None",
+          additionalPlacementRequirements:
+            formData.additionalPlacementRequirements || "None",
+          customerProfileUri:
+            formData.customerProfileUri || "https://www.clickcrate.xyz/",
           creator: wallet.publicKey.toBase58(),
           feePayer: wallet.publicKey.toBase58(),
           creator_url: "https://www.clickcrate.xyz/",
-          external_url: formData.external_url || "https://www.clickcrate.xyz/",
           listingSymbol: generateSymbol(formData.listingName || ""),
-          listingImage: imageUri,
-          products: [], // Add this if it's required and not set elsewhere
-        } as CreateProductData;
+          products: products.map((product) => ({
+            name: product.name,
+            symbol: product.symbol,
+            description: product.description,
+            image: product.image,
+            external_url: product.external_url,
+            creator_url: product.creator_url,
+            brand: product.brand,
+            size: product.brand,
+          })),
+        };
 
-        console.log("productData is: ", productData);
+        console.log("productData is: ", productListingData);
 
-        const result = await createProduct(productData);
+        const result = await createProduct(productListingData);
         console.log("result.message: ", result.message);
         console.log("Tx Signatures: ", result.signatures);
         console.log("listing id: ", result.listingId);
 
         toast.success("Product created successfully");
-        onCreationSuccess(result.listingId);
+        onCreationSuccess(result.listingId, result.productIds || []);
       } catch (error) {
         console.error("Error creating product:", error);
-        if (error instanceof Error) {
-          toast.error(`Failed to create product: ${error.message}`);
-        } else {
-          toast.error("Failed to create product due to an unknown error");
-        }
+        toast.error(
+          `Failed to create product: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`
+        );
         onCreationFailure();
       }
     }
   };
+
+  if (isCreating) {
+    return (
+      <div className="flex flex-col items-center justify-center space-y-4 h-full">
+        <div className="loading loading-spinner loading-sm"></div>
+        <p className="text-sm font-bold">CREATING</p>
+        <p className="text-xs font-semibold text-red my-4 p-2 bg-tertiary text-center rounded-md">
+          WARNING: CLOSING THIS WINDOW MAY RESULT IN A FAILED CREATION
+        </p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -149,8 +247,37 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       </div>
 
       <p className="text-start font-semibold tracking-wide text-xs pt-4">
-        PRODUCT INFORMATION{" "}
+        PRODUCT LISTING INFORMATION
       </p>
+      <input
+        type="number"
+        name="numProducts"
+        placeholder="# of Products (1-10)"
+        value={numProducts}
+        onChange={handleNumProductsChange}
+        onBlur={() => {
+          const num = parseInt(numProducts);
+          if (isNaN(num) || num < 1) {
+            setNumProducts("1");
+          } else if (num > 10) {
+            setNumProducts("10");
+          }
+        }}
+        className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
+        min="1"
+        max="10"
+      />
+      <div>
+        <ImageUploadMini
+          onImageChange={(image, file) => {
+            setFormData((prev) => ({ ...prev, listingImage: image }));
+            setListingImageFile(file);
+          }}
+          initialImage={formData.listingImage}
+          imageType="Listing"
+          identifier="listing-image"
+        />
+      </div>
       <input
         type="text"
         name="listingName"
@@ -168,13 +295,19 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
         required
       />
-      <ImageUploadMini
-        onImageChange={(image, file) => {
-          setFormData((prev) => ({ ...prev, listingImage: image }));
-          setImageFile(file);
-        }}
-        initialImage={formData.listingImage}
-      />
+
+      <div>
+        <ImageUploadMini
+          onImageChange={(image, file) => {
+            setFormData((prev) => ({ ...prev, productImage: image }));
+            setProductImageFile(file);
+          }}
+          initialImage={formData.productImage}
+          imageType="Product"
+          identifier="product-image"
+        />
+      </div>
+
       <select
         name="productCategory"
         value={formData.productCategory || ""}
@@ -207,6 +340,24 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         <option value="targetedplacement">Targeted Placement</option>
       </select>
       <input
+        type="text"
+        name="size"
+        placeholder="Size"
+        value={formData.size || ""}
+        onChange={handleInputChange}
+        className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
+        required
+      />
+      <input
+        type="text"
+        name="brand"
+        placeholder="Brand"
+        value={formData.brand || ""}
+        onChange={handleInputChange}
+        className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
+        required
+      />
+      <input
         type="url"
         name="external_url"
         placeholder="Creator Website"
@@ -217,9 +368,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       />
       <input
         type="text"
-        name="additionalPlacementRequirements"
-        placeholder="Additional Placement Requirements (optional)"
-        value={formData.additionalPlacementRequirements || ""}
+        name="sku"
+        placeholder="Product SKU (optional)"
+        value={formData.sku || ""}
         onChange={handleInputChange}
         className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
       />
@@ -232,6 +383,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
       />
       <input
+        type="text"
+        name="additionalPlacementRequirements"
+        placeholder="Additional Placement Requirements (optional)"
+        value={formData.additionalPlacementRequirements || ""}
+        onChange={handleInputChange}
+        className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
+      />
+      <input
         type="url"
         name="customerProfileUri"
         placeholder="Customer Profile URI (optional)"
@@ -239,14 +398,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         onChange={handleInputChange}
         className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
       />
-      <input
-        type="text"
-        name="sku"
-        placeholder="Product SKU (optional)"
-        value={formData.sku || ""}
-        onChange={handleInputChange}
-        className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
-      />
+
       <div className="flex flex-row gap-[4%] py-2">
         <button
           type="button"
@@ -267,15 +419,18 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 };
 
 function validateProductData(
-  data: Partial<CreateProductData>
-): data is CreateProductData {
-  const requiredFields: (keyof CreateProductData)[] = [
+  data: Partial<ExtendedCreateProductData>
+): data is ExtendedCreateProductData {
+  const requiredFields: (keyof ExtendedCreateProductData)[] = [
     "listingName",
     "listingDescription",
     "listingImage",
+    "productImage",
     "productCategory",
     "placementType",
     "external_url",
+    "brand",
+    "size",
   ];
   for (const field of requiredFields) {
     if (!data[field]) {
