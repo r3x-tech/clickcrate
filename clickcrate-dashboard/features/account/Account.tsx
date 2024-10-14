@@ -10,21 +10,24 @@ import { ExplorerLink } from "@/components/ExplorerLink";
 import { AccountButtons } from "./components/AccountButtons";
 import { AccountTokens } from "./components/AccountTokens";
 import { AccountTransactions } from "./components/AccountTransactions";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export default function AccountFeature() {
   const params = useParams();
-  const address = useMemo(() => {
-    if (!params.address) {
-      return;
-    }
-    try {
-      return new PublicKey(params.address as string);
-    } catch (e) {
-      console.log(`Invalid public key`, e);
-    }
-  }, [params]);
 
-  if (!address) {
+  const { publicKey } = useWallet();
+  // const address = useMemo(() => {
+  //   if (!params.address) {
+  //     return;
+  //   }
+  //   try {
+  //     return new PublicKey(params.address as string);
+  //   } catch (e) {
+  //     console.log(`Invalid public key`, e);
+  //   }
+  // }, [params]);
+
+  if (!publicKey) {
     return (
       <div className="flex items-center justify-start w-[100vw]">
         {" "}
@@ -36,24 +39,24 @@ export default function AccountFeature() {
   return (
     <div>
       <AppHero
-        title={<AccountBalance address={address} />}
+        title={<AccountBalance address={publicKey} />}
         subtitle={
           <div className="my-4">
             Solana Wallet Address:{" "}
             <ExplorerLink
-              path={`account/${address}`}
-              label={ellipsify(address.toString())}
+              path={`account/${publicKey}`}
+              label={ellipsify(publicKey.toString())}
             />
           </div>
         }
       >
         <div className="my-4">
-          <AccountButtons address={address} />
+          <AccountButtons address={publicKey} />
         </div>
       </AppHero>
       <div className="space-y-8 pb-10">
-        <AccountTokens address={address} />
-        <AccountTransactions address={address} />
+        <AccountTokens address={publicKey} />
+        <AccountTransactions address={publicKey} />
       </div>
     </div>
   );

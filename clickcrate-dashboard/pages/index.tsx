@@ -56,13 +56,13 @@ export default function Home() {
 
       <div className="flex justify-between items-end my-4">
         <div className="text-sm font-normal py-2 px-4 rounded-full bg-quaternary">
-          Lifetime: $5000
+          Lifetime: 10.000 SOL
         </div>
         <div className="text-sm font-normal py-2 px-4 rounded-full bg-quaternary">
-          Pending: $2000
+          Pending: 2.005 SOL
         </div>
         <div className="flex px-4 pl-4 pr-0 rounded-full bg-quaternary space-x-4 items-center">
-          <div className="text-sm font-normal ">Available: $3000</div>
+          <div className="text-sm font-normal ">Available: 7.995 SOL</div>
           <button className="btn btn-xs lg:btn-sm btn-primary py-2 w-[10rem]">
             Cashout
           </button>
