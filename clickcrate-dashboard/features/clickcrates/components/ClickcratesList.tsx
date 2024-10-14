@@ -51,6 +51,10 @@ ClickcratesListProps) {
   //   }
   // };
 
+  useEffect(() => {
+    setAllSelected(selectedClickcrates.length === clickcrates.length);
+  }, [selectedClickcrates, clickcrates]);
+
   const handleAllSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isSelected = e.target.checked;
     setAllSelected(isSelected);
@@ -146,6 +150,7 @@ function ClickCratePosCard({
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [showProductInfoModal, setShowProductInfoModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [selected, setSelected] = useState(isSelected);
 
   const isUpdateClickCrateFormValid =
     clickcrate?.eligiblePlacementType !== null &&
@@ -213,12 +218,10 @@ function ClickCratePosCard({
     }
   };
 
-  const [selected, setSelected] = useState(false);
-
   const handleSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const isSelected = e.target.checked;
-    setSelected(isSelected);
-    onSelect(clickcrateId, isSelected);
+    const newSelected = e.target.checked;
+    setSelected(newSelected);
+    onSelect(clickcrateId, newSelected);
   };
 
   const handleCopyId = async () => {
@@ -248,6 +251,10 @@ function ClickCratePosCard({
     };
     fetchImageUrl();
   }, [clickcrateDetails]);
+
+  useEffect(() => {
+    setSelected(isSelected);
+  }, [isSelected]);
 
   useEffect(() => {
     setSelected(allSelected);
@@ -313,9 +320,7 @@ function ClickCratePosCard({
           </div>
           <div className="flex flex-row w-[8%]">
             <p className="text-start font-normal text-xs">
-              {clickcrateDetails?.collection.ownership.frozen
-                ? "Inactive"
-                : "Active"}
+              {!clickcrate.isActive ? "Inactive" : "Active"}
             </p>
           </div>
           <div className="flex flex-row w-[12%]">

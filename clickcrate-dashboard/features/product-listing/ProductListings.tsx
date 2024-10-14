@@ -6,6 +6,8 @@ import ProductListingsList from "./components/ProductListingsList";
 import toast from "react-hot-toast";
 import { WalletButton } from "@/solana/solana-provider";
 import { IconCaretDownFilled, IconRefresh } from "@tabler/icons-react";
+import { useActivateProductListing } from "./hooks/useActivateProductListing";
+import { useDeactivateProductListing } from "./hooks/useDeactivateProductListing";
 
 export default function ProductListings() {
   const { publicKey } = useWallet();
@@ -22,6 +24,9 @@ export default function ProductListings() {
   const [selectedListings, setSelectedListings] = useState<string[]>([]);
   const [showActionsMenu, setShowActionsMenu] = useState(false);
   const [isRefetching, setIsRefetching] = useState(false);
+
+  const activateProductListing = useActivateProductListing();
+  const deactivateProductListing = useDeactivateProductListing();
 
   const handleListingSelect = (productListingId: string, selected: boolean) => {
     setSelectedListings((prev) =>
@@ -42,14 +47,37 @@ export default function ProductListings() {
     setIsRefetching(false);
   };
 
-  const handleActivateListings = () => {
-    // Implement the activation logic here
-    toast.success("Activating selected listings");
+  const handleActivateListings = async () => {
+    for (const listingId of selectedListings) {
+      try {
+        await activateProductListing.mutateAsync(listingId);
+        toast.success(`Product listing activated successfully`);
+      } catch (error) {
+        console.error(`Error activating product listing ${listingId}:`, error);
+        toast.error(`Failed to activate product listing ${listingId}`);
+      }
+    }
+    setSelectedListings([]);
+    setShowActionsMenu(false);
+    refetch();
   };
 
-  const handleDeactivateListings = () => {
-    // Implement the deactivation logic here
-    toast.success("Deactivating selected listings");
+  const handleDeactivateListings = async () => {
+    for (const listingId of selectedListings) {
+      try {
+        await deactivateProductListing.mutateAsync(listingId);
+        toast.success(`Product listing deactivated successfully`);
+      } catch (error) {
+        console.error(
+          `Error deactivating product listing ${listingId}:`,
+          error
+        );
+        toast.error(`Failed to deactivate product listing ${listingId}`);
+      }
+    }
+    setSelectedListings([]);
+    setShowActionsMenu(false);
+    refetch();
   };
 
   if (!publicKey) {

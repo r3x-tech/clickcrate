@@ -28,6 +28,10 @@ export default function ProductListingsList({
 }: ProductListingsListProps) {
   const [allSelected, setAllSelected] = useState(false);
 
+  useEffect(() => {
+    setAllSelected(selectedListings.length === listings.length);
+  }, [selectedListings, listings]);
+
   const handleAllSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isSelected = e.target.checked;
     setAllSelected(isSelected);
@@ -75,7 +79,7 @@ export default function ProductListingsList({
         <ProductListingCard
           key={listing.productListingId}
           listing={listing}
-          onSelect={(id, selected) => onSelect(id, selected)}
+          onSelect={onSelect}
           isFirst={index === 0}
           isLast={index === listings.length - 1}
           allSelected={allSelected}
@@ -107,7 +111,15 @@ function ProductListingCard({
     publicKey?.toString() || null
   );
   const [imageUrl, setImageUrl] = useState<string>("/placeholder-image.svg");
-  const [selected, setSelected] = useState(false);
+  const [selected, setSelected] = useState(isSelected);
+
+  useEffect(() => {
+    setSelected(isSelected);
+  }, [isSelected]);
+
+  useEffect(() => {
+    setSelected(allSelected);
+  }, [allSelected]);
 
   useEffect(() => {
     const fetchImageUrl = async () => {
@@ -127,14 +139,10 @@ function ProductListingCard({
     fetchImageUrl();
   }, [listingDetails]);
 
-  useEffect(() => {
-    setSelected(allSelected);
-  }, [allSelected]);
-
   const handleSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const isSelected = e.target.checked;
-    setSelected(isSelected);
-    onSelect(listing.productListingId, isSelected);
+    const newSelected = e.target.checked;
+    setSelected(newSelected);
+    onSelect(listing.productListingId, newSelected);
   };
 
   const handleCopyId = async () => {

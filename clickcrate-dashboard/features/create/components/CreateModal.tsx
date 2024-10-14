@@ -19,7 +19,7 @@ export const CreateModal: React.FC<CreateProductModalProps> = ({
   onClose,
 }) => {
   const [creationType, setCreationType] = useState<"product" | "clickcrate">(
-    "product"
+    "clickcrate"
   );
   const [isCreating, setIsCreating] = useState(false);
   const [creationSuccess, setCreationSuccess] = useState(false);
@@ -105,8 +105,8 @@ export const CreateModal: React.FC<CreateProductModalProps> = ({
                     setCreationType(e.target.value as "product" | "clickcrate")
                   }
                 >
-                  <option value="product">Create Product Listing</option>
                   <option value="clickcrate">Create ClickCrate</option>
+                  <option value="product">Create Product Listing</option>
                 </select>
               </div>
             )}

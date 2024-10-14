@@ -5,9 +5,9 @@ import { ClickcrateRegisterModal } from "./components/ClickcrateRegisterModal";
 import toast from "react-hot-toast";
 import { WalletButton } from "@/solana/solana-provider";
 import { IconCaretDownFilled, IconRefresh } from "@tabler/icons-react";
-import { ClickcratesList } from "./components/ClickcratesList";
 import { useActivateClickcrate } from "./hooks/useActivateClickcrate";
 import { useDeactivateClickcrate } from "./hooks/useDeactivateClickcrate";
+import { ClickcratesList } from "./components/ClickcratesList";
 
 export default function Clickcrates() {
   const { publicKey } = useWallet();
@@ -51,12 +51,13 @@ export default function Clickcrates() {
     for (const clickcrateId of selectedClickcrates) {
       try {
         await activateClickcrate.mutateAsync(clickcrateId);
-        toast.success(`ClickCrate ${clickcrateId} activated successfully`);
+        toast.success(`ClickCrate activated successfully`);
       } catch (error) {
         console.error(`Error activating ClickCrate ${clickcrateId}:`, error);
         toast.error(`Failed to activate ClickCrate ${clickcrateId}`);
       }
     }
+    setSelectedClickcrates([]);
     setShowActionsMenu(false);
     refetch();
   };
@@ -65,12 +66,13 @@ export default function Clickcrates() {
     for (const clickcrateId of selectedClickcrates) {
       try {
         await deactivateClickcrate.mutateAsync(clickcrateId);
-        toast.success(`ClickCrate ${clickcrateId} deactivated successfully`);
+        toast.success(`ClickCrate deactivated successfully`);
       } catch (error) {
         console.error(`Error deactivating ClickCrate ${clickcrateId}:`, error);
         toast.error(`Failed to deactivate ClickCrate ${clickcrateId}`);
       }
     }
+    setSelectedClickcrates([]);
     setShowActionsMenu(false);
     refetch();
   };
