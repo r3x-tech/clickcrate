@@ -1,63 +1,72 @@
-import { ExplorerLink } from "@/components/ExplorerLink";
-import { ellipsify } from "@/components/Layout";
-import { PlacementType, ProductCategory } from "@/types";
+import React, { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey } from "@solana/web3.js";
-import { useState } from "react";
+import { ExplorerLink } from "@/components/ExplorerLink";
+import { ellipsify } from "@/utils/ellipsify";
+import { PlacementType, ProductCategory } from "@/types";
 import toast from "react-hot-toast";
-import { useUpdateClickcrate } from "../hooks/useUpdateClickcrate";
+import { useUpdateProductListing } from "../hooks/useUpdateProductListing";
+import { PublicKey } from "@solana/web3.js";
 
-export function ClickCratePosUpdateModal({
+export function ProductListingUpdateModal({
   show,
   onClose,
-  currentClickcrateId,
-  isUpdateClickCrateFormValid,
+  currentProductListingId,
+  currentManager,
+  currentPlacementType,
+  currentProductCategory,
+  currentPrice,
+  isUpdateProductListingFormValid,
 }: {
   show: boolean;
   onClose: () => void;
-  currentClickcrateId: PublicKey;
-  isUpdateClickCrateFormValid: boolean;
+  currentProductListingId: string;
+  currentManager: string;
+  currentPlacementType: PlacementType;
+  currentProductCategory: ProductCategory;
+  currentPrice: number;
+  isUpdateProductListingFormValid: boolean;
 }) {
   const { publicKey } = useWallet();
-  const updateClickcrate = useUpdateClickcrate();
+  const updateProductListing = useUpdateProductListing();
 
   const [placementType, setPlacementType] = useState<PlacementType | null>(
-    null
+    currentPlacementType
   );
   const [productCategory, setProductCategory] =
-    useState<ProductCategory | null>(null);
-  const [managerInput, setManagerInput] = useState<string>("");
+    useState<ProductCategory | null>(currentProductCategory);
+  const [manager, setManager] = useState<string>(currentManager);
+  const [price, setPrice] = useState<number>(currentPrice / 1_000_000_000);
 
-  const handleUpdateClickCrate = () => {
-    if (!placementType || !productCategory || !managerInput) {
+  const handleUpdateProductListing = () => {
+    if (!placementType || !productCategory || !manager || price === undefined) {
       toast.error("All fields required");
       return;
     }
 
-    let manager: PublicKey;
     try {
-      manager = new PublicKey(managerInput);
+      new PublicKey(manager); // Validate manager is a valid public key
     } catch (error) {
       toast.error("Invalid manager public key");
       return;
     }
 
-    if (publicKey && isUpdateClickCrateFormValid) {
-      updateClickcrate.mutate(
+    if (publicKey && isUpdateProductListingFormValid) {
+      updateProductListing.mutate(
         {
-          clickcrateId: currentClickcrateId.toString(),
-          eligiblePlacementType: placementType,
-          eligibleProductCategory: productCategory,
-          manager: manager.toString(),
+          productListingId: currentProductListingId,
+          placementType,
+          productCategory,
+          manager,
+          price: Math.floor(price * 1_000_000_000), // Convert to lamports and ensure it's an integer
         },
         {
           onSuccess: () => {
             onClose();
-            toast.success("ClickCrate updated successfully");
+            toast.success("Product Listing updated successfully");
           },
           onError: (error) => {
             console.error("Error in mutation:", error);
-            toast.error("Failed to update ClickCrate");
+            toast.error("Failed to update Product Listing");
           },
         }
       );
@@ -75,7 +84,7 @@ export function ClickCratePosUpdateModal({
       <div className="modal-box bg-background p-6 flex flex-col border-2 border-white rounded-lg space-y-4 w-[92vw]">
         <div className="flex flex-row justify-between items-end">
           <h1 className="text-lg font-bold text-start">
-            Update ClickCrate POS
+            Update Product Listing
           </h1>
           <div className="flex flex-row justify-end items-end mb-[0.15em] p-0">
             <p className="text-start font-semibold tracking-wide text-xs">
@@ -83,14 +92,14 @@ export function ClickCratePosUpdateModal({
             </p>
             <p className="pl-2 text-start font-normal text-xs">
               <ExplorerLink
-                path={`account/${currentClickcrateId}`}
-                label={ellipsify(currentClickcrateId.toString())}
+                path={`account/${currentProductListingId}`}
+                label={ellipsify(currentProductListingId)}
               />
             </p>
           </div>
         </div>
 
-        {updateClickcrate.isPending ? (
+        {updateProductListing.isPending ? (
           <div className="absolute inset-0 bg-background bg-opacity-50 flex flex-col items-center justify-center space-y-4">
             <div className="loading loading-spinner loading-sm"></div>
             <p className="text-sm font-bold">UPDATING</p>
@@ -101,7 +110,9 @@ export function ClickCratePosUpdateModal({
         ) : (
           <div
             className={
-              updateClickcrate.isPending ? "pointer-events-none opacity-50" : ""
+              updateProductListing.isPending
+                ? "pointer-events-none opacity-50"
+                : ""
             }
           >
             <select
@@ -109,19 +120,20 @@ export function ClickCratePosUpdateModal({
               onChange={(e) =>
                 setPlacementType(e.target.value as PlacementType)
               }
-              className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm mb-2"
+              className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
             >
               <option value="">Select a placement type</option>
               <option value="relatedpurchase">Related Purchase</option>
               <option value="digitalreplica">Digital Replica</option>
               <option value="targetedplacement">Targeted Placement</option>
             </select>
+
             <select
               value={productCategory || ""}
               onChange={(e) =>
                 setProductCategory(e.target.value as ProductCategory)
               }
-              className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm mb-2"
+              className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
             >
               <option value="">Select a product category</option>
               <option value="clothing">Clothing</option>
@@ -135,25 +147,35 @@ export function ClickCratePosUpdateModal({
               <option value="grocery">Grocery</option>
               <option value="health">Health</option>
             </select>
+
             <input
               type="text"
-              placeholder="Manager"
-              value={managerInput}
-              onChange={(e) => setManagerInput(e.target.value)}
-              className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm mb-2"
+              placeholder="Manager (Public Key)"
+              value={manager}
+              onChange={(e) => setManager(e.target.value)}
+              className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
             />
+
+            <input
+              type="number"
+              placeholder="Price (SOL)"
+              value={price}
+              onChange={(e) => setPrice(parseFloat(e.target.value))}
+              className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm"
+            />
+
             <div className="flex flex-row gap-[4%] py-2">
               <button
                 className="btn btn-xs lg:btn-sm btn-outline w-[48%] py-3"
                 onClick={onClose}
-                disabled={updateClickcrate.isPending}
+                disabled={updateProductListing.isPending}
               >
                 Cancel
               </button>
               <button
                 className="btn btn-xs lg:btn-sm btn-primary w-[48%] py-3"
-                onClick={handleUpdateClickCrate}
-                disabled={updateClickcrate.isPending}
+                onClick={handleUpdateProductListing}
+                disabled={updateProductListing.isPending}
               >
                 Update
               </button>

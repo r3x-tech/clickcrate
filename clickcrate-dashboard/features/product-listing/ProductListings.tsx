@@ -28,6 +28,11 @@ export default function ProductListings() {
   const activateProductListing = useActivateProductListing();
   const deactivateProductListing = useDeactivateProductListing();
 
+  const handleRegisterModalClose = () => {
+    setShowRegisterModal(false);
+    handleRefetch(); // This will trigger a refetch of the listings
+  };
+
   const handleListingSelect = (productListingId: string, selected: boolean) => {
     setSelectedListings((prev) =>
       selected
@@ -197,7 +202,7 @@ export default function ProductListings() {
       {showRegisterModal && (
         <ProductListingRegister
           show={showRegisterModal}
-          onClose={() => setShowRegisterModal(false)}
+          onClose={handleRegisterModalClose} // Use the new handler here
         />
       )}
     </div>

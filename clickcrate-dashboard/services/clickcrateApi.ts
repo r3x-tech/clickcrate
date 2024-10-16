@@ -44,7 +44,7 @@ export const clickcrateApi = {
       walletAddress,
       method: "POST",
       endpoint: "/v1/recent-creations",
-      params: { owner: owner.toString() },
+      params: { owner: owner },
     }),
 
   // ClickCrate endpoints
@@ -231,8 +231,8 @@ export const clickcrateApi = {
     data: {
       productListingId: string;
       origin: Origin;
-      eligiblePlacementType: PlacementType;
-      eligibleProductCategory: ProductCategory;
+      placementType: PlacementType;
+      productCategory: ProductCategory;
       manager: string;
       price: number;
       orderManager: OrderManager;
@@ -253,8 +253,8 @@ export const clickcrateApi = {
   updateProductListing: (
     data: {
       productListingId: string;
-      eligiblePlacementType: PlacementType;
-      eligibleProductCategory: ProductCategory;
+      placementType: PlacementType;
+      productCategory: ProductCategory;
       manager: string;
       price: number;
     },

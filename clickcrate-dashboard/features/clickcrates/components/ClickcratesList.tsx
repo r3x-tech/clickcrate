@@ -242,6 +242,9 @@ function ClickCratePosCard({
             clickcrateDetails.collection.content.json_uri
           );
           const data = await response.json();
+          console.log("Clickcrate data: ", data);
+          console.log("Clickcrate image: ", data.image);
+
           setImageUrl(data.image || "/placeholder-image.svg");
         } catch (error) {
           console.error("Error fetching image URL:", error);
@@ -285,7 +288,13 @@ function ClickCratePosCard({
             />
           </div>
           <div className="flex flex-row w-[4%]">
-            <Image src={imageUrl} alt="product image" width={30} height={30} />
+            <Image
+              src={imageUrl}
+              alt="product image"
+              width={30}
+              height={30}
+              unoptimized
+            />{" "}
           </div>
           <div className="flex flex-row w-[10%] items-center">
             <p className="text-start font-normal text-xs mr-2">

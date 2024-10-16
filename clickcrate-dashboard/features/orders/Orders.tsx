@@ -32,31 +32,29 @@ export default function Orders() {
 
   return publicKey ? (
     <div>
-      <AppHero title="" subtitle="">
-        <div className="flex flex-row items-end w-[100%] h-[3rem] mb-4">
-          <div className="flex flex-row flex-1 justify-start items-end">
-            <h1 className="text-lg font-bold mr-2"> Inbound Orders</h1>
+      <div className="flex flex-row items-end w-[100%] h-[3rem] mb-4">
+        <div className="flex flex-row flex-1 justify-start items-end">
+          <h1 className="text-lg font-bold mr-2"> Inbound Orders</h1>
 
-            <button
-              className="btn btn-ghost btn-sm ml-2 text-white bg-transparent hover:bg-transparent p-2"
-              onClick={handleRefetch}
-              disabled={isRefetching || !publicKey}
-            >
-              <IconRefresh
-                size={21}
-                className={`refresh-icon ${
-                  isRefetching ? "animate-spin-counterclockwise" : ""
-                }`}
-              />
-            </button>
-          </div>
+          <button
+            className="btn btn-ghost btn-sm ml-2 text-white bg-transparent hover:bg-transparent p-2"
+            onClick={handleRefetch}
+            disabled={isRefetching || !publicKey}
+          >
+            <IconRefresh
+              size={21}
+              className={`refresh-icon ${
+                isRefetching ? "animate-spin-counterclockwise" : ""
+              }`}
+            />
+          </button>
         </div>
-        <OrdersList
-          orders={ordersQuery.data}
-          isLoading={ordersQuery.isLoading}
-          error={ordersQuery.error}
-        />
-      </AppHero>
+      </div>
+      <OrdersList
+        orders={ordersQuery.data}
+        isLoading={ordersQuery.isLoading}
+        error={ordersQuery.error}
+      />
     </div>
   ) : (
     <div className="max-w-4xl mx-auto">

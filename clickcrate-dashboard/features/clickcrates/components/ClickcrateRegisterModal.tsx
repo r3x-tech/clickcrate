@@ -5,6 +5,7 @@ import { ExplorerLink } from "@/components/ExplorerLink";
 import { ellipsify } from "@/utils/ellipsify";
 import toast from "react-hot-toast";
 import { useRegisterClickcrate } from "../hooks/useRegisterClickcrate";
+import { showTransactionToast } from "@/components/TransactionToast";
 
 interface ClickcrateRegisterProps {
   show: boolean;
@@ -43,13 +44,14 @@ export function ClickcrateRegisterModal({
     }
 
     try {
-      await registerClickCrate.mutateAsync({
+      const result = await registerClickCrate.mutateAsync({
         clickcrateId: clickcrateId,
         eligiblePlacementType: clickcratePlacementType!,
         eligibleProductCategory: clickcrateProductCategory!,
         manager: publicKey.toString(),
       });
       toast.success("ClickCrate registered successfully");
+      showTransactionToast(result.signature);
       onClose();
     } catch (error) {
       console.error("Error registering ClickCrate:", error);
@@ -80,7 +82,7 @@ export function ClickcrateRegisterModal({
         </div>
 
         {registerClickCrate.isPending ? (
-          <div className="absolute inset-0 bg-background bg-opacity-50 flex flex-col items-center justify-center space-y-4">
+          <div className="flex flex-col items-center justify-center space-y-4 h-full pt-4">
             <div className="loading loading-spinner loading-sm"></div>
             <p className="text-sm font-bold">REGISTERING</p>
             <p className="text-xs font-semibold text-red my-4 p-2 bg-tertiary text-center rounded-md">

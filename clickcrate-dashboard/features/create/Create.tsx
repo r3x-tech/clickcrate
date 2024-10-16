@@ -7,6 +7,8 @@ import { useRecentCreations } from "./hooks/useRecentCreations";
 import { ExplorerLink } from "@/components/ExplorerLink";
 import { ellipsify } from "@/components/Layout";
 import { CreateModal } from "./components/CreateModal";
+import { WalletButton } from "@/solana/solana-provider";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export default function Create() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,6 +19,7 @@ export default function Create() {
     refetch,
   } = useRecentCreations();
   const [isRefetching, setIsRefetching] = useState(false);
+  const { publicKey } = useWallet();
 
   const handleCreateNew = () => {
     setIsModalOpen(true);
@@ -43,6 +46,18 @@ export default function Create() {
       toast.error("Failed to copy mint address");
     }
   };
+
+  if (!publicKey) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <div className="hero py-[64px]">
+          <div className="hero-content text-center">
+            <WalletButton />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

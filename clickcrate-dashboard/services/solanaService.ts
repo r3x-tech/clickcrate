@@ -115,6 +115,16 @@ export const signAndSendVersionedTransaction = async (
   if (!wallet.publicKey || !wallet.signTransaction) {
     throw new Error("Wallet not connected");
   }
+  console.log(
+    "Number of required signatures:",
+    transaction.message.header.numRequiredSignatures
+  );
+  console.log(
+    "Required signers:",
+    transaction.message.staticAccountKeys
+      .slice(0, transaction.message.header.numRequiredSignatures)
+      .map((pubkey) => pubkey.toBase58())
+  );
 
   try {
     const signedTransaction = await wallet.signTransaction(transaction);

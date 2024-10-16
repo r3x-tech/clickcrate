@@ -118,7 +118,7 @@ export function AppHero({
 export function useTransactionToast() {
   return (signature: string) => {
     const toastId = toast.success(
-      <div className=" flex flex-col">
+      <div className="flex flex-col">
         <div className="flex flex-row justify-center">
           <button
             className="btn btn-xs btn-ghost p-0 m-0"
@@ -128,7 +128,7 @@ export function useTransactionToast() {
           </button>
         </div>
         <div className="flex flex-col justify-center items-center pt-0 mt-0">
-          <div className="text-md justify-center text-center mb-[1px]">
+          <div className="text-xs justify-center text-center mb-[1px]">
             Transaction sent!
           </div>
           <ExplorerLink

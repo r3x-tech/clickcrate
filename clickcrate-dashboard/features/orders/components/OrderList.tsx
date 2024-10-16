@@ -108,31 +108,31 @@ export function OrdersList({
               <ExplorerLink
                 path={`tx/${order.id}`}
                 label={ellipsify(order.id)}
-                className="font-extralight text-xs underline"
+                className="font-normal text-xs underline"
               />
             </div>
             <div className="w-[15%] text-start">
               <ExplorerLink
                 path={`address/${order.productId}`}
                 label={ellipsify(order.productId)}
-                className="font-extralight text-xs underline"
+                className="font-normal text-xs underline"
               />
             </div>
             <div className="w-[15%] text-start">
               <ExplorerLink
                 path={`address/${order.buyerId}`}
                 label={ellipsify(order.buyerId)}
-                className="font-extralight text-xs underline"
+                className="font-normal text-xs underline"
               />
             </div>
             <div className="w-[5%] text-right">
-              <p className="font-extralight text-xs">{order.quantity}</p>
+              <p className="font-normal text-xs">{order.quantity}</p>
             </div>
             <div className="w-[15%] text-right">
-              <p className="font-extralight text-xs">{order.totalPrice} SOL</p>
+              <p className="font-normal text-xs">{order.totalPrice} SOL</p>
             </div>
             <div className="w-[7%] text-left ml-[8%]">
-              <p className="font-extralight text-xs">{order.status}</p>
+              <p className="font-normal text-xs">{order.status}</p>
             </div>
             <div className="flex flex-row w-[15%] ml-[5%] justify-end">
               {order.status === "Confirmed" && (

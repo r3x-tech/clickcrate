@@ -146,22 +146,18 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         );
 
         const productListingData: CreateProductData = {
-          listingImage: listingImageUri,
           listingName: formData.listingName || "",
+          listingSymbol: generateSymbol(formData.listingName || ""),
           listingDescription: formData.listingDescription || "",
+          listingImage: listingImageUri,
           productCategory: formData.productCategory,
           placementType: formData.placementType,
-          external_url: formData.external_url || "https://www.clickcrate.xyz/",
-          sku: formData.sku || "None",
-          discount: formData.discount || "None",
           additionalPlacementRequirements:
             formData.additionalPlacementRequirements || "None",
+          discount: formData.discount || "None",
           customerProfileUri:
             formData.customerProfileUri || "https://www.clickcrate.xyz/",
-          creator: wallet.publicKey.toBase58(),
-          feePayer: wallet.publicKey.toBase58(),
-          creator_url: "https://www.clickcrate.xyz/",
-          listingSymbol: generateSymbol(formData.listingName || ""),
+          sku: formData.sku || "None",
           products: products.map((product) => ({
             name: product.name,
             symbol: product.symbol,
@@ -170,8 +166,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             external_url: product.external_url,
             creator_url: product.creator_url,
             brand: product.brand,
-            size: product.brand,
+            size: product.size,
           })),
+          creator: wallet.publicKey.toBase58(),
+          feePayer: wallet.publicKey.toBase58(),
+          external_url: formData.external_url || "https://www.clickcrate.xyz/",
+          creator_url: "https://www.clickcrate.xyz/",
         };
 
         console.log("productData is: ", productListingData);

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { PublicKey } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Origin, PlacementType, ProductCategory } from "@/types";
-import { clickcrateApi } from "@/services/clickcrateApi";
+import { OrderManager, Origin, PlacementType, ProductCategory } from "@/types";
 import toast from "react-hot-toast";
 import { ExplorerLink } from "@/components/ExplorerLink";
 import { ellipsify } from "@/utils/ellipsify";
+import { showTransactionToast } from "@/components/TransactionToast";
+import { useRegisterProductListing } from "../hooks/useRegisterProductListing";
 
 interface ProductListingRegisterProps {
   show: boolean;
@@ -17,16 +17,16 @@ export function ProductListingRegister({
   onClose,
 }: ProductListingRegisterProps) {
   const { publicKey } = useWallet();
-  const [isRegistering, setIsRegistering] = useState(false);
+  const registerProductListing = useRegisterProductListing();
+
   const [productId, setProductId] = useState("");
   const [productOrigin, setProductOrigin] = useState<Origin | null>(null);
   const [productPlacementType, setProductPlacementType] =
     useState<PlacementType | null>(null);
   const [productCategory, setProductCategory] =
     useState<ProductCategory | null>(null);
-  const [productOrderManager, setProductOrderManager] = useState<Origin | null>(
-    null
-  );
+  const [productOrderManager, setProductOrderManager] =
+    useState<OrderManager | null>(null);
 
   const isProductFormValid =
     productId.trim() !== "" &&
@@ -46,27 +46,22 @@ export function ProductListingRegister({
       return;
     }
 
-    setIsRegistering(true);
     try {
-      await clickcrateApi.registerProductListing(
-        {
-          productListingId: productId,
-          origin: productOrigin!,
-          eligiblePlacementType: productPlacementType!,
-          eligibleProductCategory: productCategory!,
-          manager: publicKey.toString(),
-          price: 0, // You may want to add a price input field
-          orderManager: productOrderManager!,
-        },
-        publicKey.toString()
-      );
+      const result = await registerProductListing.mutateAsync({
+        productListingId: productId,
+        origin: productOrigin!,
+        placementType: productPlacementType!,
+        productCategory: productCategory!,
+        manager: publicKey.toString(),
+        price: 0, // You may want to add a price input field
+        orderManager: productOrderManager!,
+      });
       toast.success("Product listing registered successfully");
+      showTransactionToast(result.signature);
       onClose();
     } catch (error) {
       console.error("Error registering product listing:", error);
       toast.error("Failed to register product listing");
-    } finally {
-      setIsRegistering(false);
     }
   };
 
@@ -94,8 +89,8 @@ export function ProductListingRegister({
           )}
         </div>
 
-        {isRegistering ? (
-          <div className="absolute inset-0 bg-background bg-opacity-50 flex flex-col items-center justify-center space-y-4">
+        {registerProductListing.isPending ? (
+          <div className="flex flex-col items-center justify-center space-y-4 h-full pt-4">
             <div className="loading loading-spinner loading-sm"></div>
             <p className="text-sm font-bold">REGISTERING</p>
             <p className="text-xs font-semibold text-red my-4 p-2 bg-tertiary text-center rounded-md">
@@ -104,7 +99,11 @@ export function ProductListingRegister({
           </div>
         ) : (
           <div
-            className={isRegistering ? "pointer-events-none opacity-50" : ""}
+            className={
+              registerProductListing.isPending
+                ? "pointer-events-none opacity-50"
+                : ""
+            }
           >
             <input
               type="text"
@@ -112,19 +111,19 @@ export function ProductListingRegister({
               value={productId}
               onChange={(e) => setProductId(e.target.value)}
               className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm mb-2"
-              disabled={isRegistering}
+              disabled={registerProductListing.isPending}
             />
 
             <select
               value={productOrigin || ""}
               onChange={(e) => setProductOrigin(e.target.value as Origin)}
               className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm mb-2"
-              disabled={isRegistering}
+              disabled={registerProductListing.isPending}
             >
               <option value="">Select an origin</option>
-              <option value="Clickcrate">ClickCrate</option>
-              <option value="Shopify">Shopify</option>
-              <option value="Square">Square</option>
+              <option value="clickcrate">ClickCrate</option>
+              <option value="shopify">Shopify</option>
+              <option value="square">Square</option>
             </select>
 
             <select
@@ -133,7 +132,7 @@ export function ProductListingRegister({
                 setProductPlacementType(e.target.value as PlacementType)
               }
               className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm mb-2"
-              disabled={isRegistering}
+              disabled={registerProductListing.isPending}
             >
               <option value="">Select a placement type</option>
               <option value="relatedpurchase">Related Purchase</option>
@@ -147,7 +146,7 @@ export function ProductListingRegister({
                 setProductCategory(e.target.value as ProductCategory)
               }
               className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm mb-2"
-              disabled={isRegistering}
+              disabled={registerProductListing.isPending}
             >
               <option value="">Select a product category</option>
               <option value="clothing">Clothing</option>
@@ -164,28 +163,32 @@ export function ProductListingRegister({
 
             <select
               value={productOrderManager || ""}
-              onChange={(e) => setProductOrderManager(e.target.value as Origin)}
+              onChange={(e) =>
+                setProductOrderManager(e.target.value as OrderManager)
+              }
               className="rounded-lg p-[10px] text-white w-full bg-tertiary text-sm mb-2"
-              disabled={isRegistering}
+              disabled={registerProductListing.isPending}
             >
               <option value="">Select an order manager</option>
-              <option value="Clickcrate">ClickCrate</option>
-              <option value="Shopify">Shopify</option>
-              <option value="Square">Square</option>
+              <option value="clickcrate">ClickCrate</option>
+              <option value="shopify">Shopify</option>
+              <option value="square">Square</option>
             </select>
 
             <div className="flex flex-row gap-[4%] py-2">
               <button
                 className="btn btn-xs lg:btn-sm btn-outline w-[48%] py-3"
                 onClick={onClose}
-                disabled={isRegistering}
+                disabled={registerProductListing.isPending}
               >
                 Cancel
               </button>
               <button
                 className="btn btn-xs lg:btn-sm btn-primary w-[48%] py-3"
                 onClick={handleProductRegistration}
-                disabled={!isProductFormValid || isRegistering}
+                disabled={
+                  !isProductFormValid || registerProductListing.isPending
+                }
               >
                 Register Listing
               </button>
