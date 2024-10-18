@@ -31,7 +31,7 @@ export default function Orders() {
   };
 
   return publicKey ? (
-    <div>
+    <div className="mb-12">
       <div className="flex flex-row items-end w-[100%] h-[3rem] mb-4">
         <div className="flex flex-row flex-1 justify-start items-end">
           <h1 className="text-lg font-bold mr-2"> Inbound Orders</h1>

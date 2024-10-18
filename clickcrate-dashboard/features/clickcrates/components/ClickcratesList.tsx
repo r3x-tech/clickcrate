@@ -210,9 +210,8 @@ function ClickCratePosCard({
       toast.error("Clickcrate not active");
       return;
     }
-    setShowShareModal(!showShareModal);
     if (clickcrate?.product && clickcrate?.product !== undefined) {
-      setShowPurchaseModal(!showPurchaseModal);
+      setShowShareModal(!showShareModal);
     } else {
       toast.error("No product in ClickCrate");
     }

@@ -135,7 +135,7 @@ export function ClickCratePosShareModal({
               </div>
             )}
             <div
-              className="flex items-center justify-end cursor-pointer mt-4"
+              className="flex items-center justify-end cursor-pointer mt-4 mb-2"
               onClick={togglePreview}
             >
               <span className="mr-2 font-body text-xs font-bold">
