@@ -3,6 +3,9 @@ A social e-commerce platform that lets you sell physical goods at the click of a
 
 [ClickCrate Chrome Extension](https://github.com/r3x-tech/clickcrate-chrome-extension) - [ClickCrate Storefronts](https://github.com/r3x-tech/clickcrate-storefronts) - [ClickCrate API](https://github.com/r3x-tech/clickcrate-api-test) - [ClickCrate Blinks & Actions](https://github.com/r3x-tech/creator-blink-api) - [Docs](https://docs.clickcrate.xyz/) - [Website](https://www.clickcrate.xyz/) - [Pitch Deck](https://www.canva.com/design/DAGSe9jrasA/ygRTI9BWmVDMayE8K4i0kQ/view?utm_content=DAGSe9jrasA&utm_campaign=designshare&utm_medium=link&utm_source=editor)
 
+> **⚠️ NOTICE:**  
+> Although we are working on PRs to add support to the Dialect chrome extension, currently, if you would like to use blinks on social platforms outside of X, you will need to install the [ClickCrate Chrome Extension](https://github.com/r3x-tech/clickcrate-chrome-extension).
+
 ## Getting Started 
 
 /creator-program  - Core ClickCrate program that allows distributed sales of goods.
@@ -24,9 +27,3 @@ ClickCrate currently supports Metaplex Core NFTs together with associated plugin
 
 > **NOTE:**  
 All physical products are tokenized with a digital NFT receipt serving as your proof of purchase and source of truth. So while sales are direct they are aggregated by product listing and no matter where you post your blink your orders will all come into your order management system of choice. 
-
-> **⚠️ NOTICE:**  
-> Although we are working on PRs to add support to the Dialect chrome extension, currently, if you would like to use blinks on social platforms outside of X, you will need to install the [ClickCrate Chrome Extension](https://github.com/r3x-tech/clickcrate-chrome-extension).
-
-
-
