@@ -51,7 +51,7 @@ export default function Clickcrates() {
     for (const clickcrateId of selectedClickcrates) {
       try {
         await activateClickcrate.mutateAsync(clickcrateId);
-        toast.success(`ClickCrate activated successfully`);
+        toast.success(`ClickCrate activated`);
       } catch (error) {
         console.error(`Error activating ClickCrate ${clickcrateId}:`, error);
         toast.error(`Failed to activate ClickCrate ${clickcrateId}`);
@@ -66,7 +66,7 @@ export default function Clickcrates() {
     for (const clickcrateId of selectedClickcrates) {
       try {
         await deactivateClickcrate.mutateAsync(clickcrateId);
-        toast.success(`ClickCrate deactivated successfully`);
+        toast.success(`ClickCrate deactivated`);
       } catch (error) {
         console.error(`Error deactivating ClickCrate ${clickcrateId}:`, error);
         toast.error(`Failed to deactivate ClickCrate ${clickcrateId}`);

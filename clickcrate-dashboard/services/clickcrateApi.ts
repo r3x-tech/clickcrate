@@ -287,6 +287,14 @@ export const clickcrateApi = {
       params: { productListingId: productListingId.toString() },
     }),
 
+  initializeOracles: (productListingId: string, walletAddress: string) =>
+    api.post("/clickcrate-proxy", {
+      walletAddress,
+      method: "POST",
+      endpoint: "/v1/product-listing/initialize-oracles",
+      params: { productListingId: productListingId.toString() },
+    }),
+
   placeProductListing: (
     data: {
       productListingId: string;

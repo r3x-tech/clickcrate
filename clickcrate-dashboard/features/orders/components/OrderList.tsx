@@ -173,7 +173,7 @@ export function OrdersList({
             //   },
             //   {
             //     onSuccess: () => {
-            //       toast.success("Order fulfilled successfully");
+            //       toast.success("Order fulfilled ");
             //       closeFulfillModal();
             //     },
             //     onError: (error: { message: string }) => {
@@ -193,7 +193,7 @@ export function OrdersList({
             //   { orderId: selectedOrder.id, newStatus: "Cancelled" },
             //   {
             //     onSuccess: () => {
-            //       toast.success("Order cancelled successfully");
+            //       toast.success("Order cancelled ");
             //       closeCancelModal();
             //     },
             //     onError: (error: { message: string }) => {

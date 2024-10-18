@@ -181,7 +181,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         console.log("Tx Signatures: ", result.signatures);
         console.log("listing id: ", result.listingId);
 
-        toast.success("Product created successfully");
+        toast.success("Product created ");
         onCreationSuccess(result.listingId, result.productIds || []);
       } catch (error) {
         console.error("Error creating product:", error);

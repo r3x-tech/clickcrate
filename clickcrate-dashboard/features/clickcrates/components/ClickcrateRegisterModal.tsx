@@ -50,7 +50,7 @@ export function ClickcrateRegisterModal({
         eligibleProductCategory: clickcrateProductCategory!,
         manager: publicKey.toString(),
       });
-      toast.success("ClickCrate registered successfully");
+      toast.success("ClickCrate registered ");
       showTransactionToast(result.signature);
       onClose();
     } catch (error) {

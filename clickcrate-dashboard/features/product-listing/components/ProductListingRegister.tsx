@@ -10,11 +10,13 @@ import { useRegisterProductListing } from "../hooks/useRegisterProductListing";
 interface ProductListingRegisterProps {
   show: boolean;
   onClose: () => void;
+  onStartCreating: () => void;
 }
 
 export function ProductListingRegister({
   show,
   onClose,
+  onStartCreating,
 }: ProductListingRegisterProps) {
   const { publicKey } = useWallet();
   const registerProductListing = useRegisterProductListing();
@@ -34,6 +36,8 @@ export function ProductListingRegister({
     productPlacementType !== null &&
     productCategory !== null &&
     productOrderManager !== null;
+
+  onStartCreating();
 
   const handleProductRegistration = async () => {
     if (!publicKey) {
@@ -56,7 +60,7 @@ export function ProductListingRegister({
         price: 0, // You may want to add a price input field
         orderManager: productOrderManager!,
       });
-      toast.success("Product listing registered successfully");
+      toast.success("Product listing registered ");
       showTransactionToast(result.signature);
       onClose();
     } catch (error) {

@@ -1,10 +1,37 @@
 import {
   Connection,
+  SendTransactionError,
   Transaction,
   TransactionSignature,
   VersionedTransaction,
 } from "@solana/web3.js";
 import { WalletContextState } from "@solana/wallet-adapter-react";
+import { RateLimiter } from "limiter";
+
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+const limiter = new RateLimiter({ tokensPerInterval: 40, interval: 10000 });
+
+async function retryWithExponentialBackoff<T>(
+  operation: () => Promise<T>,
+  maxRetries: number = 3,
+  baseDelay: number = 1000
+): Promise<T> {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      await limiter.removeTokens(1);
+      return await operation();
+    } catch (error) {
+      if (attempt === maxRetries - 1) throw error;
+      const delay = baseDelay * Math.pow(2, attempt);
+      console.log(`Retrying in ${delay}ms...`);
+      await sleep(delay);
+    }
+  }
+  throw new Error("Max retries reached");
+}
 
 async function getRecentBlockhashWithRetry(
   connection: Connection,
@@ -23,6 +50,53 @@ async function getRecentBlockhashWithRetry(
   }
   console.error("Failed to get recent blockhash after retries");
   return undefined;
+}
+
+async function confirmTransaction(
+  connection: Connection,
+  signature: TransactionSignature,
+  timeout: number = 120000,
+  pollInterval: number = 1000
+): Promise<boolean> {
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    try {
+      console.log(`Checking transaction status for ${signature}...`);
+      const { value: statuses } = await retryWithExponentialBackoff(() =>
+        connection.getSignatureStatuses([signature])
+      );
+      if (!statuses || statuses.length === 0) {
+        console.log("Failed to get signature status, retrying...");
+        await sleep(pollInterval);
+        continue;
+      }
+      const status = statuses[0];
+      if (status === null) {
+        console.log("Transaction status is null, waiting...");
+        await sleep(pollInterval);
+        continue;
+      }
+      if (status.err) {
+        console.error(`Transaction failed: ${JSON.stringify(status.err)}`);
+        return false;
+      }
+      if (
+        status.confirmationStatus === "confirmed" ||
+        status.confirmationStatus === "finalized"
+      ) {
+        console.log(
+          `Transaction confirmed with status: ${status.confirmationStatus}`
+        );
+        return true;
+      }
+      console.log(`Current status: ${status.confirmationStatus}, waiting...`);
+    } catch (error) {
+      console.error("Error checking transaction status:", error);
+    }
+    await sleep(pollInterval);
+  }
+  console.error(`Transaction confirmation timeout after ${timeout}ms`);
+  return false;
 }
 
 export const createConnection = (network: "devnet" | "mainnet") => {
@@ -74,39 +148,6 @@ export const signAndSendTransaction = async (
   }
 };
 
-async function confirmTransaction(
-  connection: Connection,
-  signature: TransactionSignature,
-  timeout: number = 30000,
-  pollInterval: number = 1000
-): Promise<boolean> {
-  const start = Date.now();
-  while (Date.now() - start < timeout) {
-    const { value: statuses } = await connection.getSignatureStatuses([
-      signature,
-    ]);
-    if (!statuses || statuses.length === 0) {
-      throw new Error("Failed to get signature status");
-    }
-    const status = statuses[0];
-    if (status === null) {
-      await new Promise((resolve) => setTimeout(resolve, pollInterval));
-      continue;
-    }
-    if (status.err) {
-      throw new Error(`Transaction failed: ${JSON.stringify(status.err)}`);
-    }
-    if (
-      status.confirmationStatus === "confirmed" ||
-      status.confirmationStatus === "finalized"
-    ) {
-      return true;
-    }
-    await new Promise((resolve) => setTimeout(resolve, pollInterval));
-  }
-  throw new Error(`Transaction confirmation timeout after ${timeout}ms`);
-}
-
 export const signAndSendVersionedTransaction = async (
   transaction: VersionedTransaction,
   connection: Connection,
@@ -115,31 +156,81 @@ export const signAndSendVersionedTransaction = async (
   if (!wallet.publicKey || !wallet.signTransaction) {
     throw new Error("Wallet not connected");
   }
-  console.log(
-    "Number of required signatures:",
-    transaction.message.header.numRequiredSignatures
-  );
-  console.log(
-    "Required signers:",
-    transaction.message.staticAccountKeys
-      .slice(0, transaction.message.header.numRequiredSignatures)
-      .map((pubkey) => pubkey.toBase58())
-  );
 
   try {
+    console.log("Transaction before signing:", {
+      version: transaction.version,
+      messageVersion: transaction.message.version,
+      recentBlockhash: transaction.message.recentBlockhash,
+      instructionsCount: transaction.message.compiledInstructions.length,
+    });
+
+    // Log all account keys
+    const accountKeys = transaction.message.getAccountKeys();
+    console.log(
+      "Transaction account keys:",
+      Array.from({ length: accountKeys.length }, (_, index) => ({
+        index,
+        publicKey: accountKeys.get(index)?.toBase58() || "Unknown",
+      }))
+    );
+
+    console.log("Signing transaction...");
     const signedTransaction = await wallet.signTransaction(transaction);
+    console.log("Transaction signed ");
+
+    console.log(
+      "Transaction signatures:",
+      signedTransaction.signatures
+        .map((sig, index) => ({
+          index,
+          publicKey: accountKeys.get(index)?.toBase58() || "Unknown",
+          signature: Buffer.from(sig).toString("base64"),
+        }))
+        .filter((signer) => !signer.signature.startsWith("AAAA")) // Filter out empty signatures
+    );
+
     const serializedTransaction = signedTransaction.serialize();
-    const txId = await connection.sendRawTransaction(serializedTransaction, {
-      skipPreflight: true,
-      maxRetries: 5,
+    console.log("Transaction serialized");
+
+    console.log("Transaction size (bytes):", serializedTransaction.length);
+
+    console.log("Sending transaction...");
+    const txId = await retryWithExponentialBackoff(async () => {
+      const tokensBefore = limiter.getTokensRemaining();
+      console.log(`Tokens before sending: ${tokensBefore}`);
+      try {
+        const result = await connection.sendRawTransaction(
+          serializedTransaction,
+          {
+            skipPreflight: false,
+            preflightCommitment: "confirmed",
+            maxRetries: 3,
+          }
+        );
+        console.log("Raw transaction sent ");
+        console.log("Transaction ID:", result);
+        return result;
+      } catch (sendError) {
+        console.error("Error sending raw transaction:", sendError);
+        throw sendError;
+      }
     });
 
     console.log("Transaction sent with ID:", txId);
 
-    const confirmed = await confirmTransaction(connection, txId);
+    if (
+      txId ===
+      "1111111111111111111111111111111111111111111111111111111111111111"
+    ) {
+      throw new Error("Invalid transaction ID received");
+    }
+
+    console.log("Waiting for confirmation...");
+    const confirmed = await confirmTransaction(connection, txId, 120000);
 
     if (confirmed) {
-      console.log("Transaction confirmed successfully");
+      console.log("Transaction confirmed ");
       return txId;
     } else {
       throw new Error(
@@ -148,6 +239,13 @@ export const signAndSendVersionedTransaction = async (
     }
   } catch (error) {
     console.error("Error in signAndSendVersionedTransaction:", error);
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
+    if (error instanceof SendTransactionError) {
+      console.error("SendTransactionError details:", error.logs);
+    }
     throw error;
   }
 };

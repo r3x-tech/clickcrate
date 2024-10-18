@@ -34,7 +34,7 @@ export function ClickCratePosProductInfoModal({
           productListingId: currentProductId.toString(),
           clickcrateId: currentClickcrateId.toString(),
         });
-        toast.success("Product listing removed successfully");
+        toast.success("Product listing removed ");
         onClose();
       } catch (error) {
         console.error("Failed to remove product:", error);

@@ -11,6 +11,8 @@ import { useDeactivateProductListing } from "./hooks/useDeactivateProductListing
 
 export default function ProductListings() {
   const { publicKey } = useWallet();
+  const [isCreatingOrPlacing, setIsCreatingOrPlacing] = useState(false);
+
   const {
     data: listings,
     isLoading,
@@ -18,7 +20,10 @@ export default function ProductListings() {
     refetch,
   } = useOwnedProductListings(
     publicKey ? publicKey.toBase58() : null,
-    publicKey ? publicKey.toBase58() : null
+    publicKey ? publicKey.toBase58() : null,
+    {
+      enabled: !isCreatingOrPlacing, // Disable fetching when creating or placing
+    }
   );
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [selectedListings, setSelectedListings] = useState<string[]>([]);
@@ -30,7 +35,8 @@ export default function ProductListings() {
 
   const handleRegisterModalClose = () => {
     setShowRegisterModal(false);
-    handleRefetch(); // This will trigger a refetch of the listings
+    setIsCreatingOrPlacing(false);
+    handleRefetch();
   };
 
   const handleListingSelect = (productListingId: string, selected: boolean) => {
@@ -45,7 +51,6 @@ export default function ProductListings() {
     setIsRefetching(true);
     try {
       await refetch();
-      toast.success("Product listings refreshed");
     } catch (error) {
       toast.error("Failed to refresh product listings");
     }
@@ -56,7 +61,7 @@ export default function ProductListings() {
     for (const listingId of selectedListings) {
       try {
         await activateProductListing.mutateAsync(listingId);
-        toast.success(`Product listing activated successfully`);
+        toast.success(`Product listing activated `);
       } catch (error) {
         console.error(`Error activating product listing ${listingId}:`, error);
         toast.error(`Failed to activate product listing ${listingId}`);
@@ -71,7 +76,7 @@ export default function ProductListings() {
     for (const listingId of selectedListings) {
       try {
         await deactivateProductListing.mutateAsync(listingId);
-        toast.success(`Product listing deactivated successfully`);
+        toast.success(`Product listing deactivated `);
       } catch (error) {
         console.error(
           `Error deactivating product listing ${listingId}:`,
@@ -188,6 +193,8 @@ export default function ProductListings() {
           listings={listings}
           onSelect={handleListingSelect}
           selectedListings={selectedListings}
+          onStartPlacing={() => setIsCreatingOrPlacing(true)}
+          onFinishPlacing={() => setIsCreatingOrPlacing(false)}
         />
       )}
 
@@ -202,7 +209,8 @@ export default function ProductListings() {
       {showRegisterModal && (
         <ProductListingRegister
           show={showRegisterModal}
-          onClose={handleRegisterModalClose} // Use the new handler here
+          onClose={handleRegisterModalClose}
+          onStartCreating={() => setIsCreatingOrPlacing(true)}
         />
       )}
     </div>

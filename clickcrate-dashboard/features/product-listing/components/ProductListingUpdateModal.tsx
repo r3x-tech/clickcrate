@@ -62,7 +62,7 @@ export function ProductListingUpdateModal({
         {
           onSuccess: () => {
             onClose();
-            toast.success("Product Listing updated successfully");
+            toast.success("Product Listing updated ");
           },
           onError: (error) => {
             console.error("Error in mutation:", error);
@@ -100,20 +100,21 @@ export function ProductListingUpdateModal({
         </div>
 
         {updateProductListing.isPending ? (
-          <div className="absolute inset-0 bg-background bg-opacity-50 flex flex-col items-center justify-center space-y-4">
+          <div className="flex flex-col items-center justify-center space-y-4 h-full pt-4">
             <div className="loading loading-spinner loading-sm"></div>
             <p className="text-sm font-bold">UPDATING</p>
             <p className="text-xs font-semibold text-red my-4 p-2 bg-tertiary text-center rounded-md">
-              WARNING: CLOSING THIS WINDOW MAY RESULT IN A FAILED UPDATE
+              WARNING: CLOSING THIS WINDOW MAY RESULT IN A FAILED REGISTRATION
             </p>
           </div>
         ) : (
           <div
-            className={
+            className={`${
               updateProductListing.isPending
                 ? "pointer-events-none opacity-50"
                 : ""
-            }
+            } space-y-2
+            `}
           >
             <select
               value={placementType || ""}

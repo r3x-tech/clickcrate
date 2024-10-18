@@ -101,7 +101,7 @@ export const ClickcrateForm: React.FC<ClickcrateFormProps> = ({
         console.log("Tx Sig: ", result.signature);
         console.log("clickcrate id: ", result.clickcrateId);
 
-        toast.success("ClickCrate created successfully");
+        toast.success("ClickCrate created ");
         onCreationSuccess(result.clickcrateId);
       } catch (error) {
         console.error("Error creating ClickCrate:", error);

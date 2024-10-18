@@ -32,7 +32,7 @@ export function ClickCratePosPurchaseModal({
           quantity: 1,
           buyer: publicKey.toString(),
         });
-        toast.success("Purchase completed successfully");
+        toast.success("Purchase completed ");
         onClose();
       } catch (error) {
         console.error("Failed to complete purchase:", error);

@@ -1,11 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { clickcrateApi } from "@/services/clickcrateApi";
 import { ProductListing, ProductListingResponse } from "@/types";
 import axios from "axios";
 
 export function useOwnedProductListings(
   owner: string | null,
-  walletAddress: string | null
+  walletAddress: string | null,
+  options?: Omit<
+    UseQueryOptions<ProductListing[], Error>,
+    "queryKey" | "queryFn"
+  >
 ) {
   return useQuery<ProductListing[], Error>({
     queryKey: ["ownedProductListings", owner, walletAddress],
@@ -42,6 +46,7 @@ export function useOwnedProductListings(
         throw error;
       }
     },
-    enabled: !!owner && !!walletAddress,
+    enabled: !!owner && !!walletAddress && (options?.enabled ?? true),
+    ...options,
   });
 }
