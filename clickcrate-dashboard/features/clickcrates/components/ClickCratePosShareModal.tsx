@@ -99,7 +99,7 @@ export function ClickCratePosShareModal({
     <div
       className={`modal ${
         show ? "modal-open" : ""
-      } absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center`}
+      } fixed inset-0 z-50 overflow-y-auto`}
     >
       <div className="modal-box bg-background p-6 flex flex-col border-2 border-white rounded-lg space-y-6 w-full max-w-md sm:max-h-[80vh]">
         <div className="flex flex-row justify-between items-end">

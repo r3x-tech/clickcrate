@@ -95,7 +95,7 @@ export const usePlaceProductListing = () => {
           await clickcrateApi.placeProductListing(
             {
               ...data,
-              price: Math.floor(data.price),
+              price: data.price,
             },
             wallet.publicKey.toString()
           );

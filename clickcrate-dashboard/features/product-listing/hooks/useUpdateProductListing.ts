@@ -27,7 +27,7 @@ export const useUpdateProductListing = () => {
         const response = await clickcrateApi.updateProductListing(
           {
             ...data,
-            price: Math.floor(data.price),
+            price: data.price,
           },
           wallet.publicKey.toString()
         );

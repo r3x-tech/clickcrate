@@ -70,10 +70,10 @@ export function ClickCratePosUpdateModal({
     <div
       className={`modal ${
         show ? "modal-open" : ""
-      } absolute top-0 left-0 right-0 bottom-0`}
+      } fixed inset-0 z-50 overflow-y-auto`}
     >
-      <div className="modal-box bg-background p-6 flex flex-col border-2 border-white rounded-lg space-y-4 w-[92vw]">
-        <div className="flex flex-row justify-between items-end">
+      <div className="modal-box bg-background p-6 rounded-lg border-2 border-white w-[92vw] m-auto">
+        <div className="flex flex-row justify-between items-end mb-4">
           <h1 className="text-lg font-bold text-start">
             Update ClickCrate POS
           </h1>

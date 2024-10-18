@@ -103,7 +103,7 @@ export default function ProductListings() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full mb-12">
       <div className="flex justify-between items-end mb-4 mt-8">
         <div className="flex items-end m-0 p-0">
           <h1 className="text-lg font-bold mr-2">My Product Listings</h1>

@@ -57,7 +57,7 @@ export function ProductListingUpdateModal({
           placementType,
           productCategory,
           manager,
-          price: Math.floor(price * 1_000_000_000), // Convert to lamports and ensure it's an integer
+          price: price, // Convert to lamports and ensure it's an integer
         },
         {
           onSuccess: () => {
@@ -79,7 +79,7 @@ export function ProductListingUpdateModal({
     <div
       className={`modal ${
         show ? "modal-open" : ""
-      } absolute top-0 left-0 right-0 bottom-0`}
+      } fixed inset-0 z-50 overflow-y-auto`}
     >
       <div className="modal-box bg-background p-6 flex flex-col border-2 border-white rounded-lg space-y-4 w-[92vw]">
         <div className="flex flex-row justify-between items-end">

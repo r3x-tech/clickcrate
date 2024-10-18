@@ -69,7 +69,7 @@ export const CreateModal: React.FC<CreateProductModalProps> = ({
   };
 
   return (
-    <div className="modal modal-open absolute top-0 left-0 right-0 bottom-0">
+    <div className="modal modal-open fixed inset-0 z-50 overflow-y-auto">
       <div className="modal-box bg-background p-6 flex flex-col border-2 border-white rounded-lg space-y-6 w-[92vw] max-h-[90vh] overflow-y-auto">
         <div className="flex flex-row justify-between items-end">
           <h1 className="text-lg font-bold text-start tracking-wide">
